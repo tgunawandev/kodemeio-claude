@@ -1,0 +1,33 @@
+name: Notify
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    name: Telegram Notification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get commit info
+        id: commit
+        run: |
+          SUBJECT=$(echo "${{ github.event.head_commit.message }}" | head -n 1 | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
+          echo "subject=$SUBJECT" >> $GITHUB_OUTPUT
+
+      - name: Send notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID_ABCFOOD }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN_ABCFOOD }}
+          format: html
+          message: |
+            📝 <b>Changes Pushed</b>
+
+            <b>Repository:</b> <code>${{ github.repository }}</code>
+            <b>Branch:</b> <code>${{ github.ref_name }}</code>
+            <b>Commit:</b> <code>${{ steps.commit.outputs.subject }}</code>
+            <b>By:</b> ${{ github.actor }}
+
+            <a href="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}">View Changes</a>

@@ -40,6 +40,10 @@ RUN npm install -g pnpm@latest
 # Install Claude Code + Playwright CLI (browser automation)
 RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} @playwright/cli
 
+# Install worktrunk (Git worktree manager for parallel AI agents)
+RUN curl -fsSL https://github.com/max-sixty/worktrunk/releases/latest/download/wt-x86_64-unknown-linux-gnu.tar.xz \
+    | tar -xJ -C /usr/local/bin/ wt && chmod +x /usr/local/bin/wt
+
 # Create dev user with same UID/GID as host user (for bind mount permissions)
 ARG DEV_UID=1000
 ARG DEV_GID=1000

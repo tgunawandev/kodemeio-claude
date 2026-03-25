@@ -59,6 +59,16 @@ log_success "System tools OK"
 log_info "[3/8] Checking dev tools..."
 command -v ruff     &>/dev/null || { pip3 install ruff 2>/dev/null || uv tool install ruff 2>/dev/null || log_warn "Install ruff manually"; }
 command -v prettier &>/dev/null || npm install -g prettier 2>/dev/null || log_warn "Install prettier manually"
+if ! command -v wt &>/dev/null; then
+    log_info "  Installing worktrunk (wt)..."
+    if command -v cargo &>/dev/null; then
+        cargo install worktrunk 2>/dev/null && log_success "  worktrunk installed via cargo" || log_warn "  cargo install failed"
+    elif command -v brew &>/dev/null; then
+        brew install worktrunk 2>/dev/null && log_success "  worktrunk installed via brew" || log_warn "  brew install failed"
+    else
+        log_warn "  Install worktrunk manually: cargo install worktrunk OR brew install worktrunk"
+    fi
+fi
 log_success "Dev tools OK"
 
 # 4. Create directory structure

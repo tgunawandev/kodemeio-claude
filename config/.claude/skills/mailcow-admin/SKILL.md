@@ -76,6 +76,7 @@ kctl-mailcow domains get <domain>
 kctl-mailcow domains add <domain> [--description DESC] [--aliases 400] [--mailboxes 10] [--quota 10240]
 kctl-mailcow domains update <domain> [--description DESC] [--active/--inactive]
 kctl-mailcow domains delete <domain> [--force]
+kctl-mailcow domains dns-check <domain>                           # Check DNS records (MX, SPF, DKIM, DMARC)
 ```
 
 ## Mailbox Management
@@ -150,6 +151,22 @@ kctl-mailcow sync-jobs delete <id> [--force]
 kctl-mailcow fwdhost list
 kctl-mailcow fwdhost add <hostname> [--filter-spam/--no-filter-spam]
 kctl-mailcow fwdhost delete <hostname> [--force]
+```
+
+## TLS Policy
+
+```bash
+kctl-mailcow tls-policy list                                      # List TLS policy maps
+kctl-mailcow tls-policy create <domain> --policy dane|encrypt|verify [--parameters PARAMS]
+kctl-mailcow tls-policy delete <id> [--force]
+```
+
+## Resources
+
+```bash
+kctl-mailcow resources list                                       # List transport resources
+kctl-mailcow resources create <hostname> --port PORT [--username USER] [--password PASS]
+kctl-mailcow resources delete <id> [--force]
 ```
 
 ## Monitoring & Health

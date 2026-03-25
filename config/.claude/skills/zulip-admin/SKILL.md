@@ -157,6 +157,76 @@ kctl-zulip dashboard [--watch] [--interval N]
 kctl-zulip announce "message" --stream general --topic "Announcement"
 ```
 
+## Message Reactions
+
+```bash
+kctl-zulip reactions add <message_id> <emoji_name>               # Add reaction to message
+kctl-zulip reactions remove <message_id> <emoji_name>            # Remove reaction
+kctl-zulip reactions list <message_id>                           # List reactions on message
+```
+
+## User Presence & Status
+
+```bash
+kctl-zulip presence list                                         # All users presence
+kctl-zulip presence get <user_id_or_email>                       # User presence/last active
+kctl-zulip presence set-status --text "In a meeting" --emoji "calendar"
+```
+
+## Scheduled Messages
+
+```bash
+kctl-zulip scheduled list                                        # List scheduled messages
+kctl-zulip scheduled create --to STREAM --topic TOPIC --content TEXT --deliver-at DATETIME
+kctl-zulip scheduled update <msg_id> [--content TEXT] [--deliver-at DATETIME]
+kctl-zulip scheduled delete <msg_id>
+```
+
+## Muted Topics & Users
+
+```bash
+kctl-zulip muted topics                                          # List muted topics
+kctl-zulip muted mute-topic <stream> <topic>
+kctl-zulip muted unmute-topic <stream> <topic>
+kctl-zulip muted mute-user <user_id>
+kctl-zulip muted unmute-user <user_id>
+```
+
+## Drafts
+
+```bash
+kctl-zulip drafts list
+kctl-zulip drafts create --to STREAM --topic TOPIC --content TEXT
+kctl-zulip drafts update <draft_id> --content TEXT
+kctl-zulip drafts delete <draft_id>
+```
+
+## Custom Profile Fields
+
+```bash
+kctl-zulip profile-fields list                                   # List custom profile fields
+kctl-zulip profile-fields create --name NAME --type TYPE [--hint TEXT]
+kctl-zulip profile-fields update <field_id> [--name NAME]
+kctl-zulip profile-fields delete <field_id>
+kctl-zulip profile-fields reorder --order "1,3,2"                # Reorder fields
+```
+
+## Alert Words
+
+```bash
+kctl-zulip alert-words list                                      # List alert words
+kctl-zulip alert-words add word1 word2                           # Add alert words
+kctl-zulip alert-words remove word1 word2                        # Remove alert words
+```
+
+## Linkifiers
+
+```bash
+kctl-zulip linkifiers list
+kctl-zulip linkifiers create --pattern "#(?P<id>[0-9]+)" --url-template "https://plane.kodeme.io/issue/{id}"
+kctl-zulip linkifiers delete <id>
+```
+
 ## Authentication
 
 Zulip API uses HTTP Basic authentication:

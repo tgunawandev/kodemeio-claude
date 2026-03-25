@@ -173,6 +173,43 @@ kctl-plane health [--watch]
 kctl-plane dashboard [--watch] [--interval 10]
 ```
 
+## Issue Comments
+
+```bash
+kctl-plane comments list <project-id> <issue-id>
+kctl-plane comments create <project-id> <issue-id> --body "Comment text"
+kctl-plane comments update <project-id> <issue-id> <comment-id> --body "Updated text"
+kctl-plane comments delete <project-id> <issue-id> <comment-id> [--force]
+```
+
+## Analytics & Insights
+
+```bash
+kctl-plane analytics overview <project-id>                          # Project overview metrics
+kctl-plane analytics issue-stats <project-id>                       # Issues by state/priority/assignee
+kctl-plane analytics cycle-stats <project-id> <cycle-id>            # Cycle completion metrics
+kctl-plane analytics activity <project-id> [--days 7]               # Recent activity feed
+```
+
+## Pages (Documents)
+
+```bash
+kctl-plane pages list <project-id>
+kctl-plane pages get <project-id> <page-id>
+kctl-plane pages create <project-id> --name "Page Title" [--description DESC]
+kctl-plane pages update <project-id> <page-id> [--name NAME] [--description DESC]
+kctl-plane pages delete <project-id> <page-id> [--force]
+```
+
+## Views
+
+```bash
+kctl-plane views list <project-id>
+kctl-plane views get <project-id> <view-id>
+kctl-plane views create <project-id> --name "View Name" [--type TYPE] [--filters JSON]
+kctl-plane views delete <project-id> <view-id> [--force]
+```
+
 ## Export
 
 ```bash

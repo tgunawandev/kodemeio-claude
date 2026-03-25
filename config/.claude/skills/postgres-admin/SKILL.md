@@ -239,6 +239,53 @@ kctl-pg replaces the need for most of these by providing a local CLI experience.
 - App users have LOGIN only (no CREATEDB by default)
 - PgBouncer uses `auth_query` for credential lookup
 
+## Database Maintenance
+
+```bash
+kctl-pg maintenance vacuum <database> [--table TABLE] [--full] [--analyze] [--verbose]
+kctl-pg maintenance analyze <database> [--table TABLE] [--verbose]
+kctl-pg maintenance reindex <database> [--table TABLE] [--index INDEX] [--system]
+kctl-pg maintenance bloat [--db DATABASE] [--top 20]
+kctl-pg maintenance autovacuum-status [--db DATABASE]
+```
+
+## Performance Monitoring
+
+```bash
+kctl-pg perf overview [--db DATABASE]
+kctl-pg perf slow-queries [--db DATABASE] [--min-duration MS] [--limit 20]
+kctl-pg perf table-stats [--db DATABASE] [--top 20]
+kctl-pg perf index-usage [--db DATABASE] [--min-size BYTES]
+kctl-pg perf cache [--db DATABASE]
+kctl-pg perf locks [--db DATABASE]
+kctl-pg perf connections [--db DATABASE]
+kctl-pg perf settings [--filter PATTERN]
+kctl-pg perf wal-status
+```
+
+## PostgreSQL Configuration
+
+```bash
+kctl-pg pg-config show [--filter PATTERN]
+kctl-pg pg-config get <name>
+kctl-pg pg-config set <name> <value>
+kctl-pg pg-config reset <name>
+kctl-pg pg-config reload
+kctl-pg pg-config diff
+```
+
+## Statistics Views
+
+```bash
+kctl-pg stats tables [--db DATABASE]
+kctl-pg stats indexes [--db DATABASE]
+kctl-pg stats bgwriter
+kctl-pg stats replication
+kctl-pg stats wal
+kctl-pg stats io
+kctl-pg stats database [--name DB]
+```
+
 ## Troubleshooting
 
 ### Cannot connect via kctl-pg

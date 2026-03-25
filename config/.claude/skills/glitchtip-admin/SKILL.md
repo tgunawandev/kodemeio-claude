@@ -1,6 +1,6 @@
 ---
 name: glitchtip-admin
-description: GlitchTip error tracking administration for kodemeio infrastructure. Supports multiple GlitchTip instances via profiles (glitchtip.kodeme.io). Covers project management, DSN keys, issue tracking, team management, organization management, event management, alerts, health monitoring, and user management. Use when working with kctl-glitchtip CLI or managing any GlitchTip instance.
+description: GlitchTip error tracking administration for kodemeio infrastructure. Supports multiple GlitchTip instances via profiles (glitchtip.kodeme.io). Covers project management, DSN keys, issue tracking, team management, organization management, event management, uptime monitors, alerts, health monitoring, and user management. Use when working with kctl-glitchtip CLI or managing any GlitchTip instance.
 ---
 
 # GlitchTip Admin Skill
@@ -67,6 +67,9 @@ kctl-glitchtip projects get <org-slug> <project-slug>
 
 # Create project (returns DSN)
 kctl-glitchtip projects create <name> --org <org-slug> --team <team-slug> [--platform python]
+
+# Update project name or platform
+kctl-glitchtip projects update <org-slug> <project-slug> [--name "New Name"] [--platform javascript]
 
 # Delete project
 kctl-glitchtip projects delete <org-slug> <project-slug> [--force]
@@ -141,6 +144,22 @@ kctl-glitchtip events list <org-slug> <project-slug> [--limit 50]
 
 # Clean old events (requires Docker)
 kctl-glitchtip events cleanup [--days 90]
+```
+
+### Uptime Monitors
+
+```bash
+# List uptime monitors
+kctl-glitchtip uptime list [--org <org-slug>]
+
+# Create an uptime monitor
+kctl-glitchtip uptime create --name "My Service" --url https://example.com [--org <org-slug>] [--interval 60] [--type Ping] [--expected-status 200]
+
+# Delete an uptime monitor
+kctl-glitchtip uptime delete <monitor-id> [--org <org-slug>] [--force]
+
+# Show recent checks for a monitor
+kctl-glitchtip uptime checks <monitor-id> [--org <org-slug>]
 ```
 
 ### Users
@@ -219,6 +238,7 @@ Profile selection: `--profile` flag > `KCTL_GLITCHTIP_PROFILE` env > config defa
 - Auth: `Authorization: Bearer <token>` (API token from GlitchTip UI Settings > API Tokens)
 - Most list endpoints return JSON arrays directly (not paginated objects)
 - DSN format: `https://<public_key>@glitchtip.kodeme.io/<project_id>`
+- Uptime monitors: `GET/POST /api/0/organizations/{org}/monitors/`, checks at `.../monitors/{id}/checks/`
 
 ## Common Workflows
 
@@ -239,4 +259,11 @@ kctl-glitchtip issues resolve <id>
 ```bash
 kctl-glitchtip issues bulk-resolve --org kodemeio --project old-app --force
 kctl-glitchtip events cleanup --days 30
+```
+
+### Monitor service uptime
+```bash
+kctl-glitchtip uptime create --name "API" --url https://api.kodeme.io/health --type GET --interval 60
+kctl-glitchtip uptime list
+kctl-glitchtip uptime checks <monitor-id>
 ```

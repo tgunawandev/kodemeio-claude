@@ -220,6 +220,134 @@ kctl-odoo config test                         # Test connection
 kctl-odoo config migrate                      # Migrate flat → scoped format
 ```
 
+### Mail Management
+
+```bash
+kctl-odoo mail status                         # Mail server status and queue counts
+kctl-odoo mail queue [--state outgoing|exception|sent] [--limit 50]
+kctl-odoo mail send <to> --subject "..." --body "..."
+kctl-odoo mail retry [--all] [--id ID]        # Retry failed emails
+kctl-odoo mail purge [--days 30] [--state sent] [--force]
+kctl-odoo mail servers list                   # List incoming/outgoing servers
+kctl-odoo mail servers test <id>              # Test mail server connection
+kctl-odoo mail fetchmail                      # Trigger incoming mail fetch
+```
+
+### Session Management
+
+```bash
+kctl-odoo sessions list [--user USER]         # List active sessions
+kctl-odoo sessions kill <sid>                 # Kill specific session
+kctl-odoo sessions kill-user <user> [--force] # Kill all sessions for user
+kctl-odoo sessions stats                      # Session statistics
+```
+
+### Worker Management
+
+```bash
+kctl-odoo workers status                      # Worker process status
+kctl-odoo workers count                       # Current worker count
+kctl-odoo workers restart [--graceful]        # Restart workers
+kctl-odoo workers stats                       # Worker performance stats
+```
+
+### Performance Monitoring
+
+```bash
+kctl-odoo performance overview                # Overall performance summary
+kctl-odoo performance slow-queries [--limit 20] [--min-duration MS]
+kctl-odoo performance long-running [--threshold 60]
+kctl-odoo performance table-sizes [--top 20]
+kctl-odoo performance index-usage [--model MODEL]
+kctl-odoo performance cache-stats             # ORM cache statistics
+kctl-odoo performance profiler [--duration 60] [--output FILE]
+```
+
+### Queue Job Management
+
+```bash
+kctl-odoo jobs list [--state pending|enqueued|started|failed] [--limit 50]
+kctl-odoo jobs get <id>                       # Job details
+kctl-odoo jobs retry <id>                     # Retry failed job
+kctl-odoo jobs retry-all [--state failed]     # Retry all failed jobs
+kctl-odoo jobs cancel <id>                    # Cancel pending job
+kctl-odoo jobs purge [--state done] [--days 7] [--force]
+kctl-odoo jobs stats                          # Queue job statistics
+```
+
+### Security Management
+
+```bash
+kctl-odoo security access-rights list [--model MODEL]
+kctl-odoo security access-rights check <model> <user> [--operation read|write|create|unlink]
+kctl-odoo security record-rules list [--model MODEL]
+kctl-odoo security groups list                # List security groups
+kctl-odoo security groups members <group>     # List group members
+kctl-odoo security audit [--user USER] [--days 7]
+kctl-odoo security api-keys list [--user USER]
+```
+
+### Company Management
+
+```bash
+kctl-odoo companies list                      # List all companies
+kctl-odoo companies get <id|name>             # Company details
+kctl-odoo companies create <name> [--parent ID] [--currency CODE]
+kctl-odoo companies update <id> [--name NAME] [--email EMAIL]
+kctl-odoo companies switch <id>               # Switch active company context
+kctl-odoo companies users <id>                # List users in company
+```
+
+### Partner Management
+
+```bash
+kctl-odoo partners list [--customer] [--supplier] [--company]
+kctl-odoo partners get <id|name>              # Partner details
+kctl-odoo partners search <term>              # Search partners
+kctl-odoo partners create <name> [--email EMAIL] [--phone PHONE] [--company]
+kctl-odoo partners update <id> [--name NAME] [--email EMAIL]
+kctl-odoo partners merge <source_ids> --into <target_id> [--force]
+kctl-odoo partners duplicates [--model res.partner]
+kctl-odoo partners export [--format csv|json] [--domain DOMAIN]
+```
+
+### Storage Management
+
+```bash
+kctl-odoo storage overview                    # Disk usage overview
+kctl-odoo storage attachments [--model MODEL] [--top 20]
+kctl-odoo storage filestore-size              # Filestore disk usage
+kctl-odoo storage db-size                     # Database size breakdown
+kctl-odoo storage cleanup [--dry-run]         # Clean orphaned attachments
+kctl-odoo storage assets rebuild              # Rebuild web assets
+kctl-odoo storage sessions cleanup [--days 7] # Clean expired sessions
+```
+
+### Tenant Management
+
+```bash
+kctl-odoo tenants list                        # List all databases/tenants
+kctl-odoo tenants create <name> [--template TEMPLATE] [--lang LANG]
+kctl-odoo tenants duplicate <source> <target>
+kctl-odoo tenants drop <name> [--force]       # Drop tenant database
+kctl-odoo tenants backup <name> [-o FILE]     # Backup tenant
+kctl-odoo tenants restore <name> <file>       # Restore tenant
+kctl-odoo tenants info <name>                 # Tenant details (size, users, modules)
+```
+
+### Troubleshoot Commands
+
+```bash
+kctl-odoo troubleshoot logs [--level error|warning] [--limit 100]
+kctl-odoo troubleshoot check-config           # Validate odoo.conf settings
+kctl-odoo troubleshoot test-email [--to admin@kodeme.io]
+kctl-odoo troubleshoot test-db                # Test database connectivity
+kctl-odoo troubleshoot missing-deps           # Check Python dependencies
+kctl-odoo troubleshoot stale-locks [--kill]   # Find/kill stale DB locks
+kctl-odoo troubleshoot asset-check            # Verify web assets integrity
+kctl-odoo troubleshoot version-info           # Full version and environment info
+```
+
 ## JSON-RPC Protocol
 
 All API calls use Odoo's JSON-RPC 2.0 endpoint at `/jsonrpc`:

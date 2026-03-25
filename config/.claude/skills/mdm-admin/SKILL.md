@@ -89,6 +89,19 @@ kctl-mdm dashboard                            # Full overview
 kctl-mdm audit list [--days N] [--page P]     # Audit logs
 ```
 
+### Device Status & Logs
+```bash
+kctl-mdm devices status <id-or-number>                   # Detailed status (battery, network, location)
+kctl-mdm devices logs <id> [--limit 50]                  # Device log/history entries
+```
+
+### File Management
+```bash
+kctl-mdm files list                                      # List files on MDM server
+kctl-mdm files upload --file <path> [--description DESC] # Upload file to MDM
+kctl-mdm files push <file-id> --device <device-id> [--path /dest/path]  # Push file to device
+```
+
 ### Messaging
 ```bash
 kctl-mdm messages send <text> [--device ID] [--scope all|device|group]

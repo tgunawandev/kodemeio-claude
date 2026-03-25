@@ -1,6 +1,13 @@
 {
   "permissions": {
-    "defaultMode": "bypassPermissions"
+    "defaultMode": "bypassPermissions",
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(mkfs *)",
+      "Bash(dd if=*)",
+      "Bash(git push --force *main*)"
+    ]
   },
   "enableAllProjectMcpServers": true,
   "agentTeams": true,

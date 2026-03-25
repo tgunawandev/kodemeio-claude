@@ -78,13 +78,11 @@ else
     log_warn "  settings.json already exists — not overwriting"
 fi
 
-# 7. MCP servers
-log_info "[7/8] Checking MCP config..."
-if [ ! -f "$HOME/.mcp.json" ]; then
+# 7. MCP servers — always update to keep in sync
+log_info "[7/8] Syncing MCP config..."
+if [ -f "$REPO_DIR/.mcp.json" ]; then
     cp "$REPO_DIR/.mcp.json" "$HOME/.mcp.json"
-    log_success "  Created ~/.mcp.json"
-else
-    log_warn "  ~/.mcp.json already exists — not overwriting"
+    log_success "  ~/.mcp.json synced from repo"
 fi
 
 # 8. Auth check

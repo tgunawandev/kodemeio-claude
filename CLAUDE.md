@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Purpose:** Dual-purpose repo — (1) Knowledge base collecting all CLAUDE.md files across the Kodemeio empire, and (2) Docker-based Claude Code remote development platform for all 4 companies.
+**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 11 kctl-* infrastructure CLIs, 19 skills, and SDK REST API for programmatic access.
 
 **Stack:** Docker, Node.js 22, Bash, TypeScript (SDK server)
 **Location:** `/home/tgunawan/project/00-new-projects/kodemeio-core/kodemeio-claude/`
@@ -10,28 +10,30 @@
 ## Quick Reference
 
 ```bash
-# ─── Remote Development ──────────────────────────────────────
-make up              # Start full dev container (production)
+# ─── Production (Hetzner/Dokploy) ───────────────────────────
+make up              # Start full dev container
 make down            # Stop container
 make shell           # Shell into container
 make kodemeio        # Attach to kodemeio tmux session
-make kontenos        # Attach to kontenos tmux session
 make health          # Run health checks
-make task            # Run headless Claude Code task (interactive)
+make task            # Run headless Claude Code task
 
 # ─── SDK API ─────────────────────────────────────────────────
 make sdk-up          # Start SDK-only container
-make sdk-down        # Stop SDK container
-curl http://localhost:3100/health                     # Health check
+curl http://localhost:3100/health
 curl -X POST http://localhost:3100/task \
   -H "Authorization: Bearer $SDK_API_KEY" \
-  -d '{"prompt":"...", "workspace":"kodemeio-app"}'   # Run task
+  -d '{"prompt":"...", "workspace":"kodemeio-app"}'
 
-# ─── Knowledge Base ──────────────────────────────────────────
-make collect         # Collect all CLAUDE.md files
-./scripts/collect.sh --dry-run    # Preview
-./scripts/collect.sh --stats      # Statistics only
-grep -r 'keyword' docs/           # Search
+# ─── Local Setup ─────────────────────────────────────────────
+make setup-local     # Install Claude Code + sync config locally
+make sync-config     # Sync local config → repo for Docker image
+make sync-secrets    # Deploy credentials to Hetzner
+
+# ─── Environment ─────────────────────────────────────────────
+make generate-env    # Interactive .env generator
+make check-env       # Validate .env
+make deploy-env      # Deploy .env to Hetzner
 ```
 
 ## Project Structure
@@ -45,7 +47,7 @@ kodemeio-claude/
 │   ├── entrypoint-sdk.sh       # SDK API server entrypoint
 │   └── init-firewall.sh        # Network security rules (optional)
 ├── config/
-│   ├── .claude/                # Claude Code settings + global context
+│   ├── .claude/                # Claude Code config (baked into image)
 │   │   ├── settings.json       # Permissions, plugins, hooks
 │   │   ├── keybindings.json    # Custom keyboard shortcuts
 │   │   ├── CLAUDE.md           # Global empire context
@@ -57,14 +59,14 @@ kodemeio-claude/
 │   ├── tmux.conf               # Multi-pane layout per company
 │   └── zshrc                   # Shell customization + aliases
 ├── sdk/
-│   ├── server.ts               # REST API to trigger Claude Code tasks
-│   ├── package.json            # SDK server dependencies
+│   ├── server.ts               # REST API (POST /task, GET /health)
+│   ├── package.json
 │   └── tsconfig.json
 ├── mcp-servers/
 │   ├── kodemeio-claude-bridge.mjs  # MCP bridge for OpenClaw
 │   └── package.json
 ├── scripts/
-│   ├── collect.sh              # Collect CLAUDE.md files (knowledge base)
+│   ├── generate-env.sh         # Interactive .env generator
 │   ├── setup.sh                # First-time: clone repos on Hetzner
 │   ├── setup-local.sh          # Reproduce local dev environment
 │   ├── health.sh               # Container health check
@@ -74,18 +76,16 @@ kodemeio-claude/
 │   ├── sync-secrets.sh         # Deploy credentials to Hetzner
 │   ├── backup-runtime.sh       # Backup container runtime volume
 │   ├── remote-access.sh        # SSH into container from laptop
-│   └── verify-scores.sh        # Verify config completeness (14 checks)
-├── knowledge-base/             # Claude Code knowledge docs (01-20)
-├── docs/                       # [Generated] Collected CLAUDE.md copies
+│   ├── verify-scores.sh        # Verify config completeness (14 checks)
+│   └── collect.sh              # Collect CLAUDE.md files (legacy)
+├── knowledge-base/             # Claude Code reference docs (01-20)
 ├── docker-compose.prod.yml     # Production — full dev container
 ├── docker-compose.sdk.yml      # Production — SDK API only
 ├── docker-compose.yml          # Development (local)
-├── .env.example                # Environment template
+├── .env.example                # Environment template (committed)
+├── .env                   # Production secrets (generated, gitignored)
 ├── Makefile                    # Convenience commands
-├── CLAUDE.md                   # This file
-├── INDEX.md                    # [Generated] Categorized index
-├── GAPS.md                     # [Generated] Gap analysis
-└── ALL-CLAUDE.md               # [Generated] Concatenated docs
+└── CLAUDE.md                   # This file
 ```
 
 ## 3 Operating Modes
@@ -115,30 +115,48 @@ curl -X POST http://kodemeio-claude:3100/task \
   -d '{"prompt": "Run tests", "workspace": "kodemeio-app"}'
 ```
 
-## Knowledge Base
+## Deployment
 
-### Generated Files
-All files in `docs/`, `INDEX.md`, `GAPS.md`, and `ALL-CLAUDE.md` are generated by `scripts/collect.sh`. Tracked in git for browsability.
+### First-time setup on Hetzner
+```bash
+# 1. Generate production env
+make generate-env          # Creates .env interactively
 
-### Categories
-- **ERP Systems:** `*odoo*`, `*frappe*`
-- **Odoo Modules:** Projects under `src/private/`
-- **Data Integration:** `*sync*`, `*airflow*`, `*dbt*`, `*clickhouse*`
-- **Infrastructure:** `*hetzner*`, `*cloudflare*`, `*dokploy*`, `*monitoring*`, `*postgres*`, `*redis*`
-- **Security & Identity:** `*authentik*`, `*1password*`
-- **Collaboration:** `*plane*`, `*mattermost*`, `*jitsi*`
+# 2. Deploy secrets
+make sync-secrets          # Deploys kctl credentials to Hetzner
+make deploy-env            # Deploys .env to Hetzner
+
+# 3. Clone repos on server
+ssh root@dokploy.kodeme.io
+docker exec kodemeio-claude /opt/scripts/setup.sh
+
+# 4. Start
+make up
+```
+
+### Updating config
+```bash
+# After changing skills/agents/rules locally:
+make sync-config           # Sync to repo
+git add -A && git commit   # Commit
+git push                   # Dokploy auto-deploys
+```
 
 ## Script Conventions
 
-- Same color codes (RED/GREEN/YELLOW/BLUE/CYAN), logging functions as other kodemeio scripts
-- Same exclusion patterns (node_modules, .venv, .git, etc.)
+- Color codes: RED/GREEN/YELLOW/BLUE/CYAN + logging functions (log_info/log_success/log_warn/log_error)
+- `set -euo pipefail` in all scripts
 - Same header format with `================================================================` banners
 
 ## Security
 
-- Non-root user `dev` with sudo
+- Non-root user `dev` (UID 1000) with sudo
 - Docker socket read-only
 - SSH keys read-only
-- SDK API requires bearer token
+- SDK API requires bearer token (warns if empty)
+- Concurrency limit (MAX_CONCURRENT=3, returns 429)
+- Path traversal protection on workspace parameter
+- Tool name validation against allowlist
 - Optional firewall (init-firewall.sh) restricts outbound to whitelisted domains
-- `--dangerously-skip-permissions` is enabled by default (via `config/.claude/settings.json` `bypassPermissions` mode + CLI flag in headless scripts) — this container IS the isolated sandbox
+- `bypassPermissions` mode — this container IS the isolated sandbox
+- Credentials never baked into image — injected via env vars and mounted volumes

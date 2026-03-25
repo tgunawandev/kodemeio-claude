@@ -1,5 +1,7 @@
 services:
   claude-dev:
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: docker/Dockerfile

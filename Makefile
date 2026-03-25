@@ -1,7 +1,8 @@
 .PHONY: up down build shell kodemeio kontenos journaltx kidneuro infra core health logs task \
        sdk-up sdk-down sdk-build dev dev-down dev-build \
-       collect sync-config sync-secrets sync-secrets-dry sync-all \
-       install-kctl check-kctl backup restore verify verify-container setup-local
+       generate-env check-env deploy-env \
+       sync-config sync-secrets sync-secrets-dry sync-all \
+       install-kctl check-kctl backup restore verify verify-container setup-local collect
 
 # ─── Production (full dev container) ─────────────────────────────────
 
@@ -76,6 +77,17 @@ task:
 	  --allowedTools "Bash,Read,Edit" --output-format json \
 	  --cwd "/opt/dev/$$ws"
 
+# ─── Environment generation ──────────────────────────────────────────
+
+generate-env:
+	./scripts/generate-env.sh
+
+check-env:
+	./scripts/generate-env.sh --check
+
+deploy-env:
+	scp .env $${HETZNER_SSH:-root@dokploy.kodeme.io}:/opt/kodemeio-claude/.env
+
 # ─── Config sync (run on laptop before deploy) ──────────────────────
 
 sync-config:
@@ -120,7 +132,7 @@ verify-container:
 setup-local:
 	./scripts/setup-local.sh
 
-# ─── Knowledge base (existing functionality) ─────────────────────────
+# ─── Legacy (knowledge base collection) ──────────────────────────────
 
 collect:
 	./scripts/collect.sh

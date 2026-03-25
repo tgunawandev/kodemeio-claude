@@ -6,9 +6,11 @@
 # other Claude Code config. Changes are then committed and deployed to Hetzner.
 #
 # What gets synced:
-#   ~/.claude/agents/    → config/.claude/agents/
-#   ~/.claude/skills/    → config/.claude/skills/
-#   ~/.claude/commands/  → config/.claude/commands/
+#   ~/.claude/agents/       → config/.claude/agents/
+#   ~/.claude/skills/       → config/.claude/skills/
+#   ~/.claude/commands/     → config/.claude/commands/
+#   ~/.claude/rules/        → config/.claude/rules/
+#   ~/.claude/keybindings.json → config/.claude/keybindings.json
 #
 # What does NOT get synced (must stay manual):
 #   settings.json  — adapted for container (no host-specific paths)
@@ -66,6 +68,22 @@ if [ -d "$LOCAL_DIR/commands" ]; then
     cp -r "$LOCAL_DIR/commands" "$CONFIG_DIR/commands"
     count=$(find "$CONFIG_DIR/commands" -name "*.md" | wc -l)
     log_success "  $count command(s) synced"
+fi
+
+# Sync rules
+if [ -d "$LOCAL_DIR/rules" ]; then
+    log_info "Syncing rules..."
+    rm -rf "$CONFIG_DIR/rules"
+    cp -r "$LOCAL_DIR/rules" "$CONFIG_DIR/rules"
+    count=$(find "$CONFIG_DIR/rules" -name "*.md" | wc -l)
+    log_success "  $count rule(s) synced"
+fi
+
+# Sync keybindings
+if [ -f "$LOCAL_DIR/keybindings.json" ]; then
+    log_info "Syncing keybindings..."
+    cp "$LOCAL_DIR/keybindings.json" "$CONFIG_DIR/keybindings.json"
+    log_success "  keybindings.json synced"
 fi
 
 # Show what's in settings.json (reminder to update manually if needed)

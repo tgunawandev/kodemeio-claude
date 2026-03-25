@@ -33,6 +33,9 @@ services:
       - uv-tools:/home/dev/.local
       # kctl-* credentials — deployed by scripts/sync-secrets.sh
       - ${SECRETS_PATH:-/opt/kodemeio-claude-secrets}:/home/dev/.config/kodemeio:ro
+      # MCP OAuth credentials (optional — auth on laptop first, then mount)
+      # Point CLAUDE_CREDENTIALS to ~/.claude/.credentials.json after authenticating locally
+      - ${CLAUDE_CREDENTIALS:-/dev/null}:/home/dev/.claude-credentials.json:ro
       # Docker socket (read-only — for inspecting containers)
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # SSH keys (for git push) — deploy key on Hetzner

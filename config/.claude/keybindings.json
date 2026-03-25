@@ -1,0 +1,7 @@
+[
+  { "key": "ctrl+r", "command": "retry", "description": "Retry last response" },
+  { "key": "ctrl+k", "command": "clear", "description": "Clear screen" },
+  { "key": "ctrl+x", "command": "exit", "description": "Exit Claude Code" },
+  { "key": "ctrl+t", "command": "newTask", "description": "Start new task" },
+  { "key": "ctrl+p", "command": "plan", "description": "Toggle plan mode" }
+]

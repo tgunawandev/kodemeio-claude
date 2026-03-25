@@ -1,4 +1,4 @@
-.PHONY: up down build shell kodemeio kontenos journaltx kidneuro infra core health task sdk-up sdk-down collect sync-config install-kctl
+.PHONY: up down build shell kodemeio kontenos journaltx kidneuro infra core health task sdk-up sdk-down collect sync-config sync-secrets sync-all install-kctl check-kctl backup restore verify setup-local
 
 # ─── Production (full dev container) ─────────────────────────────────
 
@@ -94,6 +94,28 @@ install-kctl:
 
 check-kctl:
 	docker exec kodemeio-claude /opt/scripts/install-kctl.sh --check
+
+# ─── Backup & restore ────────────────────────────────────────────────
+
+backup:
+	./scripts/backup-runtime.sh
+
+restore:
+	@read -p "Backup dir: " dir; \
+	docker cp "$$dir/." kodemeio-claude:/home/dev/.claude/
+
+# ─── Verification ────────────────────────────────────────────────────
+
+verify:
+	./scripts/verify-scores.sh
+
+verify-container:
+	docker exec kodemeio-claude bash /opt/scripts/verify-scores.sh /home/dev/.claude
+
+# ─── Setup (local machine) ───────────────────────────────────────────
+
+setup-local:
+	./scripts/setup-local.sh
 
 # ─── Knowledge base (existing functionality) ─────────────────────────
 

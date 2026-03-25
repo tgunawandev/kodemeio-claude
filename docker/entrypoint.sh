@@ -21,6 +21,25 @@ if [ -d "$BAKED_DIR" ] && [ -d "$CLAUDE_DIR" ]; then
     echo "  [+] Claude config initialized from image"
 fi
 
+# ─── Seed MCP credentials if mounted ──────────────────────────────────
+if [ -f "/home/dev/.claude-credentials.json" ] && [ -s "/home/dev/.claude-credentials.json" ]; then
+    cp /home/dev/.claude-credentials.json "$CLAUDE_DIR/.credentials.json" 2>/dev/null || true
+    echo "  [+] MCP OAuth credentials loaded"
+else
+    echo "  [-] No MCP credentials mounted (cloud MCP servers may not work)"
+fi
+
+# ─── Seed project directories for each workspace ─────────────────────
+for ws_dir in /opt/dev/*/; do
+    [ -d "$ws_dir" ] || continue
+    ws_path=$(echo "$ws_dir" | sed 's|/$||')
+    proj_id=$(echo -n "$ws_path" | sed 's|/|-|g; s|^-||')
+    proj_dir="$CLAUDE_DIR/projects/$proj_id"
+    if [ ! -d "$proj_dir" ]; then
+        mkdir -p "$proj_dir/memory"
+    fi
+done
+
 # ─── Git configuration ───────────────────────────────────────────────
 if [ -n "${GIT_USER_NAME:-}" ]; then
     git config --global user.name "$GIT_USER_NAME"

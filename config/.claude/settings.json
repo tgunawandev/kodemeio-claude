@@ -15,6 +15,40 @@
     "langroid@cctools-plugins": false,
     "n8n-mcp-skills@n8n-mcp-skills": false
   },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(cat - | jq -r '.tool_input.file_path // empty'); case \"$FILE\" in *.env|*.env.*|*.credentials*|*id_rsa*|*id_ed25519*) echo '{\"decision\": \"block\", \"reason\": \"Cannot edit secrets in container\"}' ;; esac; exit 0"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(cat - | jq -r '.tool_input.file_path // empty'); case \"$FILE\" in *.py) ruff format \"$FILE\" 2>/dev/null || true ;; *.ts|*.tsx|*.js|*.jsx) npx prettier --write \"$FILE\" 2>/dev/null || true ;; esac; exit 0"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"[$(date +%H:%M:%S)] Claude Code task completed\" >> /tmp/claude-activity.log"
+          }
+        ]
+      }
+    ]
+  },
   "alwaysThinkingEnabled": true,
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true

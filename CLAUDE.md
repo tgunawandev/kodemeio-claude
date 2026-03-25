@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 11 kctl-* infrastructure CLIs, 19 skills, and SDK REST API for programmatic access.
+**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 24 skills, and SDK REST API for programmatic access.
 
 **Stack:** Docker, Node.js 22, Bash, TypeScript (SDK server)
 **Location:** `/home/tgunawan/project/00-new-projects/kodemeio-core/kodemeio-claude/`
@@ -71,7 +71,7 @@ kodemeio-claude/
 │   ├── setup-local.sh          # Reproduce local dev environment
 │   ├── health.sh               # Container health check
 │   ├── run-task.sh             # Trigger headless task via CLI
-│   ├── install-kctl.sh         # Install 11 kctl-* CLI tools
+│   ├── install-kctl.sh         # Install 14 kctl-* CLI tools
 │   ├── sync-config.sh          # Sync local config → repo for Docker
 │   ├── sync-secrets.sh         # Deploy credentials to Hetzner
 │   ├── backup-runtime.sh       # Backup container runtime volume

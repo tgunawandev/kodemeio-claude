@@ -29,13 +29,17 @@ echo "  Setup Claude Code — Local Environment"
 echo "================================================================"
 echo ""
 
-# 1. Install Claude Code
+# 1. Install Claude Code + Playwright CLI
 if command -v claude &>/dev/null; then
     log_success "[1/8] Claude Code installed: $(claude --version 2>/dev/null)"
 else
     log_info "[1/8] Installing Claude Code..."
     npm install -g @anthropic-ai/claude-code@latest
     log_success "Claude Code installed"
+fi
+if ! command -v playwright-cli &>/dev/null; then
+    log_info "  Installing playwright-cli..."
+    npm install -g @playwright/cli 2>/dev/null && log_success "  playwright-cli installed" || log_warn "  playwright-cli install failed"
 fi
 
 # 2. Install system tools

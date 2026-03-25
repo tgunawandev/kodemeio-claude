@@ -37,8 +37,8 @@ ENV PATH="/home/dev/.local/bin:/root/.local/bin:$PATH"
 # Install pnpm
 RUN npm install -g pnpm@latest
 
-# Install Claude Code + Agent SDK
-RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
+# Install Claude Code + Playwright CLI (browser automation)
+RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} @playwright/cli
 
 # Create dev user with same UID/GID as host user (for bind mount permissions)
 ARG DEV_UID=1000

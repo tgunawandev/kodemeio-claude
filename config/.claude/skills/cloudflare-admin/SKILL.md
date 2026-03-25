@@ -25,30 +25,16 @@ allowed-tools:
 - **IaC**: Terraform configs in kodemeio-infra/kodemeio-cloudflare/
 - **Config**: `~/.config/kodemeio/config.yaml` → `profiles.<profile>.cloudflare`
 
-## Quick Reference
+## Implemented Commands
 
 | Command | Description |
 |---------|-------------|
 | `kctl-cloudflare zones list` | All DNS zones |
 | `kctl-cloudflare zones get <zone>` | Zone details |
 | `kctl-cloudflare records list [--zone]` | DNS records |
-| `kctl-cloudflare records export [--zone]` | BIND export |
 | `kctl-cloudflare tunnels list` | Cloudflare Tunnels |
 | `kctl-cloudflare tunnels get <name>` | Tunnel details |
-| `kctl-cloudflare waf list [--zone]` | WAF rules |
-| `kctl-cloudflare waf ip-rules [--zone]` | IP access rules |
-| `kctl-cloudflare cache status [--zone]` | Cache settings |
-| `kctl-cloudflare cache purge-all [--zone]` | Purge all cache |
-| `kctl-cloudflare ssl status [--zone]` | SSL/TLS mode |
-| `kctl-cloudflare ssl certificates [--zone]` | Certificate packs |
-| `kctl-cloudflare workers list` | Worker scripts |
-| `kctl-cloudflare workers routes [--zone]` | Worker routes |
-| `kctl-cloudflare workers kv` | KV namespaces |
-| `kctl-cloudflare r2 list` | R2 buckets |
 | `kctl-cloudflare health check` | Composite health |
-| `kctl-cloudflare export all [--zone]` | Full zone export |
-| `kctl-cloudflare terraform plan` | Terraform plan |
-| `kctl-cloudflare terraform apply` | Terraform apply |
 
 ## Global Options
 

@@ -25,29 +25,13 @@ allowed-tools:
 - **CLI**: `kctl-hetzner` (Python, installed via `uv tool install ./cli`)
 - **Config**: `~/.config/kodemeio/config.yaml` → `profiles.<profile>.hetzner`
 
-## Quick Reference
+## Implemented Commands
 
 | Command | Description |
 |---------|-------------|
 | `kctl-hetzner servers list` | All servers |
 | `kctl-hetzner servers get <name>` | Server details |
-| `kctl-hetzner servers create <name> --type cx22` | Create server |
-| `kctl-hetzner servers delete <name>` | Delete server |
-| `kctl-hetzner servers reboot <name>` | Reboot server |
-| `kctl-hetzner volumes list` | All volumes |
-| `kctl-hetzner volumes create <name> --size 50` | Create volume |
-| `kctl-hetzner firewalls list` | All firewalls |
-| `kctl-hetzner firewalls create <name>` | Create firewall |
-| `kctl-hetzner networks list` | All networks |
-| `kctl-hetzner ssh-keys list` | SSH keys |
-| `kctl-hetzner ips list` | Floating + primary IPs |
-| `kctl-hetzner snapshots list` | Server snapshots |
-| `kctl-hetzner load-balancers list` | Load balancers |
-| `kctl-hetzner dns zones` | DNS zones |
-| `kctl-hetzner dns records <zone>` | DNS records |
-| `kctl-hetzner dns create-record <zone>` | Create DNS record |
-| `kctl-hetzner status` | Infrastructure dashboard |
-| `kctl-hetzner costs estimate` | Monthly cost estimate |
+| `kctl-hetzner status show` | Infrastructure dashboard |
 | `kctl-hetzner health check` | API connectivity |
 | `kctl-hetzner config init` | First-time setup |
 

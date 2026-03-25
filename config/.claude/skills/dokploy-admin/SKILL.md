@@ -25,22 +25,16 @@ allowed-tools:
 - **CLI**: `kctl-dokploy` (Python, installed via `uv tool install ./cli`)
 - **Config**: `~/.config/kodemeio/config.yaml` → `profiles.<profile>.dokploy`
 
-## Quick Reference
+## Implemented Commands
 
 | Command | Description |
 |---------|-------------|
-| `kctl-dokploy status` | Platform dashboard |
+| `kctl-dokploy status show` | Platform dashboard |
 | `kctl-dokploy projects list` | List all projects |
 | `kctl-dokploy projects get <name>` | Project details |
 | `kctl-dokploy apps list` | All compose services |
-| `kctl-dokploy deployments list` | Recent deployments |
-| `kctl-dokploy domains list` | All configured domains |
-| `kctl-dokploy env list <compose-id>` | Environment variables |
-| `kctl-dokploy logs <compose-id>` | Service logs |
-| `kctl-dokploy deploy <compose-id>` | Trigger deployment |
-| `kctl-dokploy backups list` | Backup inventory |
+| `kctl-dokploy deploy run <compose-id>` | Trigger deployment |
 | `kctl-dokploy health check` | API connectivity |
-| `kctl-dokploy cleanup stats` | Docker cleanup stats |
 | `kctl-dokploy config init` | First-time setup |
 | `kctl-dokploy config test` | Test connection |
 | `kctl-dokploy config show` | Show config (masked) |

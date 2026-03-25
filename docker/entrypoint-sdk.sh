@@ -29,17 +29,14 @@ for dir in /opt/dev/*/*/; do
     [ -d "$dir/.git" ] && git config --global --add safe.directory "$dir"
 done
 
-# ─── Claude Code auth setup ──────────────────────────────────────────
+# ─── Claude Code auth setup (Max subscription via OAuth token) ───────
 if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
     if [ ! -f /home/dev/.claude.json ] || ! grep -q 'hasCompletedOnboarding' /home/dev/.claude.json 2>/dev/null; then
         echo '{"hasCompletedOnboarding": true}' > /home/dev/.claude.json
         echo "  [+] Created .claude.json with onboarding bypass"
     fi
-fi
-
-if [ -n "${ANTHROPIC_API_KEY:-}" ] && [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
-    echo "  [!] WARNING: Both ANTHROPIC_API_KEY and CLAUDE_CODE_OAUTH_TOKEN are set."
-    echo "      ANTHROPIC_API_KEY takes precedence — uses API credits, NOT your subscription."
+else
+    echo "  [!] WARNING: CLAUDE_CODE_OAUTH_TOKEN is not set."
 fi
 
 # ─── Claude Code verification ────────────────────────────────────────

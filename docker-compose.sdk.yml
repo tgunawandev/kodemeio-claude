@@ -7,7 +7,6 @@ services:
     container_name: kodemeio-claude-sdk
     restart: unless-stopped
     environment:
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
       GIT_USER_NAME: ${GIT_USER_NAME:-Tri Gunawan}
       GIT_USER_EMAIL: ${GIT_USER_EMAIL:-tri@kodeme.io}

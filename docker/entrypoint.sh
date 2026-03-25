@@ -76,20 +76,16 @@ if [ -d /home/dev/.ssh ]; then
     done
 fi
 
-# ─── Claude Code auth setup ──────────────────────────────────────────
-# When using subscription (OAuth token), ensure onboarding is bypassed
+# ─── Claude Code auth setup (Max subscription via OAuth token) ───────
 if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
     if [ ! -f /home/dev/.claude.json ] || ! grep -q 'hasCompletedOnboarding' /home/dev/.claude.json 2>/dev/null; then
         echo '{"hasCompletedOnboarding": true}' > /home/dev/.claude.json
         echo "  [+] Created .claude.json with onboarding bypass"
     fi
-fi
-
-# Warn if both auth methods are set (API key overrides subscription)
-if [ -n "${ANTHROPIC_API_KEY:-}" ] && [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
-    echo "  [!] WARNING: Both ANTHROPIC_API_KEY and CLAUDE_CODE_OAUTH_TOKEN are set."
-    echo "      ANTHROPIC_API_KEY takes precedence — uses API credits, NOT your subscription."
-    echo "      Unset one to avoid confusion."
+    echo "  [+] Auth: Claude Max subscription (OAuth token)"
+else
+    echo "  [!] WARNING: CLAUDE_CODE_OAUTH_TOKEN is not set."
+    echo "      Run 'claude setup-token' on a machine with a browser to get one."
 fi
 
 # ─── Firewall (optional, requires NET_ADMIN) ────────────────────────

@@ -45,7 +45,7 @@ if [ "${1:-}" = "--check" ]; then
         if [ -z "$value" ]; then
             # Check if this is a required field
             case "$key" in
-                CLAUDE_CODE_OAUTH_TOKEN|ANTHROPIC_API_KEY)
+                CLAUDE_CODE_OAUTH_TOKEN)
                     # At least one must be set
                     ;;
                 SDK_API_KEY|GITHUB_TOKEN)
@@ -62,11 +62,10 @@ if [ "${1:-}" = "--check" ]; then
         fi
     done < "$ENV_FILE"
 
-    # Check at least one auth method
+    # Check auth
     oauth=$(grep '^CLAUDE_CODE_OAUTH_TOKEN=' "$ENV_FILE" | cut -d= -f2-)
-    apikey=$(grep '^ANTHROPIC_API_KEY=' "$ENV_FILE" | cut -d= -f2-)
-    if [ -z "$oauth" ] && [ -z "$apikey" ]; then
-        log_error "  Neither CLAUDE_CODE_OAUTH_TOKEN nor ANTHROPIC_API_KEY is set!"
+    if [ -z "$oauth" ]; then
+        log_error "  CLAUDE_CODE_OAUTH_TOKEN is not set! Run: claude setup-token"
         errors=$((errors + 1))
     fi
 
@@ -117,15 +116,11 @@ prompt_value() {
     echo "${value:-$default}"
 }
 
-echo "─── Claude Code Authentication ───"
-echo "Choose ONE: OAuth token (subscription) or API key (pay-per-use)"
+echo "─── Claude Code Authentication (Max subscription) ───"
+echo "Run 'claude setup-token' on a machine with a browser to get your token."
 echo ""
 
-OAUTH_TOKEN=$(prompt_value "CLAUDE_CODE_OAUTH_TOKEN" "OAuth token (from 'claude setup-token')" "" "true")
-API_KEY=""
-if [ -z "$OAUTH_TOKEN" ]; then
-    API_KEY=$(prompt_value "ANTHROPIC_API_KEY" "API key (from console.anthropic.com)" "" "true")
-fi
+OAUTH_TOKEN=$(prompt_value "CLAUDE_CODE_OAUTH_TOKEN" "OAuth token (sk-ant-oat01-...)" "" "true")
 
 echo ""
 echo "─── SDK API ───"
@@ -159,9 +154,8 @@ cat > "$ENV_FILE" << ENVEOF
 # Generated: $(date -Iseconds)
 # =============================================================================
 
-# Claude Code Auth
+# Claude Code Auth (Max subscription)
 CLAUDE_CODE_OAUTH_TOKEN=${OAUTH_TOKEN}
-ANTHROPIC_API_KEY=${API_KEY}
 
 # SDK API
 SDK_API_KEY=${SDK_API_KEY}

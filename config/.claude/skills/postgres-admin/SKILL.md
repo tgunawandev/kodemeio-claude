@@ -98,6 +98,11 @@ kctl-pg users drop <name> [--force]                     # Drop role
 kctl-pg users password <name> [--password PASS]         # Set/reset password (auto-generates if omitted)
 kctl-pg users grant <role> --to <target>                # Grant role membership
 kctl-pg users revoke <role> --from <target>             # Revoke role membership
+kctl-pg users alter <name> --set <param> <value>        # Set session defaults per role
+kctl-pg users grant-db <role> <database> --privileges connect,create,temp
+kctl-pg users grant-schema <role> <schema> --privileges usage,create [--db DATABASE]
+kctl-pg users grant-table <role> <table> --privileges select,insert,update,delete [--db DATABASE]
+kctl-pg users default-privileges <role> [--db DATABASE] [--schema SCHEMA] --grant-to <target> --privileges select
 ```
 
 ### Health & Monitoring
@@ -247,6 +252,11 @@ kctl-pg maintenance analyze <database> [--table TABLE] [--verbose]
 kctl-pg maintenance reindex <database> [--table TABLE] [--index INDEX] [--system]
 kctl-pg maintenance bloat [--db DATABASE] [--top 20]
 kctl-pg maintenance autovacuum-status [--db DATABASE]
+kctl-pg maintenance vacuum-freeze <database> [--table TABLE]
+kctl-pg maintenance cluster <database> <table> <index> [--force]
+kctl-pg maintenance reindex-concurrently <database> [--table TABLE] [--index INDEX]
+kctl-pg maintenance checkpoint [--force]
+kctl-pg maintenance frozen-xid [--db DATABASE] [--top 20]
 ```
 
 ## Performance Monitoring
@@ -261,6 +271,10 @@ kctl-pg perf locks [--db DATABASE]
 kctl-pg perf connections [--db DATABASE]
 kctl-pg perf settings [--filter PATTERN]
 kctl-pg perf wal-status
+kctl-pg perf explain <sql> [--db DATABASE] [--analyze] [--buffers]
+kctl-pg perf xid-wraparound                             # XID age per database
+kctl-pg perf temp-files [--db DATABASE]                  # Temp file usage
+kctl-pg perf progress                                    # All pg_stat_progress_* views
 ```
 
 ## PostgreSQL Configuration
@@ -284,6 +298,82 @@ kctl-pg stats replication
 kctl-pg stats wal
 kctl-pg stats io
 kctl-pg stats database [--name DB]
+```
+
+## Table Management
+
+```bash
+kctl-pg tables list [--db DATABASE] [--schema SCHEMA]
+kctl-pg tables describe <table> [--db DATABASE]
+kctl-pg tables size [--db DATABASE] [--top 20]
+kctl-pg tables partitions <table> [--db DATABASE]
+kctl-pg tables constraints <table> [--db DATABASE]
+kctl-pg tables triggers <table> [--db DATABASE]
+kctl-pg tables dependencies <table> [--db DATABASE]
+kctl-pg tables toast <table> [--db DATABASE]
+kctl-pg tables sequences [--db DATABASE] [--near-max]
+```
+
+## Index Management
+
+```bash
+kctl-pg indexes list [--db DATABASE] [--table TABLE]
+kctl-pg indexes bloat [--db DATABASE] [--top 20]
+kctl-pg indexes duplicate [--db DATABASE]
+kctl-pg indexes invalid [--db DATABASE]
+kctl-pg indexes missing [--db DATABASE] [--min-size "10 MB"]
+kctl-pg indexes create-concurrently <table> <columns> [--db DATABASE] [--name NAME] [--unique]
+kctl-pg indexes reindex-concurrently <target> [--db DATABASE] [--table]
+```
+
+## Replication Management
+
+```bash
+kctl-pg replication status
+kctl-pg replication lag
+kctl-pg replication slots
+kctl-pg replication slot-create <name> [--logical --plugin pgoutput] [--physical]
+kctl-pg replication slot-drop <name> [--force]
+kctl-pg replication publications [--db DATABASE]
+kctl-pg replication subscriptions [--db DATABASE]
+kctl-pg replication promote [--force]
+kctl-pg replication wal-senders
+kctl-pg replication wal-receiver
+```
+
+## Security Management
+
+```bash
+kctl-pg security ssl-status
+kctl-pg security hba-rules
+kctl-pg security privileges <role> [--db DATABASE]
+kctl-pg security rls-status [--db DATABASE]
+kctl-pg security rls-policies [--db DATABASE] [--table TABLE]
+kctl-pg security superuser-audit
+kctl-pg security password-check
+```
+
+## Schema Management
+
+```bash
+kctl-pg schemas list [--db DATABASE]
+kctl-pg schemas create <name> [--db DATABASE] [--owner ROLE]
+kctl-pg schemas drop <name> [--db DATABASE] [--cascade] [--force]
+kctl-pg schemas size [--db DATABASE]
+```
+
+## PgBouncer Management
+
+```bash
+kctl-pg pgbouncer status
+kctl-pg pgbouncer pools
+kctl-pg pgbouncer clients
+kctl-pg pgbouncer servers
+kctl-pg pgbouncer databases
+kctl-pg pgbouncer stats
+kctl-pg pgbouncer reload [--force]
+kctl-pg pgbouncer pause [--db DATABASE] [--force]
+kctl-pg pgbouncer resume [--db DATABASE]
 ```
 
 ## Troubleshooting

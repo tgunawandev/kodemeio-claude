@@ -348,6 +348,49 @@ kctl-odoo troubleshoot asset-check            # Verify web assets integrity
 kctl-odoo troubleshoot version-info           # Full version and environment info
 ```
 
+## Development Tools
+
+```bash
+kctl-odoo dev translate-export <module> [--lang LANG] [--format po|csv]
+kctl-odoo dev translate-import <file> [--lang CODE] [--overwrite]
+kctl-odoo dev translate-languages
+kctl-odoo dev assets-regenerate [--force]
+kctl-odoo dev deps-tree <module>                         # Dependency tree visualization
+kctl-odoo dev deps-reverse <module>                      # What depends on this module
+kctl-odoo dev cloc [--module MODULE]                     # Lines of code / module info
+kctl-odoo dev model-info <model_name>                    # Field definitions for any model
+```
+
+## Server Configuration
+
+```bash
+kctl-odoo config-server mail-outgoing                    # List SMTP servers
+kctl-odoo config-server mail-outgoing-add --name NAME --host HOST --port PORT [--encryption starttls]
+kctl-odoo config-server mail-outgoing-test <server_id>   # Test SMTP connection
+kctl-odoo config-server mail-incoming                    # List IMAP/POP3 servers
+kctl-odoo config-server mail-incoming-add --name NAME --host HOST --port PORT --type imap|pop3
+kctl-odoo config-server defaults-list [--model MODEL]    # List ir.default records
+kctl-odoo config-server defaults-set <model> <field> <value>
+kctl-odoo config-server defaults-delete <id> [--force]
+```
+
+## Report Management
+
+```bash
+kctl-odoo report list [--model MODEL]                    # List available reports
+kctl-odoo report render <report_name> <record_ids> [--format pdf|html] [--output FILE]
+kctl-odoo report templates [--model MODEL]               # List QWeb templates
+```
+
+## Integration
+
+```bash
+kctl-odoo integration webhook-list                       # List base.automation webhooks
+kctl-odoo integration oauth-list                         # List OAuth providers
+kctl-odoo integration bus-send <channel> <message>       # Send bus notification
+kctl-odoo integration test-smtp [--server-id ID]         # Test SMTP connection
+```
+
 ## JSON-RPC Protocol
 
 All API calls use Odoo's JSON-RPC 2.0 endpoint at `/jsonrpc`:

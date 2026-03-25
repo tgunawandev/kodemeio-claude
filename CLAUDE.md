@@ -46,19 +46,35 @@ kodemeio-claude/
 │   └── init-firewall.sh        # Network security rules (optional)
 ├── config/
 │   ├── .claude/                # Claude Code settings + global context
-│   │   ├── settings.json       # Permissions, allowed tools
-│   │   └── CLAUDE.md           # Global empire context
+│   │   ├── settings.json       # Permissions, plugins, hooks
+│   │   ├── keybindings.json    # Custom keyboard shortcuts
+│   │   ├── CLAUDE.md           # Global empire context
+│   │   ├── agents/             # 4 subagents (code-reviewer, docs, architect, test)
+│   │   ├── skills/             # 19 custom skills (kctl admin, dev frameworks)
+│   │   ├── commands/           # Custom slash commands
+│   │   └── rules/              # 5 path-specific rule files
+│   ├── kodemeio/               # kctl-* credential config template
 │   ├── tmux.conf               # Multi-pane layout per company
 │   └── zshrc                   # Shell customization + aliases
 ├── sdk/
 │   ├── server.ts               # REST API to trigger Claude Code tasks
 │   ├── package.json            # SDK server dependencies
 │   └── tsconfig.json
+├── mcp-servers/
+│   ├── kodemeio-claude-bridge.mjs  # MCP bridge for OpenClaw
+│   └── package.json
 ├── scripts/
 │   ├── collect.sh              # Collect CLAUDE.md files (knowledge base)
-│   ├── setup.sh                # First-time: clone repos, configure git
+│   ├── setup.sh                # First-time: clone repos on Hetzner
+│   ├── setup-local.sh          # Reproduce local dev environment
 │   ├── health.sh               # Container health check
-│   └── run-task.sh             # Trigger headless task via CLI
+│   ├── run-task.sh             # Trigger headless task via CLI
+│   ├── install-kctl.sh         # Install 11 kctl-* CLI tools
+│   ├── sync-config.sh          # Sync local config → repo for Docker
+│   ├── sync-secrets.sh         # Deploy credentials to Hetzner
+│   ├── backup-runtime.sh       # Backup container runtime volume
+│   ├── remote-access.sh        # SSH into container from laptop
+│   └── verify-scores.sh        # Verify config completeness (14 checks)
 ├── knowledge-base/             # Claude Code knowledge docs (01-20)
 ├── docs/                       # [Generated] Collected CLAUDE.md copies
 ├── docker-compose.prod.yml     # Production — full dev container

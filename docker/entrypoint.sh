@@ -57,7 +57,8 @@ if [ -n "${GITHUB_TOKEN:-}" ]; then
         echo "  [!] gh auth failed — git push over HTTPS may not work"
 fi
 
-# Safe directories for all mounted repos
+# Safe directories for all mounted repos (clear first to prevent accumulation)
+git config --global --unset-all safe.directory 2>/dev/null || true
 for dir in /opt/dev/*/; do
     [ -d "$dir/.git" ] && git config --global --add safe.directory "$dir"
 done
@@ -129,7 +130,7 @@ echo ""
 
 # ─── Start SDK API server in background (if enabled) ────────────────
 if [ "${ENABLE_SDK_API:-false}" = "true" ] && [ -d /opt/sdk ]; then
-    echo "Starting SDK API server on :3100..."
+    echo "Starting SDK API server on :${SDK_PORT:-3100}..."
     cd /opt/sdk && node server.js &
 fi
 

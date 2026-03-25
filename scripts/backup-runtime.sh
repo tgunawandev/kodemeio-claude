@@ -37,8 +37,8 @@ SIZE=$(du -sh "$BACKUP_PATH" | cut -f1)
 echo -e "${GREEN}[OK]${NC} Backed up to $BACKUP_PATH ($SIZE)"
 
 # Rotate — keep last 5 backups
-old_backups=$(ls -dt "$BACKUP_DIR"/claude-runtime-* 2>/dev/null | tail -n +6)
-if [ -n "$old_backups" ]; then
-    echo "$old_backups" | xargs rm -rf
-    echo -e "${CYAN}[CLEANUP]${NC} Removed old backups (keeping last 5)"
+mapfile -t old_backups < <(ls -dt "$BACKUP_DIR"/claude-runtime-* 2>/dev/null | tail -n +6)
+if [ ${#old_backups[@]} -gt 0 ]; then
+    rm -rf "${old_backups[@]}"
+    echo -e "${CYAN}[CLEANUP]${NC} Removed ${#old_backups[@]} old backup(s) (keeping last 5)"
 fi

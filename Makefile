@@ -1,4 +1,7 @@
-.PHONY: up down build shell kodemeio kontenos journaltx kidneuro infra core health task sdk-up sdk-down collect sync-config sync-secrets sync-all install-kctl check-kctl backup restore verify setup-local
+.PHONY: up down build shell kodemeio kontenos journaltx kidneuro infra core health logs task \
+       sdk-up sdk-down sdk-build dev dev-down dev-build \
+       collect sync-config sync-secrets sync-secrets-dry sync-all \
+       install-kctl check-kctl backup restore verify verify-container setup-local
 
 # ─── Production (full dev container) ─────────────────────────────────
 

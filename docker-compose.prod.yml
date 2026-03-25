@@ -14,6 +14,9 @@ services:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       ENABLE_SDK_API: ${ENABLE_SDK_API:-false}
       SDK_API_KEY: ${SDK_API_KEY:-}
+      SDK_PORT: ${SDK_PORT:-3100}
+      MAX_CONCURRENT: ${MAX_CONCURRENT:-3}
+      ENABLE_FIREWALL: ${ENABLE_FIREWALL:-false}
       TZ: Asia/Jakarta
     volumes:
       # All company repos — cloned on Hetzner by scripts/setup.sh

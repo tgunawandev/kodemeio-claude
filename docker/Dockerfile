@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tmux zsh fzf less nano vim \
     # Build tools
     build-essential python3 python3-pip python3-venv \
-    # Docker CLI
-    docker.io docker-compose-plugin \
+    # Docker CLI (for inspecting host containers via mounted socket)
+    docker.io \
     # Network
     openssh-client iptables ipset iproute2 dnsutils \
     # Utilities
@@ -68,10 +68,10 @@ RUN cp -r /home/dev/.claude /opt/claude-config-baked
 COPY sdk/ /opt/sdk/
 RUN cd /opt/sdk && npm install && npm run build && npm prune --omit=dev
 
-# Copy scripts + health check
+# Copy scripts + health check into PATH
 COPY scripts/ /opt/scripts/
-COPY scripts/health.sh /usr/local/bin/health.sh
-RUN chmod +x /opt/scripts/*.sh /usr/local/bin/health.sh
+RUN chmod +x /opt/scripts/*.sh && \
+    cp /opt/scripts/health.sh /usr/local/bin/health.sh
 
 # Copy entrypoint and firewall
 COPY docker/init-firewall.sh /usr/local/bin/

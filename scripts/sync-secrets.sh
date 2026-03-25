@@ -55,6 +55,7 @@ fi
 
 # Create a container-adapted copy (fix paths)
 TEMP_CONFIG=$(mktemp)
+trap 'rm -f "$TEMP_CONFIG"' EXIT
 sed \
     -e 's|/home/tgunawan/project/00-new-projects/kodemeio-app|/opt/dev/kodemeio-app|g' \
     -e 's|/home/tgunawan/project/00-new-projects/kodemeio-core|/opt/dev/kodemeio-core|g' \

@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tmux zsh fzf less nano vim \
     # Build tools
     build-essential python3 python3-pip python3-venv \
-    # Docker CLI (for inspecting host containers via mounted socket)
-    docker.io \
+    # Docker CLI (uses host Docker via mounted socket)
+    docker.io docker-compose \
     # Network
     openssh-client iptables ipset iproute2 dnsutils \
     # Utilities
@@ -46,6 +46,10 @@ RUN pip3 install --break-system-packages ruff
 # Install worktrunk (Git worktree manager for parallel AI agents)
 RUN curl -fsSL https://github.com/max-sixty/worktrunk/releases/latest/download/wt-x86_64-unknown-linux-gnu.tar.xz \
     | tar -xJ -C /usr/local/bin/ wt && chmod +x /usr/local/bin/wt
+
+# Install Terraform (for kodemeio-infra: Hetzner, Cloudflare, Dokploy IaC)
+RUN curl -fsSL https://releases.hashicorp.com/terraform/1.12.1/terraform_1.12.1_linux_amd64.zip \
+    -o /tmp/terraform.zip && unzip /tmp/terraform.zip -d /usr/local/bin/ && rm /tmp/terraform.zip
 
 # Create dev user with same UID/GID as host user (for bind mount permissions)
 ARG DEV_UID=1000

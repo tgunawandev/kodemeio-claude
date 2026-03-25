@@ -15,3 +15,7 @@ globs: "**/*"
 - Never run `git push --force` to main/master
 - Validate all user input at system boundaries (API endpoints, CLI args)
 - Use parameterized queries for SQL — never string concatenation
+- Never run `docker rm -f` or `docker system prune` without explicit permission
+- Never stop Dokploy's own containers (dokploy, traefik)
+- Always use `docker compose -f <project>/docker-compose.yml` — never bare `docker run`
+- Before `terraform apply`, always run `terraform plan` and show the output first

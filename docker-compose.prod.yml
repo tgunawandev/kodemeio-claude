@@ -41,8 +41,8 @@ services:
       # MCP OAuth credentials (optional — auth on laptop first, then mount)
       # Point CLAUDE_CREDENTIALS to ~/.claude/.credentials.json after authenticating locally
       - ${CLAUDE_CREDENTIALS:-/dev/null}:/home/dev/.claude-credentials.json:ro
-      # Docker socket (read-only — for inspecting containers)
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Docker socket (read-write — allows docker compose up/down/build on host)
+      - /var/run/docker.sock:/var/run/docker.sock
       # SSH keys (for git push) — deploy key on Hetzner
       - ${SSH_KEYS_PATH:-~/.ssh}:/home/dev/.ssh:ro
     networks:

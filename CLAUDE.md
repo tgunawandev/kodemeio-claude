@@ -151,7 +151,7 @@ git push                   # Dokploy auto-deploys
 ## Security
 
 - Non-root user `dev` (UID 1000) with sudo
-- Docker socket read-only
+- Docker socket read-write (can docker compose up/down/build on host)
 - SSH keys read-only
 - SDK API requires bearer token (warns if empty)
 - Concurrency limit (MAX_CONCURRENT=3, returns 429)

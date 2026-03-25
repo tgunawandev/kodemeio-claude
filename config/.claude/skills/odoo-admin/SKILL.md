@@ -382,6 +382,44 @@ kctl-odoo report render <report_name> <record_ids> [--format pdf|html] [--output
 kctl-odoo report templates [--model MODEL]               # List QWeb templates
 ```
 
+## Business Operations (biz)
+
+### Dashboards
+```bash
+kctl-odoo biz sales-summary [--period month|quarter|year] [--team TEAM]
+kctl-odoo biz purchase-summary [--period month|quarter|year]
+kctl-odoo biz inventory-summary [--warehouse WH]
+kctl-odoo biz accounting-summary [--period month]
+kctl-odoo biz manufacturing-summary
+kctl-odoo biz crm-pipeline [--team TEAM]
+kctl-odoo biz hr-summary
+```
+
+### Alerts
+```bash
+kctl-odoo biz overdue-invoices [--days 30] [--limit 50]
+kctl-odoo biz overdue-orders [--type sale|purchase] [--days 7]
+kctl-odoo biz low-stock [--threshold 10] [--limit 50]
+kctl-odoo biz stuck-transfers [--days 3] [--limit 50]
+kctl-odoo biz pending-approvals [--limit 50]
+kctl-odoo biz failed-emails [--limit 50]
+```
+
+### Bulk Operations
+```bash
+kctl-odoo biz confirm-orders --model sale.order|purchase.order [--domain DOMAIN] [--ids IDS] [--force]
+kctl-odoo biz post-invoices [--type out_invoice|in_invoice] [--domain DOMAIN] [--force]
+kctl-odoo biz create-invoices [--from-orders] [--domain DOMAIN] [--force]
+kctl-odoo biz validate-transfers [--type outgoing|incoming] [--domain DOMAIN] [--force]
+```
+
+### Approvals
+```bash
+kctl-odoo biz approve-purchases [--ids IDS] [--all] [--force]
+kctl-odoo biz approve-leaves [--ids IDS] [--all] [--force]
+kctl-odoo biz approve-expenses [--ids IDS] [--all] [--force]
+```
+
 ## Integration
 
 ```bash

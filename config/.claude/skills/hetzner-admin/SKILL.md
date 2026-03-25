@@ -19,92 +19,72 @@ allowed-tools:
 
 ## System Overview
 
-- **Server**: cx42 (8 vCPU, 16 GB RAM) at fsn1 datacenter
+- **Server**: cx42 (8 vCPU, 16 GB RAM) at fsn1
 - **IP**: 168.119.233.161 (dokploy.kodeme.io)
-- **APIs**: Hetzner Cloud API v1 + Hetzner DNS API v1 (separate tokens)
+- **APIs**: Cloud API v1 + DNS API v1 (separate tokens)
 - **CLI**: `kctl-hetzner` (Python, installed via `uv tool install ./cli`)
 - **Config**: `~/.config/kodemeio/config.yaml` → `profiles.<profile>.hetzner`
 
-## Implemented Commands
+## Commands
 
 | Command | Description |
 |---------|-------------|
 | `kctl-hetzner servers list` | All servers |
 | `kctl-hetzner servers get <name>` | Server details |
+| `kctl-hetzner servers create <name> --type --image --location` | Create server |
+| `kctl-hetzner servers delete <name> [--force]` | Delete server |
+| `kctl-hetzner servers reboot <name>` | Reboot server |
+| `kctl-hetzner servers shutdown <name>` | Graceful shutdown |
+| `kctl-hetzner servers power-off <name>` | Force power off |
+| `kctl-hetzner servers rebuild <name> --image` | Reinstall OS |
+| `kctl-hetzner volumes list` | All volumes |
+| `kctl-hetzner volumes create <name> --size N` | Create volume |
+| `kctl-hetzner volumes attach/detach <id>` | Attach/detach |
+| `kctl-hetzner volumes delete <id>` | Delete volume |
+| `kctl-hetzner firewalls list` | All firewalls |
+| `kctl-hetzner firewalls get <name>` | Firewall details + rules |
+| `kctl-hetzner firewalls create <name>` | Create firewall |
+| `kctl-hetzner networks list` | All networks |
+| `kctl-hetzner networks create <name> --ip-range` | Create network |
+| `kctl-hetzner ssh-keys list` | SSH keys |
+| `kctl-hetzner ssh-keys create <name> --public-key` | Add key |
+| `kctl-hetzner ssh-keys delete <id>` | Remove key |
+| `kctl-hetzner ips list` | Floating + primary IPs |
+| `kctl-hetzner snapshots list` | Server snapshots |
+| `kctl-hetzner snapshots create --server <name>` | Create snapshot |
+| `kctl-hetzner snapshots delete <id>` | Delete snapshot |
+| `kctl-hetzner load-balancers list` | Load balancers |
+| `kctl-hetzner dns zones` | DNS zones (separate API) |
+| `kctl-hetzner dns records <zone>` | DNS records |
+| `kctl-hetzner dns create-record <zone> --type --name --value` | Create record |
+| `kctl-hetzner dns delete-record <id>` | Delete record |
 | `kctl-hetzner status show` | Infrastructure dashboard |
-| `kctl-hetzner health check` | API connectivity |
-| `kctl-hetzner config init` | First-time setup |
+| `kctl-hetzner costs estimate` | Monthly cost breakdown |
+| `kctl-hetzner health check` | Cloud + DNS API check |
+| `kctl-hetzner config init/show/test/use` | Configuration |
 
 ## Global Options
 
-| Flag | Description |
-|------|-------------|
-| `--json` | JSON output |
-| `--quiet`, `-q` | Suppress info |
-| `--profile`, `-p` | Config profile |
-| `--token` | Cloud API token override |
-| `--dns-token` | DNS API token override |
-| `--version`, `-V` | Show version |
+`--json` `--quiet` `-q` `--profile` `-p` `--token` `--dns-token` `--version` `-V`
 
 ## Server Management
 
 ```bash
-# Create a new server
-kctl-hetzner servers create my-server \
-  --type cx22 \
-  --image ubuntu-24.04 \
-  --location fsn1 \
-  --ssh-keys my-key
-
-# Power operations
+kctl-hetzner servers create my-server --type cx22 --image ubuntu-24.04 --location fsn1
 kctl-hetzner servers reboot my-server
-kctl-hetzner servers shutdown my-server
-kctl-hetzner servers power-off my-server
-
-# Rebuild (reinstall OS)
 kctl-hetzner servers rebuild my-server --image ubuntu-24.04
 ```
 
-## DNS Management
-
-DNS uses a SEPARATE API with a different token (`dns_token`).
+## DNS (separate API, separate token)
 
 ```bash
-# List zones
 kctl-hetzner dns zones
-
-# List records
 kctl-hetzner dns records kodeme.io
-
-# Create record
-kctl-hetzner dns create-record kodeme.io \
-  --type A --name www --value 168.119.233.161
-```
-
-## Cost Monitoring
-
-```bash
-# Get estimated monthly costs
-kctl-hetzner costs estimate
-
-# Check server sizes and pricing
-kctl-hetzner servers list --json | jq '.[].server_type'
+kctl-hetzner dns create-record kodeme.io --type A --name www --value 168.119.233.161
 ```
 
 ## Troubleshooting
 
-### Server unreachable
-1. `kctl-hetzner servers get <name>` — check status (running?)
-2. `kctl-hetzner firewalls list` — check firewall rules
-3. `kctl-hetzner ips list` — verify IP assignment
-4. SSH test: `ssh root@<ip> echo ok`
-
-### Volume full
-1. `kctl-hetzner volumes list` — check sizes
-2. Expand: resize via Hetzner console (API doesn't support resize)
-3. `df -h` inside server to verify
-
-### DNS not resolving
-1. `kctl-hetzner dns records <zone>` — check record exists
-2. Note: Hetzner DNS is separate from Cloudflare DNS
-3. If using Cloudflare as DNS, use kctl-cloudflare instead
+- Server unreachable: `servers get <name>` → `firewalls list` → `ips list`
+- Costs: `costs estimate` → monthly breakdown by resource type
+- DNS: uses separate DNS API — if using Cloudflare DNS, use kctl-cloudflare instead

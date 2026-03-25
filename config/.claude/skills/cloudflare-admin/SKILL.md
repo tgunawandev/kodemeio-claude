@@ -19,70 +19,59 @@ allowed-tools:
 
 ## System Overview
 
-- **Zones**: kodeme.io + subdomains (20+)
+- **Zones**: kodeme.io + 20+ subdomains
 - **Architecture**: Cloudflare Edge → cloudflared tunnel → Traefik → Dokploy
 - **CLI**: `kctl-cloudflare` (Python, installed via `uv tool install ./cli`)
-- **IaC**: Terraform configs in kodemeio-infra/kodemeio-cloudflare/
+- **IaC**: Terraform in kodemeio-infra/kodemeio-cloudflare/
 - **Config**: `~/.config/kodemeio/config.yaml` → `profiles.<profile>.cloudflare`
 
-## Implemented Commands
+## Commands
 
 | Command | Description |
 |---------|-------------|
 | `kctl-cloudflare zones list` | All DNS zones |
 | `kctl-cloudflare zones get <zone>` | Zone details |
-| `kctl-cloudflare records list [--zone]` | DNS records |
+| `kctl-cloudflare records list [--zone] [--type]` | DNS records |
 | `kctl-cloudflare tunnels list` | Cloudflare Tunnels |
 | `kctl-cloudflare tunnels get <name>` | Tunnel details |
-| `kctl-cloudflare health check` | Composite health |
+| `kctl-cloudflare waf list [--zone]` | WAF firewall rules |
+| `kctl-cloudflare waf ip-rules [--zone]` | IP access rules |
+| `kctl-cloudflare waf rate-limits [--zone]` | Rate limiting rules |
+| `kctl-cloudflare cache status [--zone]` | Cache settings |
+| `kctl-cloudflare cache purge-all [--zone]` | Purge all cache |
+| `kctl-cloudflare cache purge [--zone] <urls...>` | Purge specific URLs |
+| `kctl-cloudflare ssl status [--zone]` | SSL/TLS mode |
+| `kctl-cloudflare ssl certificates [--zone]` | Certificate packs |
+| `kctl-cloudflare workers list` | Worker scripts |
+| `kctl-cloudflare workers routes [--zone]` | Worker routes |
+| `kctl-cloudflare workers kv` | KV namespaces |
+| `kctl-cloudflare r2 list` | R2 buckets |
+| `kctl-cloudflare r2 get <name>` | Bucket details |
+| `kctl-cloudflare export all [--zone]` | Full zone export JSON |
+| `kctl-cloudflare terraform init` | Terraform init |
+| `kctl-cloudflare terraform plan` | Terraform plan |
+| `kctl-cloudflare terraform apply` | Terraform apply |
+| `kctl-cloudflare terraform destroy` | Terraform destroy |
+| `kctl-cloudflare terraform output` | Terraform output |
+| `kctl-cloudflare terraform validate` | Terraform validate |
+| `kctl-cloudflare health check` | Composite API health |
+| `kctl-cloudflare config init/show/test/use` | Configuration |
 
 ## Global Options
 
-| Flag | Description |
-|------|-------------|
-| `--json` | JSON output |
-| `--quiet`, `-q` | Suppress info |
-| `--profile`, `-p` | Config profile |
-| `--api-token` | API token override |
-| `--account-id` | Account ID override |
-| `--version`, `-V` | Show version |
+`--json` `--quiet` `-q` `--profile` `-p` `--api-token` `--account-id` `--version` `-V`
 
 ## Terraform Workflow
 
 ```bash
-# Plan changes
-kctl-cloudflare terraform plan
-
-# Review output, then apply
-kctl-cloudflare terraform apply
-
-# Check current state
-kctl-cloudflare terraform output
-```
-
-## DNS Management
-
-```bash
-# List all records
-kctl-cloudflare records list --zone kodeme.io
-
-# Export as BIND format
-kctl-cloudflare records export --zone kodeme.io
+kctl-cloudflare terraform plan     # Review changes
+kctl-cloudflare terraform apply    # Apply changes
+kctl-cloudflare terraform output   # Check state
 ```
 
 ## Troubleshooting
 
-### DNS not propagating
-1. `kctl-cloudflare records list --zone <zone>` — verify record exists
-2. Check proxy status (orange cloud vs gray)
-3. `dig +short <domain>` — check resolution
-4. TTL may need to expire (default 300s)
-
-### Tunnel down
-1. `kctl-cloudflare tunnels list` — check status
-2. `docker logs cloudflared` — check connector logs
-3. Verify tunnel token in `.env.prod`
-
-### SSL issues
-1. `kctl-cloudflare ssl status --zone <zone>` — check mode (Full Strict recommended)
-2. `kctl-cloudflare ssl certificates --zone <zone>` — check cert status
+- DNS not resolving: `records list --zone` → `dig +short <domain>`
+- Tunnel down: `tunnels list` → `docker logs cloudflared`
+- SSL issues: `ssl status --zone` → should be "strict"
+- Cache stale: `cache purge-all --zone`

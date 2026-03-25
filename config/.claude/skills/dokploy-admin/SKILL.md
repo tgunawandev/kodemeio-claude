@@ -25,62 +25,45 @@ allowed-tools:
 - **CLI**: `kctl-dokploy` (Python, installed via `uv tool install ./cli`)
 - **Config**: `~/.config/kodemeio/config.yaml` → `profiles.<profile>.dokploy`
 
-## Implemented Commands
+## Commands
 
 | Command | Description |
 |---------|-------------|
-| `kctl-dokploy status show` | Platform dashboard |
+| `kctl-dokploy status show` | Platform dashboard (projects, services) |
 | `kctl-dokploy projects list` | List all projects |
 | `kctl-dokploy projects get <name>` | Project details |
-| `kctl-dokploy apps list` | All compose services |
+| `kctl-dokploy apps list` | All compose services across projects |
+| `kctl-dokploy servers list` | List all servers |
+| `kctl-dokploy deployments list` | Recent deployments |
+| `kctl-dokploy domains list` | All configured domains |
+| `kctl-dokploy backups list` | Backup inventory |
+| `kctl-dokploy env list <compose-id>` | List environment variables |
+| `kctl-dokploy env get <compose-id> <key>` | Get single env var |
+| `kctl-dokploy logs show <compose-id> [--lines N]` | Service logs |
 | `kctl-dokploy deploy run <compose-id>` | Trigger deployment |
+| `kctl-dokploy notify test` | Test notification channel |
+| `kctl-dokploy cleanup stats` | Docker container stats |
 | `kctl-dokploy health check` | API connectivity |
 | `kctl-dokploy config init` | First-time setup |
-| `kctl-dokploy config test` | Test connection |
 | `kctl-dokploy config show` | Show config (masked) |
+| `kctl-dokploy config test` | Test connection |
+| `kctl-dokploy config use <profile>` | Switch profile |
 
 ## Global Options
 
-| Flag | Description |
-|------|-------------|
-| `--json` | JSON output (for piping) |
-| `--quiet`, `-q` | Suppress info messages |
-| `--profile`, `-p` | Config profile name |
-| `--url` | API URL override |
-| `--api-key` | API key override |
-| `--version`, `-V` | Show version |
+`--json` `--quiet` `-q` `--profile` `-p` `--url` `--api-key` `--version` `-V`
 
 ## Deployment Workflow
 
 ```bash
-# Check current state
-kctl-dokploy status
-
-# Find the compose service ID
-kctl-dokploy apps list
-
-# Check environment
-kctl-dokploy env list <compose-id>
-
-# Deploy
-kctl-dokploy deploy <compose-id>
-
-# Check logs
-kctl-dokploy logs <compose-id>
+kctl-dokploy status show           # Dashboard
+kctl-dokploy apps list             # Find compose ID
+kctl-dokploy deploy run <id>       # Deploy
+kctl-dokploy logs show <id>        # Check logs
 ```
 
 ## Troubleshooting
 
-### Deployment stuck
-1. `kctl-dokploy deployments list` — check status
-2. `kctl-dokploy logs <id>` — check container logs
-3. `docker ps --filter name=<service>` — check container state
-
-### Service not accessible
-1. `kctl-dokploy domains list` — check domain config
-2. `kctl-dokploy health check` — verify API is up
-3. Check Traefik: `docker logs traefik --tail 50`
-
-### Environment issues
-1. `kctl-dokploy env list <id>` — check current env
-2. Compare with `.env.example` in the project repo
+- Deployment stuck: `deployments list` → `logs show <id>` → `docker ps`
+- Service down: `health check` → `domains list` → Traefik logs
+- Env issues: `env list <id>` → compare with .env.example

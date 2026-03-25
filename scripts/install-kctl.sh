@@ -37,6 +37,9 @@ declare -A KCTL_TOOLS=(
     ["kctl-zulip"]="kodemeio-core/kodemeio-zulip/cli"
     ["kctl-odoo"]="kodemeio-app/kodemeio-odoo-18/cli"
     ["kctl-1password"]="kodemeio-ext/kodemeio-1password/cli"
+    ["kctl-dokploy"]="kodemeio-infra/kodemeio-dokploy/cli"
+    ["kctl-cloudflare"]="kodemeio-infra/kodemeio-cloudflare/cli"
+    ["kctl-hetzner"]="kodemeio-infra/kodemeio-hetzner/cli"
 )
 
 BASE_DIR="/opt/dev"

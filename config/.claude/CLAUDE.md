@@ -45,6 +45,7 @@ All available via `kctl-<service>` commands:
 - `kctl-ak` (Authentik), `kctl-pg` (PostgreSQL), `kctl-mailcow`, `kctl-plane`
 - `kctl-zulip`, `kctl-rmm`, `kctl-mdm`, `kctl-outline`, `kctl-glitchtip`
 - `kctl-odoo` (Odoo 18), `kctl-1password`
+- `kctl-dokploy` (Dokploy), `kctl-cloudflare` (Cloudflare), `kctl-hetzner` (Hetzner Cloud)
 - Config: ~/.config/kodemeio/config.yaml (profiles: kodemeio, abcfood)
 
 ## Common Tasks

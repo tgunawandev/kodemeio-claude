@@ -3,6 +3,7 @@
     "defaultMode": "bypassPermissions"
   },
   "enableAllProjectMcpServers": true,
+  "agentTeams": true,
   "enabledPlugins": {
     "example-skills@anthropic-agent-skills": true,
     "document-skills@anthropic-agent-skills": true,
@@ -22,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(cat - | jq -r '.tool_input.file_path // empty'); case \"$FILE\" in *.env|*.env.*|*.credentials*|*id_rsa*|*id_ed25519*) echo '{\"decision\": \"block\", \"reason\": \"Cannot edit secrets in container\"}' ;; esac; exit 0"
+            "command": "FILE=$(cat - | jq -r '.tool_input.file_path // empty'); case \"$FILE\" in *.env|*.env.*|*.credentials*|*id_rsa*|*id_ed25519*|*.pem|*.key|*.p12) echo '{\"decision\": \"block\", \"reason\": \"Cannot edit secrets/keys in container\"}' ;; esac; exit 0"
           }
         ]
       }
@@ -43,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"[$(date +%H:%M:%S)] Claude Code task completed\" >> /tmp/claude-activity.log"
+            "command": "echo \"[$(date '+%Y-%m-%d %H:%M:%S')] Task completed in $(pwd)\" >> /tmp/claude-activity.log"
           }
         ]
       }

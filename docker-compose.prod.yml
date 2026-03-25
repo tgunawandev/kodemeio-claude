@@ -18,6 +18,7 @@ services:
       SDK_PORT: ${SDK_PORT:-3100}
       MAX_CONCURRENT: ${MAX_CONCURRENT:-3}
       ENABLE_FIREWALL: ${ENABLE_FIREWALL:-false}
+      CLAUDE_CODE_ENABLE_AGENT_TEAMS: "1"
       TZ: Asia/Jakarta
     volumes:
       # All company repos — cloned on Hetzner by scripts/setup.sh

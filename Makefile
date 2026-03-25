@@ -68,6 +68,14 @@ health:
 logs:
 	docker logs -f kodemeio-claude
 
+# ─── Remote & monitoring ─────────────────────────────────────────────
+
+remote:
+	docker exec -it kodemeio-claude claude --remote
+
+monitor:
+	docker exec -it kodemeio-claude tmux new-session -A -s monitor -c /opt/dev
+
 # ─── Headless task ───────────────────────────────────────────────────
 
 task:

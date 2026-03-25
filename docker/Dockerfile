@@ -37,8 +37,11 @@ ENV PATH="/home/dev/.local/bin:/root/.local/bin:$PATH"
 # Install pnpm
 RUN npm install -g pnpm@latest
 
-# Install Claude Code + Playwright CLI (browser automation)
-RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} @playwright/cli
+# Install Claude Code + Playwright CLI + dev formatters
+RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} @playwright/cli prettier
+
+# Install ruff (Python linter/formatter — used by PostToolUse hooks)
+RUN pip3 install --break-system-packages ruff
 
 # Install worktrunk (Git worktree manager for parallel AI agents)
 RUN curl -fsSL https://github.com/max-sixty/worktrunk/releases/latest/download/wt-x86_64-unknown-linux-gnu.tar.xz \

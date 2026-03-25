@@ -1,0 +1,11 @@
+{
+  "name": "kodemeio-claude-bridge",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server bridging OpenClaw to Claude Code SDK REST API",
+  "main": "kodemeio-claude-bridge.mjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.24.0"
+  }
+}

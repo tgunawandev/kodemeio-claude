@@ -1,0 +1,65 @@
+services:
+  claude-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: kodemeio-claude:latest
+    container_name: kodemeio-claude
+    restart: unless-stopped
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
+      GIT_USER_NAME: ${GIT_USER_NAME:-Tri Gunawan}
+      GIT_USER_EMAIL: ${GIT_USER_EMAIL:-tri@kodeme.io}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      ENABLE_SDK_API: ${ENABLE_SDK_API:-false}
+      SDK_API_KEY: ${SDK_API_KEY:-}
+      TZ: Asia/Jakarta
+    volumes:
+      # All company repos — cloned on Hetzner by scripts/setup.sh
+      - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-app:/opt/dev/kodemeio-app
+      - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-core:/opt/dev/kodemeio-core
+      - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-ext:/opt/dev/kodemeio-ext
+      - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-infra:/opt/dev/kodemeio-infra
+      - ${REPOS_BASE_PATH:-/opt/repos}/kontenos-app:/opt/dev/kontenos-app
+      - ${REPOS_BASE_PATH:-/opt/repos}/journaltx-app:/opt/dev/journaltx-app
+      - ${REPOS_BASE_PATH:-/opt/repos}/kidneuro-app:/opt/dev/kidneuro-app
+      # Runtime state (persists across container rebuilds)
+      # Config (settings, agents, skills) is baked into image via config/.claude/
+      # This volume preserves runtime changes: credentials, session data, MCP cache
+      - claude-runtime:/home/dev/.claude
+      - claude-history:/commandhistory
+      # uv tools (kctl-*) — persists installed Python CLI tools across restarts
+      - uv-tools:/home/dev/.local
+      # kctl-* credentials — deployed by scripts/sync-secrets.sh
+      - ${SECRETS_PATH:-/opt/kodemeio-claude-secrets}:/home/dev/.config/kodemeio:ro
+      # Docker socket (read-only — for inspecting containers)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # SSH keys (for git push) — deploy key on Hetzner
+      - ${SSH_KEYS_PATH:-~/.ssh}:/home/dev/.ssh:ro
+    networks:
+      - dokploy-network
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: ["CMD", "bash", "/usr/local/bin/health.sh"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+volumes:
+  claude-runtime:
+  claude-history:
+  uv-tools:
+
+networks:
+  dokploy-network:
+    external: true

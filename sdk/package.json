@@ -1,0 +1,17 @@
+{
+  "name": "kodemeio-claude-sdk",
+  "version": "1.0.0",
+  "description": "REST API server for triggering Claude Code tasks programmatically",
+  "main": "server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node server.js",
+    "dev": "tsx server.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "tsx": "^4.19.0",
+    "@types/node": "^22.0.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledPlugins": {
+    "example-skills@anthropic-agent-skills": true,
+    "document-skills@anthropic-agent-skills": true,
+    "git-pr-workflows@claude-code-workflows": true,
+    "python-development@claude-code-workflows": true,
+    "javascript-typescript@claude-code-workflows": true,
+    "shell-scripting@claude-code-workflows": true,
+    "developer-essentials@claude-code-workflows": false,
+    "safety-hooks@cctools-plugins": false,
+    "langroid@cctools-plugins": false,
+    "n8n-mcp-skills@n8n-mcp-skills": false
+  },
+  "alwaysThinkingEnabled": true,
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true
+}

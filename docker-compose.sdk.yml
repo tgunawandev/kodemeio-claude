@@ -1,0 +1,57 @@
+services:
+  claude-sdk:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.sdk
+    image: kodemeio-claude-sdk:latest
+    container_name: kodemeio-claude-sdk
+    restart: unless-stopped
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
+      GIT_USER_NAME: ${GIT_USER_NAME:-Tri Gunawan}
+      GIT_USER_EMAIL: ${GIT_USER_EMAIL:-tri@kodeme.io}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      SDK_API_KEY: ${SDK_API_KEY:-}
+      SDK_PORT: ${SDK_PORT:-3100}
+      TZ: Asia/Jakarta
+    volumes:
+      # All company repos
+      - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-app:/opt/dev/kodemeio-app
+      - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-core:/opt/dev/kodemeio-core
+      - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-ext:/opt/dev/kodemeio-ext
+      - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-infra:/opt/dev/kodemeio-infra
+      - ${REPOS_BASE_PATH:-/opt/repos}/kontenos-app:/opt/dev/kontenos-app
+      - ${REPOS_BASE_PATH:-/opt/repos}/journaltx-app:/opt/dev/journaltx-app
+      - ${REPOS_BASE_PATH:-/opt/repos}/kidneuro-app:/opt/dev/kidneuro-app
+      # Runtime state
+      - sdk-claude-runtime:/home/dev/.claude
+      - sdk-uv-tools:/home/dev/.local
+      # Credentials
+      - ${SECRETS_PATH:-/opt/kodemeio-claude-secrets}:/home/dev/.config/kodemeio:ro
+      - ${SSH_KEYS_PATH:-~/.ssh}:/home/dev/.ssh:ro
+    ports:
+      - "3100:3100"
+    networks:
+      - dokploy-network
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:3100/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+volumes:
+  sdk-claude-runtime:
+  sdk-uv-tools:
+
+networks:
+  dokploy-network:
+    external: true

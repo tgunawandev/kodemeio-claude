@@ -18,3 +18,18 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
+
+# Node.js
+node_modules/
+sdk/node_modules/
+sdk/server.js
+sdk/server.js.map
+
+# Docker
+.docker/
+
+# Secrets — NEVER commit real credentials
+config/kodemeio/config.yaml
+!config/kodemeio/config.yaml.example
+config/.claude/.credentials.json
+mcp-servers/node_modules/

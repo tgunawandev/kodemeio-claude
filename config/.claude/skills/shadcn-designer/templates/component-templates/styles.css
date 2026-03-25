@@ -1,0 +1,44 @@
+/* Base Component Styles */
+.base-component {
+  /* Base component styles */
+  transition: all 0.2s ease-in-out;
+}
+
+/* Form Component Styles */
+.form-field {
+  @apply space-y-2;
+}
+
+.form-label {
+  @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+}
+
+.form-input {
+  @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+/* Dashboard Grid Styles */
+.dashboard-grid {
+  @apply grid gap-6 md:grid-cols-2 lg:grid-cols-3;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    @apply grid-cols-1;
+  }
+}
+
+/* Accessibility Styles */
+@media (prefers-reduced-motion: reduce) {
+  .base-component {
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .base-component {
+    border: 2px solid currentColor;
+  }
+}

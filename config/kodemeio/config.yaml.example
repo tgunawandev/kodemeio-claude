@@ -1,0 +1,116 @@
+# =============================================================================
+# Kodemeio kctl-* CLI tools — unified configuration
+# =============================================================================
+# Location in container: /home/dev/.config/kodemeio/config.yaml
+# All kctl-* tools read from this file. Supports multiple profiles.
+#
+# DO NOT COMMIT the real config.yaml — it contains secrets.
+# Use: make sync-secrets (copies from laptop to Hetzner)
+# =============================================================================
+
+default_profile: kodemeio
+roles_paths: []
+group_structure_path: ''
+
+profiles:
+  kodemeio:
+    authentik:
+      url: https://auth.kodeme.io
+      token: <KCTL_AK_TOKEN>
+      smtp:
+        host: mail.kodeme.io
+        port: 587
+        username: info@kodeme.io
+        password: <SMTP_PASSWORD>
+        use_tls: true
+        use_ssl: false
+        from_address: info@kodeme.io
+        from_name: Kodemeio
+
+    mailcow:
+      url: https://mail.kodeme.io
+      api_key: <KCTL_MAILCOW_API_KEY>
+
+    plane:
+      url: https://plane.kodeme.io
+      api_key: <KCTL_PLANE_API_KEY>
+      workspace: kodemeio
+
+    zulip:
+      url: https://zulip.kodeme.io
+      email: kctl-admin-bot@zulip.kodeme.io
+      api_key: <KCTL_ZULIP_API_KEY>
+
+    postgres:
+      host: 127.0.0.1
+      port: 5432
+      user: postgres
+      password: <KCTL_PG_PASSWORD>
+      ssh_host: db.kodeme.io
+      ssh_port: 22
+      ssh_user: root
+      ssh_key: /home/dev/.ssh/id_ed25519
+      databases:
+        - authentik
+        - zulip
+        - outline
+        - gatus
+        - glitchtip
+        - hmdm
+
+    rmm:
+      url: https://api-rmm.kodeme.io
+      api_key: <KCTL_RMM_API_KEY>
+      mesh_url: https://mesh.kodeme.io
+
+    onepassword:
+      vault: Kodemeio
+      service_account_token: <OP_SERVICE_ACCOUNT_TOKEN>
+      scan_roots:
+        - /opt/dev/kodemeio-app
+        - /opt/dev/kodemeio-core
+        - /opt/dev/kodemeio-ext
+
+    mdm:
+      url: https://mdm.kodeme.io
+      username: admin
+      password: <KCTL_MDM_PASSWORD>
+
+    outline:
+      url: https://outline.kodeme.io
+      token: <KCTL_OUTLINE_TOKEN>
+
+    glitchtip:
+      url: https://glitchtip.kodeme.io
+      token: <KCTL_GLITCHTIP_TOKEN>
+
+    odoo:
+      url: https://erp.kodeme.io
+      database: kodemeio
+      username: admin
+      api_key: <KCTL_ODOO_API_KEY>
+
+  abcfood:
+    authentik:
+      url: https://auth.abcfood.app
+      token: <KCTL_AK_TOKEN_ABCFOOD>
+
+    mailcow:
+      url: https://mail.abcfood.app
+      api_key: <KCTL_MAILCOW_API_KEY_ABCFOOD>
+
+    rmm:
+      url: https://api-rmm.abcfood.app
+      api_key: <KCTL_RMM_API_KEY_ABCFOOD>
+      mesh_url: https://mesh.abcfood.app
+
+    onepassword:
+      vault: ABCFood
+      service_account_token: <OP_SERVICE_ACCOUNT_TOKEN_ABCFOOD>
+      scan_roots:
+        - /opt/dev/abcfood
+
+    mdm:
+      url: https://mdm.abcfood.app
+      username: admin
+      password: <KCTL_MDM_PASSWORD_ABCFOOD>

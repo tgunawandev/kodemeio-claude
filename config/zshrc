@@ -1,0 +1,65 @@
+# =============================================================================
+# .zshrc — kodemeio-claude development container
+# =============================================================================
+
+# History
+HISTFILE=/commandhistory/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
+setopt APPEND_HISTORY
+
+# Key bindings
+bindkey -e
+
+# Prompt — show company/workspace context
+autoload -Uz vcs_info
+precmd() { vcs_info }
+zstyle ':vcs_info:git:*' formats '%F{cyan}(%b)%f '
+setopt PROMPT_SUBST
+PROMPT='%F{blue}%~%f ${vcs_info_msg_0_}%F{yellow}>%f '
+
+# Aliases — company shortcuts
+alias kd='cd /opt/dev/kodemeio-app'
+alias kt='cd /opt/dev/kontenos-app'
+alias jt='cd /opt/dev/journaltx-app'
+alias kn='cd /opt/dev/kidneuro-app'
+alias ki='cd /opt/dev/kodemeio-infra'
+alias kc='cd /opt/dev/kodemeio-core'
+
+# Development aliases
+alias g='git'
+alias gs='git status'
+alias gd='git diff'
+alias gl='git log --oneline -20'
+alias gp='git pull'
+
+# Docker aliases
+alias dc='docker compose'
+alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias dlogs='docker logs -f'
+
+# Claude Code aliases
+alias cc='claude'
+alias ccr='claude --remote'
+
+# Tool versions
+alias versions='echo "Node: $(node -v) | pnpm: $(pnpm -v) | Python: $(python3 --version) | uv: $(uv --version) | Claude: $(claude --version 2>/dev/null || echo N/A)"'
+
+# Path
+export PATH="/home/dev/.local/bin:$PATH"
+
+# FZF integration
+[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+[ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
+
+# Welcome message
+if [ -z "$TMUX" ]; then
+    echo "================================================================"
+    echo "  kodemeio-claude — Remote Development Container"
+    echo "  Companies: kodemeio | kontenos | journaltx | kidneuro"
+    echo "  Use: tmux attach -t <company> or aliases (kd, kt, jt, kn)"
+    echo "================================================================"
+fi

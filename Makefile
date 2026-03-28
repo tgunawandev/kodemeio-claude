@@ -1,7 +1,7 @@
 .PHONY: up down build shell kodemeio kontenos journaltx kidneuro infra core health logs task \
        sdk-up sdk-down sdk-build dev dev-down dev-build \
        generate-env check-env deploy-env \
-       sync-config sync-secrets sync-secrets-dry sync-all \
+       sync-config sync-config-dry sync-secrets sync-secrets-dry sync-local sync-all \
        install-kctl check-kctl backup restore verify verify-container setup-local \
        remote monitor
 
@@ -102,11 +102,18 @@ deploy-env:
 sync-config:
 	./scripts/sync-config.sh
 
+sync-config-dry:
+	./scripts/sync-config.sh --dry-run
+
 sync-secrets:
 	./scripts/sync-secrets.sh
 
 sync-secrets-dry:
 	./scripts/sync-secrets.sh --dry-run
+
+# Pull latest config from repo → local (re-run setup without tool install)
+sync-local:
+	./scripts/setup-local.sh --sync
 
 # Full sync: config + secrets → ready for deploy
 sync-all: sync-config sync-secrets

@@ -25,9 +25,11 @@ curl -X POST http://localhost:3100/task \
   -H "Authorization: Bearer $SDK_API_KEY" \
   -d '{"prompt":"...", "workspace":"kodemeio-app"}'
 
-# ─── Local Setup ─────────────────────────────────────────────
-make setup-local     # Install Claude Code + sync config locally
-make sync-config     # Sync local config → repo for Docker image
+# ─── Local Dev ───────────────────────────────────────────────
+make setup-local     # First time: install tools + sync config
+make sync-local      # Pull latest config from repo → local
+make sync-config     # Push local config → repo (before deploy)
+make sync-config-dry # Preview what sync-config would change
 make sync-secrets    # Deploy credentials to Hetzner
 
 # ─── Environment ─────────────────────────────────────────────

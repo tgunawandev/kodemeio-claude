@@ -11,12 +11,23 @@
 # =============================================================================
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-REPO_DIR="$(dirname "$SCRIPT_DIR")"
+# Works anywhere — finds repo via git if available, skips repo checks if not
 CLAUDE_DIR="${HOME}/.claude"
-CONFIG_DIR="$REPO_DIR/config/.claude"
 JSON_MODE=false
 [[ "${1:-}" == "--json" ]] && JSON_MODE=true
+
+# Try to find repo (works whether run from repo, symlink, or standalone)
+REPO_DIR=""
+SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)" || true
+if [ -n "$SCRIPT_DIR" ] && [ -d "$(dirname "$SCRIPT_DIR")/config/.claude" ]; then
+    REPO_DIR="$(dirname "$SCRIPT_DIR")"
+elif command -v git &>/dev/null; then
+    REPO_DIR="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+    [ -n "$REPO_DIR" ] && [ ! -d "$REPO_DIR/config/.claude" ] && REPO_DIR=""
+fi
+CONFIG_DIR="${REPO_DIR:+$REPO_DIR/config/.claude}"
+HAS_REPO=false
+[ -n "$REPO_DIR" ] && [ -d "$REPO_DIR/config/.claude" ] && HAS_REPO=true
 
 # ─── Colors ──────────────────────────────────────────────────────────
 GREEN='\033[0;32m'

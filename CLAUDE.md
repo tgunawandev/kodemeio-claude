@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 29 skills, SDK REST API, and OpenClaw MCP bridge.
+**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 15 kctl-* infrastructure CLIs (including kctl-claude), 30 skills, SDK REST API, and OpenClaw MCP bridge.
 
-**Stack:** Docker, Node.js 22, Bash, TypeScript (SDK server)
+**Stack:** Docker, Node.js 22, Bash, TypeScript (SDK server), Python (kctl-claude CLI)
 **Location:** `/home/tgunawan/project/00-new-projects/kodemeio-app/kodemeio-claude/`
 
 ## Quick Reference
@@ -62,6 +62,9 @@ kodemeio-claude/
 │   ├── kodemeio/               # kctl-* credential config template
 │   ├── tmux.conf               # Multi-pane layout per company
 │   └── zshrc                   # Shell customization + aliases
+├── cli/                        # kctl-claude Python CLI
+│   ├── pyproject.toml          # Hatchling build, uv tool install
+│   └── src/kctl_claude/        # status, sync, verify, api, env, backup
 ├── sdk/
 │   ├── server.ts               # REST API server (standalone)
 │   ├── package.json

@@ -40,3 +40,4 @@ sdk/**/*.js.map
 config/kodemeio/config.yaml
 !config/kodemeio/config.yaml.example
 config/.claude/.credentials.json
+__pycache__/

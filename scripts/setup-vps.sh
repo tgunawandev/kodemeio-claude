@@ -47,6 +47,9 @@ REPOS_PATH="${REPOS_PATH:-/opt/dev}"
 NODE_MAJOR=22
 TERRAFORM_VERSION="1.12.1"
 GITHUB_ORG="${GITHUB_ORG:-kodemeio}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+YQ_VERSION="4.44.6"
 
 # ─── Repo list ───────────────────────────────────────────────────────
 REPOS=(
@@ -105,12 +108,13 @@ if [ "$CHECK_ONLY" = true ]; then
     for pkg in "${PACKAGES[@]}"; do
         dpkg -l "$pkg" &>/dev/null && echo -e "  ${GREEN}●${NC} $pkg" || echo -e "  ${RED}●${NC} $pkg"
     done
+    log_check yq
 else
     apt-get update -qq
     apt-get install -y --no-install-recommends "${PACKAGES[@]}"
-    # yq is not in default repos — install via binary
+    # yq (mikefarah) is not in default repos — install pinned binary
     if ! command -v yq &>/dev/null; then
-        wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+        wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64"
         chmod +x /usr/local/bin/yq
     fi
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -170,7 +174,8 @@ else
     npm install -g @anthropic-ai/claude-code@latest @playwright/cli prettier 2>/dev/null || true
     log_ok "Claude Code + Playwright + prettier installed"
 
-    pip3 install --break-system-packages ruff 2>/dev/null || true
+    # Prefer uv (already installed in Phase 3) over pip for ruff
+    /root/.local/bin/uv tool install ruff 2>/dev/null || pip3 install --break-system-packages ruff || log_warn "ruff install failed"
     log_ok "ruff installed"
 
     # Worktrunk
@@ -205,8 +210,7 @@ else
         log_ok "User $DEV_USER already exists"
     fi
 
-    # Shell config
-    REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+    # Shell config (REPO_DIR computed at top of script)
     [ -f "$REPO_DIR/config/zshrc" ] && cp "$REPO_DIR/config/zshrc" "/home/$DEV_USER/.zshrc"
     [ -f "$REPO_DIR/config/tmux.conf" ] && cp "$REPO_DIR/config/tmux.conf" "/home/$DEV_USER/.tmux.conf"
 
@@ -253,7 +257,6 @@ fi
 log_info "Phase 7: Claude Code config"
 
 CLAUDE_HOME="/home/$DEV_USER/.claude"
-REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 if [ "$CHECK_ONLY" = true ]; then
     [ -d "$CLAUDE_HOME/agents" ] && echo -e "  ${GREEN}●${NC} agents" || echo -e "  ${RED}●${NC} agents"
@@ -282,6 +285,16 @@ else
                 mv "$tmp" "$CLAUDE_HOME/settings.json"
         fi
         log_ok "settings.json configured (bypassPermissions=true)"
+    fi
+
+    # Copy firewall script so ENABLE_FIREWALL=true works on VPS
+    [ -f "$REPO_DIR/docker/init-firewall.sh" ] && \
+        cp "$REPO_DIR/docker/init-firewall.sh" /usr/local/bin/ && \
+        chmod +x /usr/local/bin/init-firewall.sh
+
+    # Ensure HISTFILE is set for persistent history
+    if ! grep -q 'HISTFILE' "/home/$DEV_USER/.zshrc" 2>/dev/null; then
+        echo 'export HISTFILE=/commandhistory/.zsh_history' >> "/home/$DEV_USER/.zshrc"
     fi
 
     chown -R "$DEV_USER:$DEV_USER" "$CLAUDE_HOME"
@@ -331,8 +344,9 @@ ExecStart=$(command -v node) $SDK_SERVER
 Restart=on-failure
 RestartSec=5
 Environment=SDK_PORT=3100
-Environment=SDK_API_KEY=
 Environment=MAX_CONCURRENT=3
+Environment=CLAUDE_CODE_ENABLE_AGENT_TEAMS=1
+# IMPORTANT: Set SDK_API_KEY in /home/$DEV_USER/.env before enabling this service
 EnvironmentFile=-/home/$DEV_USER/.env
 
 [Install]

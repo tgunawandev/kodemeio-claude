@@ -20,13 +20,19 @@ def local(ctx: typer.Context) -> None:
 
 
 @app.command()
-def vps(ctx: typer.Context, check: bool = typer.Option(False, "--check", help="Dry-run")) -> None:
+def vps(
+    ctx: typer.Context,
+    check: bool = typer.Option(False, "--check", help="Dry-run: show what would install"),
+    skip_repos: bool = typer.Option(False, "--skip-repos", help="Skip repo cloning"),
+) -> None:
     """Setup VPS/bare-metal server (requires sudo)."""
     actx: AppContext = ctx.obj
     script = _get_script(actx, "setup-vps.sh")
     args = ["sudo", "bash", str(script)]
     if check:
         args.append("--check")
+    if skip_repos:
+        args.append("--skip-repos")
     subprocess.run(args, check=False)
 
 
@@ -57,7 +63,11 @@ def docker(ctx: typer.Context) -> None:
 
 @app.command("init")
 def init_session(ctx: typer.Context) -> None:
-    """Run session initialization (git, SSH, tmux, kctl tools)."""
+    """Run session initialization (git, SSH, tmux, kctl tools).
+
+    Note: for shell-affecting steps (SSH agent, env vars), source directly:
+      source scripts/init-session.sh
+    """
     actx: AppContext = ctx.obj
     script = _get_script(actx, "init-session.sh")
     subprocess.run(["bash", str(script)], check=False)

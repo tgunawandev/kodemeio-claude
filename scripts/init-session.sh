@@ -105,7 +105,10 @@ done
 
 # ─── 5. SSH keys ────────────────────────────────────────────────────
 if [ -d "$HOME/.ssh" ]; then
-    eval "$(ssh-agent -s)" > /dev/null 2>&1 || true
+    # Only start a new agent if one isn't already running (prevents agent accumulation on VPS)
+    if [ -z "${SSH_AUTH_SOCK:-}" ] || ! ssh-add -l &>/dev/null; then
+        eval "$(ssh-agent -s)" > /dev/null 2>&1 || true
+    fi
     for key in "$HOME"/.ssh/id_*; do
         [ -f "$key" ] && [[ "$key" != *.pub ]] && ssh-add "$key" 2>/dev/null || true
     done

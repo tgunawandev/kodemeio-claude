@@ -70,13 +70,16 @@ kodemeio-claude/
 │   ├── package.json
 │   └── tsconfig.json
 ├── scripts/
-│   ├── generate-env.sh         # Interactive .env generator
+│   ├── init-session.sh         # Shared session init (Docker + VPS)
+│   ├── setup-local.sh          # Local dev setup (laptop)
+│   ├── setup-vps.sh            # VPS/bare-metal server setup
 │   ├── setup.sh                # First-time: clone repos on Hetzner
-│   ├── setup-local.sh          # Reproduce local dev environment
+│   ├── generate-env.sh         # Interactive .env generator
 │   ├── health.sh               # Container health check
+│   ├── status.sh               # One-page status dashboard
 │   ├── run-task.sh             # Trigger headless task via CLI
-│   ├── install-kctl.sh         # Install 14 kctl-* CLI tools
-│   ├── sync-config.sh          # Sync local config → repo for Docker
+│   ├── install-kctl.sh         # Install 15 kctl-* CLI tools
+│   ├── sync-config.sh          # Sync local config → repo
 │   ├── sync-secrets.sh         # Deploy credentials to Hetzner
 │   ├── backup-runtime.sh       # Backup container runtime volume
 │   ├── remote-access.sh        # SSH into container from laptop

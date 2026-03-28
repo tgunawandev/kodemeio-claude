@@ -156,7 +156,8 @@ setup-vps-check:
 	sudo ./scripts/setup-vps.sh --check
 
 init-session:
-	source ./scripts/init-session.sh
+	@echo "Run directly in your shell (source is needed for env vars/SSH agent):"
+	@echo "  source ./scripts/init-session.sh"
 
 # ─── Status dashboard ───────────────────────────────────────────────
 

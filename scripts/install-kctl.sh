@@ -43,7 +43,7 @@ declare -A KCTL_TOOLS=(
     ["kctl-claude"]="kodemeio-app/kodemeio-claude/cli"
 )
 
-BASE_DIR="/opt/dev"
+BASE_DIR="${REPOS_PATH:-/opt/dev}"
 CHECK_ONLY="${1:-}"
 
 echo "================================================================"

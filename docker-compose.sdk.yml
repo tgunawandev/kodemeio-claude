@@ -13,12 +13,6 @@ services:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       SDK_API_KEY: ${SDK_API_KEY:-}
       SDK_PORT: ${SDK_PORT:-3100}
-      # KodeClaw daemon
-      ENABLE_DAEMON: ${ENABLE_DAEMON:-false}
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
-      TELEGRAM_ALLOWED_USERS: ${TELEGRAM_ALLOWED_USERS:-}
-      GROQ_API_KEY: ${GROQ_API_KEY:-}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       TZ: Asia/Jakarta
     volumes:
       # All company repos

@@ -13,6 +13,6 @@
     "declaration": false,
     "sourceMap": false
   },
-  "include": ["server.ts", "daemon/**/*.ts"],
-  "exclude": ["node_modules", "config"]
+  "include": ["server.ts"],
+  "exclude": ["node_modules"]
 }

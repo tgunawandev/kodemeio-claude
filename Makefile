@@ -2,8 +2,7 @@
        sdk-up sdk-down sdk-build dev dev-down dev-build \
        generate-env check-env deploy-env \
        sync-config sync-secrets sync-secrets-dry sync-all \
-       install-kctl check-kctl backup restore verify verify-container setup-local collect \
-       daemon-status daemon-jobs daemon-queue daemon-history daemon-dashboard daemon-sessions daemon-logs daemon-config
+       install-kctl check-kctl backup restore verify verify-container setup-local collect
 
 # ─── Production (full dev container) ─────────────────────────────────
 
@@ -140,32 +139,6 @@ verify-container:
 
 setup-local:
 	./scripts/setup-local.sh
-
-# ─── KodeClaw Daemon ─────────────────────────────────────────────────
-
-daemon-status:
-	@docker exec kodemeio-claude curl -sf http://localhost:3100/dashboard/api/status | jq '{started_at, subsystems, queue_depth, in_flight, persona}'
-
-daemon-jobs:
-	@docker exec kodemeio-claude curl -sf http://localhost:3100/dashboard/api/jobs | jq '.[] | {name, schedule, workspace, enabled}'
-
-daemon-queue:
-	@docker exec kodemeio-claude curl -sf http://localhost:3100/dashboard/api/queue | jq .
-
-daemon-history:
-	@docker exec kodemeio-claude curl -sf http://localhost:3100/dashboard/api/history | jq '.[:20] | .[] | {started_at, source, workspace, status, duration_ms}'
-
-daemon-sessions:
-	@docker exec kodemeio-claude curl -sf http://localhost:3100/dashboard/api/sessions | jq .
-
-daemon-logs:
-	@docker exec kodemeio-claude tail -50 /tmp/kodeclaw-daemon.log 2>/dev/null || echo "No daemon logs found"
-
-daemon-config:
-	@docker exec kodemeio-claude cat /opt/sdk/config/daemon.yaml
-
-daemon-dashboard:
-	@echo "Dashboard: http://localhost:3100/dashboard"
 
 # ─── Legacy (knowledge base collection) ──────────────────────────────
 

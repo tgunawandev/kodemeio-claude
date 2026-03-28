@@ -12,11 +12,6 @@ services:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       ENABLE_SDK_API: ${ENABLE_SDK_API:-true}
       SDK_API_KEY: ${SDK_API_KEY:-dev-key}
-      ENABLE_DAEMON: ${ENABLE_DAEMON:-false}
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
-      TELEGRAM_ALLOWED_USERS: ${TELEGRAM_ALLOWED_USERS:-}
-      GROQ_API_KEY: ${GROQ_API_KEY:-}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       TZ: Asia/Jakarta
     volumes:
       # Mount current directory for development

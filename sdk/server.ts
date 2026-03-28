@@ -45,11 +45,6 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  // Let dashboard handle its own routes
-  if (req.url?.startsWith("/dashboard")) {
-    return; // Dashboard routes are mounted separately via daemon
-  }
-
   if (req.method === "POST" && req.url === "/task") {
     // Auth check
     const auth = req.headers.authorization?.replace("Bearer ", "");
@@ -145,7 +140,6 @@ const server = createServer(async (req, res) => {
         timestamp: new Date().toISOString(),
         inFlight,
         maxConcurrent: MAX_CONCURRENT,
-        daemon: process.env.ENABLE_DAEMON === "true",
       }),
     );
   } else {
@@ -154,30 +148,12 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, async () => {
+server.listen(PORT, () => {
   console.log(`Claude SDK API listening on :${PORT}`);
-
-  // Start daemon if enabled
-  if (process.env.ENABLE_DAEMON === "true") {
-    try {
-      const { startDaemon } = await import("./daemon/index.js");
-      await startDaemon(server);
-    } catch (err) {
-      console.error("Failed to start daemon:", err);
-    }
-  }
 });
 
-async function shutdown(signal: string): Promise<void> {
+function shutdown(signal: string): void {
   console.log(`${signal} received, shutting down...`);
-  if (process.env.ENABLE_DAEMON === "true") {
-    try {
-      const { stopDaemon } = await import("./daemon/index.js");
-      await stopDaemon();
-    } catch {
-      // Best effort
-    }
-  }
   server.close(() => process.exit(0));
 }
 

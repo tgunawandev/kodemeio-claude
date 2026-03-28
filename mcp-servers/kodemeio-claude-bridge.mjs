@@ -3,15 +3,10 @@
 // kodemeio-claude-bridge.mjs — MCP server wrapping Claude Code SDK REST API
 // =============================================================================
 // Exposes Claude Code as MCP tools for OpenClaw or any MCP-compatible client.
-// Works alongside KodeClaw daemon — OpenClaw calls these tools externally,
-// while KodeClaw handles internal automation (heartbeat, cron, Telegram).
 //
 // Tools:
 //   claude_code_task(prompt, workspace?, tools?, bare?)  — Run a coding task
 //   claude_code_status()                                 — Check container health
-//   claude_code_daemon_state()                           — Get KodeClaw daemon state
-//   claude_code_daemon_history(limit?)                   — Recent task run history
-//   claude_code_daemon_jobs()                            — List scheduled cron jobs
 //
 // Environment:
 //   SDK_BASE_URL   — REST API endpoint (default: http://kodemeio-claude:3100)
@@ -127,7 +122,7 @@ server.tool(
 // Tool: claude_code_status — health check
 server.tool(
   "claude_code_status",
-  "Check if the Claude Code container is healthy and responding. Returns health status, in-flight tasks, and daemon state.",
+  "Check if the Claude Code container is healthy and responding. Returns health status and in-flight task count.",
   {},
   async () => {
     try {
@@ -146,102 +141,6 @@ server.tool(
           {
             type: "text",
             text: `Claude Code container unreachable: ${err.message}`,
-          },
-        ],
-        isError: true,
-      };
-    }
-  },
-);
-
-// Tool: claude_code_daemon_state — KodeClaw daemon status
-server.tool(
-  "claude_code_daemon_state",
-  "Get the full KodeClaw daemon state including subsystem status, active sessions, queue depth, cron jobs, and recent run history. Requires ENABLE_DAEMON=true on the container.",
-  {},
-  async () => {
-    try {
-      const result = await sdkFetch("GET", "/dashboard/api/status");
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(result, null, 2),
-          },
-        ],
-      };
-    } catch (err) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Daemon state unavailable: ${err.message}`,
-          },
-        ],
-        isError: true,
-      };
-    }
-  },
-);
-
-// Tool: claude_code_daemon_history — recent task run history
-server.tool(
-  "claude_code_daemon_history",
-  "Get recent task execution history from the KodeClaw daemon, including source (api/heartbeat/cron/telegram), workspace, status, and duration.",
-  {
-    limit: z
-      .number()
-      .optional()
-      .describe("Number of recent runs to return (default: 50)"),
-  },
-  async ({ limit }) => {
-    try {
-      const result = await sdkFetch("GET", "/dashboard/api/history");
-      const runs = Array.isArray(result) ? result.slice(0, limit || 50) : result;
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(runs, null, 2),
-          },
-        ],
-      };
-    } catch (err) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `History unavailable: ${err.message}`,
-          },
-        ],
-        isError: true,
-      };
-    }
-  },
-);
-
-// Tool: claude_code_daemon_jobs — list cron jobs
-server.tool(
-  "claude_code_daemon_jobs",
-  "List all scheduled cron jobs configured in the KodeClaw daemon, including schedule, workspace, enabled status, and priority.",
-  {},
-  async () => {
-    try {
-      const result = await sdkFetch("GET", "/dashboard/api/jobs");
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(result, null, 2),
-          },
-        ],
-      };
-    } catch (err) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Jobs unavailable: ${err.message}`,
           },
         ],
         isError: true,

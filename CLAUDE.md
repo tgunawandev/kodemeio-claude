@@ -2,10 +2,10 @@
 
 ## Project Overview
 
-**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 24 skills, SDK REST API, OpenClaw MCP bridge, and KodeClaw daemon (heartbeat, cron, Telegram, dashboard).
+**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 24 skills, SDK REST API, OpenClaw MCP bridge, and ClaudeClaw plugin for automation (heartbeat, cron, Telegram, Discord).
 
 **Stack:** Docker, Node.js 22, Bash, TypeScript (SDK server)
-**Location:** `/home/tgunawan/project/00-new-projects/kodemeio-core/kodemeio-claude/`
+**Location:** `/home/tgunawan/project/00-new-projects/kodemeio-app/kodemeio-claude/`
 
 ## Quick Reference
 
@@ -17,13 +17,6 @@ make shell           # Shell into container
 make kodemeio        # Attach to kodemeio tmux session
 make health          # Run health checks
 make task            # Run headless Claude Code task
-
-# ─── KodeClaw Daemon ─────────────────────────────────────────
-make daemon-status   # Daemon subsystem status
-make daemon-jobs     # List recent job runs
-make daemon-queue    # Task queue depth
-make daemon-history  # Run history
-make daemon-dashboard # Dashboard URL
 
 # ─── SDK API ─────────────────────────────────────────────────
 make sdk-up          # Start SDK-only container
@@ -66,26 +59,9 @@ kodemeio-claude/
 │   ├── tmux.conf               # Multi-pane layout per company
 │   └── zshrc                   # Shell customization + aliases
 ├── sdk/
-│   ├── server.ts               # REST API + daemon bootstrap
+│   ├── server.ts               # REST API server (standalone)
 │   ├── package.json
-│   ├── tsconfig.json
-│   ├── daemon/                 # KodeClaw daemon subsystems
-│   │   ├── index.ts            # Orchestrator
-│   │   ├── config.ts           # Hot-reload YAML config (30s)
-│   │   ├── types.ts            # Shared interfaces
-│   │   ├── logger.ts           # Structured JSON logger
-│   │   ├── security.ts         # Security tier enforcement
-│   │   ├── session/            # Session manager + executor + queue
-│   │   ├── heartbeat/          # Per-workspace heartbeat timers
-│   │   ├── cron/               # Markdown job scheduler
-│   │   ├── telegram/           # Bot + workspace routing + voice
-│   │   └── dashboard/          # Web dashboard (SPA + API)
-│   └── config/                 # Daemon runtime config
-│       ├── daemon.yaml         # Main configuration
-│       ├── IDENTITY.md         # Persona identity
-│       ├── SOUL.md             # Persona communication style
-│       ├── heartbeat/*.md      # Per-workspace heartbeat prompts
-│       └── jobs/*.md           # Cron job definitions
+│   └── tsconfig.json
 ├── scripts/
 │   ├── generate-env.sh         # Interactive .env generator
 │   ├── setup.sh                # First-time: clone repos on Hetzner
@@ -144,23 +120,18 @@ curl -X POST http://kodemeio-claude:3100/task \
 # Command: node /opt/mcp-servers/kodemeio-claude-bridge.mjs
 # Env: SDK_BASE_URL=http://kodemeio-claude:3100, SDK_API_KEY=..., SDK_TIMEOUT_MS=310000
 #
-# Exposes 5 MCP tools:
+# Exposes 2 MCP tools:
 #   claude_code_task(prompt, workspace?, tools?, bare?)  — Run coding task
 #   claude_code_status()                                 — Health check
-#   claude_code_daemon_state()                           — KodeClaw daemon state
-#   claude_code_daemon_history(limit?)                   — Recent run history
-#   claude_code_daemon_jobs()                             — List cron jobs
 ```
 
-### Mode 5: KodeClaw Daemon (Always-On Automation)
+### Mode 5: ClaudeClaw Plugin (Always-On Automation)
 ```bash
-# Enable in .env: ENABLE_DAEMON=true
-# Subsystems: heartbeat, cron, Telegram, dashboard
-
-# Dashboard: http://localhost:3100/dashboard
-# Telegram: message the bot directly, use @workspace prefix to route
-# Cron: add .md files to sdk/config/jobs/
-# Heartbeat: auto-checks workspaces every N minutes
+# ClaudeClaw is a Claude Code plugin for daemon features.
+# Install: claude plugins install claudeclaw
+# Configure: /claudeclaw:start (interactive wizard)
+# Features: heartbeat, cron, Telegram, Discord, dashboard
+# See: https://github.com/moazbuilds/claudeclaw
 ```
 
 ## Deployment

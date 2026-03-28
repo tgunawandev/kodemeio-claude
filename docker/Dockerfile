@@ -79,6 +79,10 @@ RUN cp -r /home/dev/.claude /opt/claude-config-baked
 COPY sdk/ /opt/sdk/
 RUN cd /opt/sdk && pnpm install --frozen-lockfile && pnpm run build && pnpm prune --prod
 
+# Copy MCP bridge for OpenClaw integration
+COPY mcp-servers/ /opt/mcp-servers/
+RUN cd /opt/mcp-servers && npm install --omit=dev
+
 # Copy scripts + health check into PATH
 COPY scripts/ /opt/scripts/
 RUN chmod +x /opt/scripts/*.sh && \
@@ -89,7 +93,7 @@ COPY docker/init-firewall.sh /usr/local/bin/
 COPY docker/entrypoint.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/init-firewall.sh && \
-    chown -R dev:dev /home/dev /opt/sdk /opt/scripts /opt/claude-config-baked
+    chown -R dev:dev /home/dev /opt/sdk /opt/mcp-servers /opt/scripts /opt/claude-config-baked
 
 USER dev
 WORKDIR /opt/dev

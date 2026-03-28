@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 24 skills, SDK REST API, and KodeClaw daemon (heartbeat, cron, Telegram, dashboard).
+**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 24 skills, SDK REST API, OpenClaw MCP bridge, and KodeClaw daemon (heartbeat, cron, Telegram, dashboard).
 
 **Stack:** Docker, Node.js 22, Bash, TypeScript (SDK server)
 **Location:** `/home/tgunawan/project/00-new-projects/kodemeio-core/kodemeio-claude/`
@@ -99,6 +99,9 @@ kodemeio-claude/
 │   ├── remote-access.sh        # SSH into container from laptop
 │   ├── verify-scores.sh        # Verify config completeness (14 checks)
 │   └── collect.sh              # Collect CLAUDE.md files (legacy)
+├── mcp-servers/
+│   ├── kodemeio-claude-bridge.mjs  # MCP server for OpenClaw integration
+│   └── package.json                # MCP SDK + zod dependencies
 ├── docker-compose.prod.yml     # Production — full dev container
 ├── docker-compose.sdk.yml      # Production — SDK API only
 ├── docker-compose.yml          # Development (local)
@@ -108,7 +111,7 @@ kodemeio-claude/
 └── CLAUDE.md                   # This file
 ```
 
-## 3 Operating Modes
+## 5 Operating Modes
 
 ### Mode 1: Interactive Development (Boss via SSH/tmux)
 ```bash
@@ -135,7 +138,21 @@ curl -X POST http://kodemeio-claude:3100/task \
   -d '{"prompt": "Run tests", "workspace": "kodemeio-app"}'
 ```
 
-### Mode 4: KodeClaw Daemon (Always-On Automation)
+### Mode 4: OpenClaw MCP Bridge (AI Agent Gateway)
+```bash
+# Register in OpenClaw as an MCP server:
+# Command: node /opt/mcp-servers/kodemeio-claude-bridge.mjs
+# Env: SDK_BASE_URL=http://kodemeio-claude:3100, SDK_API_KEY=..., SDK_TIMEOUT_MS=310000
+#
+# Exposes 5 MCP tools:
+#   claude_code_task(prompt, workspace?, tools?, bare?)  — Run coding task
+#   claude_code_status()                                 — Health check
+#   claude_code_daemon_state()                           — KodeClaw daemon state
+#   claude_code_daemon_history(limit?)                   — Recent run history
+#   claude_code_daemon_jobs()                             — List cron jobs
+```
+
+### Mode 5: KodeClaw Daemon (Always-On Automation)
 ```bash
 # Enable in .env: ENABLE_DAEMON=true
 # Subsystems: heartbeat, cron, Telegram, dashboard

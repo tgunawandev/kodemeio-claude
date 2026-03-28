@@ -39,12 +39,16 @@ RUN mkdir -p /opt/dev /home/dev/.claude && \
 COPY sdk/ /opt/sdk/
 RUN cd /opt/sdk && pnpm install --frozen-lockfile && pnpm run build && pnpm prune --prod
 
+# Copy MCP bridge for OpenClaw integration
+COPY mcp-servers/ /opt/mcp-servers/
+RUN cd /opt/mcp-servers && npm install --omit=dev
+
 # Copy config and entrypoint
 COPY config/.claude/ /home/dev/.claude/
 COPY docker/entrypoint-sdk.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/entrypoint-sdk.sh && \
-    chown -R dev:dev /home/dev /opt/sdk
+    chown -R dev:dev /home/dev /opt/sdk /opt/mcp-servers
 
 USER dev
 WORKDIR /opt/dev

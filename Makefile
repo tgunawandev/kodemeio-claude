@@ -2,7 +2,8 @@
        sdk-up sdk-down sdk-build dev dev-down dev-build \
        generate-env check-env deploy-env \
        sync-config sync-config-dry sync-secrets sync-secrets-dry sync-local sync-all \
-       install-kctl check-kctl backup restore verify verify-container setup-local \
+       install-kctl check-kctl backup restore verify verify-container \
+       setup-local setup-vps setup-vps-check init-session \
        remote monitor status status-json
 
 # ─── Production (full dev container) ─────────────────────────────────
@@ -143,10 +144,19 @@ verify:
 verify-container:
 	docker exec kodemeio-claude bash /opt/scripts/verify-scores.sh /home/dev/.claude
 
-# ─── Setup (local machine) ───────────────────────────────────────────
+# ─── Setup ───────────────────────────────────────────────────────────
 
 setup-local:
 	./scripts/setup-local.sh
+
+setup-vps:
+	sudo ./scripts/setup-vps.sh
+
+setup-vps-check:
+	sudo ./scripts/setup-vps.sh --check
+
+init-session:
+	source ./scripts/init-session.sh
 
 # ─── Status dashboard ───────────────────────────────────────────────
 

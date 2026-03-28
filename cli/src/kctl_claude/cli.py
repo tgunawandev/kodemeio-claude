@@ -16,6 +16,7 @@ from kctl_claude.commands.verify_cmd import app as verify_app
 from kctl_claude.commands.api_cmd import app as api_app
 from kctl_claude.commands.env_cmd import app as env_app
 from kctl_claude.commands.backup_cmd import app as backup_app
+from kctl_claude.commands.setup_cmd import app as setup_app
 
 app = typer.Typer(
     name="kctl-claude",
@@ -32,6 +33,7 @@ app.add_typer(verify_app, name="verify")
 app.add_typer(api_app, name="api")
 app.add_typer(env_app, name="env")
 app.add_typer(backup_app, name="backup")
+app.add_typer(setup_app, name="setup")
 
 
 @app.callback()

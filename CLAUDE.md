@@ -140,31 +140,47 @@ curl -X POST http://kodemeio-claude:3100/task \
 # See: https://github.com/moazbuilds/claudeclaw
 ```
 
-## Deployment
+## Deployment — 3 Modes
 
-### First-time setup on Hetzner
+### Option A: Local (laptop development)
 ```bash
-# 1. Generate production env
-make generate-env          # Creates .env interactively
-
-# 2. Deploy secrets
-make sync-secrets          # Deploys kctl credentials to Hetzner
-make deploy-env            # Deploys .env to Hetzner
-
-# 3. Clone repos on server
-ssh root@dokploy.kodeme.io
-docker exec kodemeio-claude /opt/scripts/setup.sh
-
-# 4. Start
-make up
+kctl-claude setup local        # Install tools + sync config
+claude                         # Start Claude Code
 ```
 
-### Updating config
+### Option B: Docker (Hetzner via Dokploy)
 ```bash
-# After changing skills/agents/rules locally:
-make sync-config           # Sync to repo
-git add -A && git commit   # Commit
-git push                   # Dokploy auto-deploys
+make generate-env              # Create .env
+make sync-secrets              # Deploy kctl credentials
+make build && make up          # Build image and start
+```
+
+### Option C: VPS (bare-metal server)
+```bash
+git clone https://github.com/kodemeio/kodemeio-claude.git /opt/kodemeio-claude
+cd /opt/kodemeio-claude
+sudo ./scripts/setup-vps.sh   # Install everything (idempotent)
+su - dev
+source scripts/init-session.sh # Initialize session
+claude                         # Start Claude Code
+```
+
+### Compare modes
+```bash
+kctl-claude setup compare      # Side-by-side comparison table
+```
+
+### Keeping config in sync
+```bash
+# After editing skills/agents locally:
+kctl-claude sync diff          # Preview changes
+kctl-claude sync push          # Push local → repo
+git commit && git push         # Deploy
+
+# After pulling from git (teammate changed config):
+kctl-claude sync pull          # Pull repo → local
+
+# On VPS — config syncs at every login via init-session.sh
 ```
 
 ## Script Conventions

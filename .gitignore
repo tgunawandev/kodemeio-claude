@@ -19,11 +19,19 @@ Thumbs.db
 *.tmp
 *.bak
 
+# Build caches
+.ruff_cache/
+
+# Claude Code local state (runtime, not project config)
+.claude/agent-memory/
+.claude/settings.local.json
+
 # Node.js
 node_modules/
 sdk/node_modules/
-sdk/server.js
-sdk/server.js.map
+sdk/**/*.js
+sdk/**/*.js.map
+!sdk/config/**
 
 # Docker
 .docker/
@@ -32,4 +40,3 @@ sdk/server.js.map
 config/kodemeio/config.yaml
 !config/kodemeio/config.yaml.example
 config/.claude/.credentials.json
-mcp-servers/node_modules/

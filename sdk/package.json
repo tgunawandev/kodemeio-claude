@@ -1,17 +1,25 @@
 {
   "name": "kodemeio-claude-sdk",
-  "version": "1.0.0",
-  "description": "REST API server for triggering Claude Code tasks programmatically",
+  "version": "2.0.0",
+  "description": "REST API server + KodeClaw daemon for Claude Code automation",
   "main": "server.js",
   "scripts": {
     "build": "tsc",
     "start": "node server.js",
-    "dev": "tsx server.ts"
+    "dev": "tsx server.ts",
+    "test": "vitest run --coverage"
   },
-  "dependencies": {},
+  "dependencies": {
+    "cron": "^3.3.0",
+    "grammy": "^1.35.0",
+    "gray-matter": "^4.0.3",
+    "yaml": "^2.7.0"
+  },
   "devDependencies": {
-    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^4.1.2",
     "tsx": "^4.19.0",
-    "@types/node": "^22.0.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.2"
   }
 }

@@ -124,7 +124,7 @@ OAUTH_TOKEN=$(prompt_value "CLAUDE_CODE_OAUTH_TOKEN" "OAuth token (sk-ant-oat01-
 
 echo ""
 echo "─── SDK API ───"
-SDK_API_KEY=$(prompt_value "SDK_API_KEY" "SDK bearer token (for OpenClaw/CI)" "" "true")
+SDK_API_KEY=$(prompt_value "SDK_API_KEY" "SDK bearer token (for CI/CD)" "" "true")
 SDK_PORT=$(prompt_value "SDK_PORT" "SDK API port" "3100")
 ENABLE_SDK_API=$(prompt_value "ENABLE_SDK_API" "Enable SDK API (true/false)" "true")
 MAX_CONCURRENT=$(prompt_value "MAX_CONCURRENT" "Max concurrent tasks" "3")

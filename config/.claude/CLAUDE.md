@@ -9,7 +9,7 @@ You are developing code for 4 companies, 34 repos.
 - KidNeuro (kidneuro.io): Healthcare — Godot games, Savant video AI, Immich media
 
 ## Shared Infrastructure (kodemeio-core + kodemeio-infra)
-- 13 services: Authentik SSO, PostgreSQL 16, Mailcow, Plane, Gatus, GlitchTip, OpenClaw...
+- 12 services: Authentik SSO, PostgreSQL 16, Mailcow, Plane, Gatus, GlitchTip...
 - 3 IaC: Hetzner (Terraform), Cloudflare, Dokploy
 - Server: dokploy.kodeme.io (Hetzner cx42, 8 vCPU, 16 GB)
 

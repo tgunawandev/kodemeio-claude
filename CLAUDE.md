@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 24 skills, and SDK REST API for programmatic access.
+**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 24 skills, SDK REST API, and KodeClaw daemon (heartbeat, cron, Telegram, dashboard).
 
 **Stack:** Docker, Node.js 22, Bash, TypeScript (SDK server)
 **Location:** `/home/tgunawan/project/00-new-projects/kodemeio-core/kodemeio-claude/`
@@ -17,6 +17,13 @@ make shell           # Shell into container
 make kodemeio        # Attach to kodemeio tmux session
 make health          # Run health checks
 make task            # Run headless Claude Code task
+
+# ─── KodeClaw Daemon ─────────────────────────────────────────
+make daemon-status   # Daemon subsystem status
+make daemon-jobs     # List recent job runs
+make daemon-queue    # Task queue depth
+make daemon-history  # Run history
+make daemon-dashboard # Dashboard URL
 
 # ─── SDK API ─────────────────────────────────────────────────
 make sdk-up          # Start SDK-only container
@@ -59,12 +66,24 @@ kodemeio-claude/
 │   ├── tmux.conf               # Multi-pane layout per company
 │   └── zshrc                   # Shell customization + aliases
 ├── sdk/
-│   ├── server.ts               # REST API (POST /task, GET /health)
+│   ├── server.ts               # REST API + daemon bootstrap
 │   ├── package.json
-│   └── tsconfig.json
-├── mcp-servers/
-│   ├── kodemeio-claude-bridge.mjs  # MCP bridge for OpenClaw
-│   └── package.json
+│   ├── tsconfig.json
+│   ├── daemon/                 # KodeClaw daemon subsystems
+│   │   ├── index.ts            # Orchestrator
+│   │   ├── config.ts           # Hot-reload YAML config (30s)
+│   │   ├── types.ts            # Shared interfaces
+│   │   ├── logger.ts           # Structured JSON logger
+│   │   ├── security.ts         # Security tier enforcement
+│   │   ├── session/            # Session manager + executor + queue
+│   │   ├── heartbeat/          # Per-workspace heartbeat timers
+│   │   ├── cron/               # Markdown job scheduler
+│   │   ├── telegram/           # Bot + workspace routing + voice
+│   │   └── dashboard/          # Web dashboard (SPA + API)
+│   └── config/                 # Daemon runtime config
+│       ├── daemon.yaml         # Main configuration
+│       ├── heartbeat/*.md      # Per-workspace heartbeat prompts
+│       └── jobs/*.md           # Cron job definitions
 ├── scripts/
 │   ├── generate-env.sh         # Interactive .env generator
 │   ├── setup.sh                # First-time: clone repos on Hetzner
@@ -104,7 +123,7 @@ claude --remote
 # Then open claude.ai/code or Claude mobile app
 ```
 
-### Mode 3: Programmatic/API (OpenClaw or CI/CD)
+### Mode 3: Programmatic/API (CI/CD)
 ```bash
 # Headless CLI
 docker exec kodemeio-claude claude -p "Fix auth bug" --output-format json
@@ -113,6 +132,17 @@ docker exec kodemeio-claude claude -p "Fix auth bug" --output-format json
 curl -X POST http://kodemeio-claude:3100/task \
   -H "Authorization: Bearer $API_KEY" \
   -d '{"prompt": "Run tests", "workspace": "kodemeio-app"}'
+```
+
+### Mode 4: KodeClaw Daemon (Always-On Automation)
+```bash
+# Enable in .env: ENABLE_DAEMON=true
+# Subsystems: heartbeat, cron, Telegram, dashboard
+
+# Dashboard: http://localhost:3100/dashboard
+# Telegram: message the bot directly, use @workspace prefix to route
+# Cron: add .md files to sdk/config/jobs/
+# Heartbeat: auto-checks workspaces every N minutes
 ```
 
 ## Deployment

@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Network
     openssh-client iptables ipset iproute2 dnsutils \
     # Utilities
-    jq yq unzip procps man-db \
+    jq yq unzip procps man-db ffmpeg \
     # GitHub CLI
     gh \
     # Database clients

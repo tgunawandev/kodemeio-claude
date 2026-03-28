@@ -19,6 +19,11 @@ services:
       MAX_CONCURRENT: ${MAX_CONCURRENT:-3}
       ENABLE_FIREWALL: ${ENABLE_FIREWALL:-false}
       CLAUDE_CODE_ENABLE_AGENT_TEAMS: "1"
+      # KodeClaw daemon
+      ENABLE_DAEMON: ${ENABLE_DAEMON:-false}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       TZ: Asia/Jakarta
     volumes:
       # All company repos — cloned on Hetzner by scripts/setup.sh

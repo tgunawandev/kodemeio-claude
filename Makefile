@@ -3,7 +3,7 @@
        generate-env check-env deploy-env \
        sync-config sync-config-dry sync-secrets sync-secrets-dry sync-local sync-all \
        install-kctl check-kctl backup restore verify verify-container setup-local \
-       remote monitor
+       remote monitor status status-json
 
 # ─── Production (full dev container) ─────────────────────────────────
 
@@ -147,3 +147,11 @@ verify-container:
 
 setup-local:
 	./scripts/setup-local.sh
+
+# ─── Status dashboard ───────────────────────────────────────────────
+
+status:
+	./scripts/status.sh
+
+status-json:
+	./scripts/status.sh --json

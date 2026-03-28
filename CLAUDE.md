@@ -32,7 +32,9 @@ make sync-config     # Push local config → repo (before deploy)
 make sync-config-dry # Preview what sync-config would change
 make sync-secrets    # Deploy credentials to Hetzner
 
-# ─── Environment ─────────────────────────────────────────────
+# ─── Status & Environment ────────────────────────────────────
+make status          # One-page status dashboard
+make status-json     # Machine-readable JSON status
 make generate-env    # Interactive .env generator
 make check-env       # Validate .env
 make deploy-env      # Deploy .env to Hetzner

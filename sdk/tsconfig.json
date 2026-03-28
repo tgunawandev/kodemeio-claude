@@ -13,6 +13,6 @@
     "declaration": false,
     "sourceMap": false
   },
-  "include": ["server.ts"],
+  "include": ["server.ts", "server.test.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,9 +1,8 @@
 // server.test.ts — Smoke tests for the SDK REST API
 // Spawns the server on a random port and validates core endpoints.
 
-import { execFile } from "node:child_process";
+import { execFile, fork } from "node:child_process";
 import { promisify } from "node:util";
-import { createServer, type Server } from "node:http";
 
 const exec = promisify(execFile);
 
@@ -11,7 +10,7 @@ const TEST_PORT = 39100 + Math.floor(Math.random() * 1000);
 const TEST_KEY = "test-api-key-123";
 const BASE = `http://127.0.0.1:${TEST_PORT}`;
 
-let server: ReturnType<typeof import("node:child_process").fork> | null = null;
+let server: ReturnType<typeof fork> | null = null;
 
 // ─── Helpers ────────────────────────────────────────────────────────
 
@@ -47,7 +46,6 @@ function assert(condition: boolean, msg: string): void {
 
 async function startServer(): Promise<void> {
   return new Promise((resolve, reject) => {
-    const { fork } = require("node:child_process");
     server = fork("./server.ts", [], {
       execArgv: ["--import", "tsx"],
       env: {

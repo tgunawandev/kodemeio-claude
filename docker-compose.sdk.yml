@@ -6,6 +6,7 @@ services:
     image: kodemeio-claude-sdk:latest
     container_name: kodemeio-claude-sdk
     restart: unless-stopped
+    # Note: ENABLE_SDK_API is not needed here — SDK container always starts the API
     environment:
       CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
       GIT_USER_NAME: ${GIT_USER_NAME:-Tri Gunawan}
@@ -14,7 +15,7 @@ services:
       SDK_API_KEY: ${SDK_API_KEY:-}
       SDK_PORT: ${SDK_PORT:-3100}
       MAX_CONCURRENT: ${MAX_CONCURRENT:-3}
-      TZ: Asia/Jakarta
+      TZ: ${TZ:-Asia/Jakarta}
     volumes:
       # All company repos
       - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-app:/opt/dev/kodemeio-app

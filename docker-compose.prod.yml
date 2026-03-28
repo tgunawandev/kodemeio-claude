@@ -18,8 +18,8 @@ services:
       SDK_PORT: ${SDK_PORT:-3100}
       MAX_CONCURRENT: ${MAX_CONCURRENT:-3}
       ENABLE_FIREWALL: ${ENABLE_FIREWALL:-false}
-      CLAUDE_CODE_ENABLE_AGENT_TEAMS: "1"
-      TZ: Asia/Jakarta
+      CLAUDE_CODE_ENABLE_AGENT_TEAMS: "1"  # Enables multi-agent teams (intentionally hardcoded)
+      TZ: ${TZ:-Asia/Jakarta}
     volumes:
       # All company repos — cloned on Hetzner by scripts/setup.sh
       - ${REPOS_BASE_PATH:-/opt/repos}/kodemeio-app:/opt/dev/kodemeio-app

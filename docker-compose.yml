@@ -12,7 +12,7 @@ services:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       ENABLE_SDK_API: ${ENABLE_SDK_API:-true}
       SDK_API_KEY: ${SDK_API_KEY:-dev-key}
-      TZ: Asia/Jakarta
+      TZ: ${TZ:-Asia/Jakarta}
     volumes:
       # Mount current directory for development
       - .:/opt/dev/kodemeio-claude

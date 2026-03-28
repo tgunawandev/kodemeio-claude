@@ -3,7 +3,7 @@ name: kodemeio-platform
 description: >
   Cross-project architecture knowledge for the Kodemeio platform.
   Documents how the 5 main repos connect: kodemeio-react (11 PWA apps),
-  kodemeio-odoo-18 (ERP backend), kodemeio-next (websites),
+  kodemeio-odoo (ERP backend), kodemeio-next (websites),
   kodemeio-hono (Node.js services), kodemeio-fastapi (Python services).
   Use when working across repos, adding end-to-end features, debugging
   cross-service issues, or deciding which project to work in.
@@ -22,7 +22,7 @@ allowed-tools:
 | Repo | Stack | Purpose | Location |
 |---|---|---|---|
 | **kodemeio-react** | React 19 + Vite + Turborepo | 11 mobile PWA apps | kodemeio-app/kodemeio-react |
-| **kodemeio-odoo-18** | Odoo 18 + FastAPI addons | ERP backend for all mobile apps | kodemeio-app/kodemeio-odoo-18 |
+| **kodemeio-odoo** | Odoo 18 + FastAPI addons | ERP backend for all mobile apps | kodemeio-app/kodemeio-odoo |
 | **kodemeio-next** | Next.js 16 + App Router | Marketing websites | kodemeio-app/kodemeio-next |
 | **kodemeio-hono** | Hono 4.7 + Drizzle + BullMQ | Node.js API services | kodemeio-app/kodemeio-hono |
 | **kodemeio-fastapi** | FastAPI + SQLAlchemy 2.0 async | Python services (webhooks, agents, ETL) | kodemeio-app/kodemeio-fastapi |
@@ -68,7 +68,7 @@ allowed-tools:
 ```
 React PWA (kodemeio-react)
   ↓ HTTP REST (JWT in header)
-Odoo FastAPI addon (kodemeio-odoo-18/src/private/<app>_management)
+Odoo FastAPI addon (kodemeio-odoo/src/private/<app>_management)
   ↓ Pydantic validation → Odoo ORM
 PostgreSQL (kodemeio-postgres-16)
   ↓ Response envelope: { success, data, total, message }
@@ -84,8 +84,8 @@ Odoo FastAPI router → Pydantic schema → OpenAPI JSON → @hey-api/openapi-ts
 
 | Task | Work In | Files to Touch |
 |---|---|---|
-| **Add mobile app feature** | kodemeio-odoo-18 (backend) + kodemeio-react (frontend) | Odoo: models/, services/, schemas/ + React: api/, pages/ |
-| **Add new mobile app** | kodemeio-odoo-18 (new addon) + kodemeio-react (new app) | New <app>_management module + new apps/<app>/ |
+| **Add mobile app feature** | kodemeio-odoo (backend) + kodemeio-react (frontend) | Odoo: models/, services/, schemas/ + React: api/, pages/ |
+| **Add new mobile app** | kodemeio-odoo (new addon) + kodemeio-react (new app) | New <app>_management module + new apps/<app>/ |
 | **Add website page** | kodemeio-next | apps/<site>/app/[locale]/<path>/page.tsx |
 | **Add website API backend** | kodemeio-hono | apps/svc1/src/routes/<name>.ts |
 | **Add integration/webhook** | kodemeio-fastapi (or kodemeio-hono) | FastAPI: apps/webhook-* or apps/*-mm |
@@ -93,15 +93,15 @@ Odoo FastAPI router → Pydantic schema → OpenAPI JSON → @hey-api/openapi-ts
 | **Add AI agent** | kodemeio-fastapi | apps/agent-main/ |
 | **Add ETL pipeline** | kodemeio-fastapi | apps/etl-main/ |
 | **Manage users/SSO** | kctl-ak CLI | `kctl-ak users`, `kctl-ak groups`, etc. |
-| **Add Odoo model** | kodemeio-odoo-18 | models/, views/, security/, tests/ |
+| **Add Odoo model** | kodemeio-odoo | models/, views/, security/, tests/ |
 | **Add Mattermost integration** | kodemeio-fastapi (odoo-mm or plane-mm) | webhook + events worker |
 
 ## Adding a Feature End-to-End (Example: New WMS Feature)
 
-### Step 1: Backend (kodemeio-odoo-18)
+### Step 1: Backend (kodemeio-odoo)
 
 ```bash
-cd kodemeio-app/kodemeio-odoo-18
+cd kodemeio-app/kodemeio-odoo
 
 # 1. Add/modify Odoo model
 # src/private/wms_management/models/wms_new_feature.py
@@ -201,8 +201,8 @@ pnpm --filter @kodemeio/wms codegen
 | FastAPI plane-mm | 8004 | kodemeio-fastapi |
 | FastAPI webhook-github | 8005 | kodemeio-fastapi |
 | FastAPI webhook-chatwoot | 8006 | kodemeio-fastapi |
-| Odoo web | 8069 | kodemeio-odoo-18 |
-| Odoo FastAPI | 8869 | kodemeio-odoo-18 |
+| Odoo web | 8069 | kodemeio-odoo |
+| Odoo FastAPI | 8869 | kodemeio-odoo |
 
 ## Shared Infrastructure
 

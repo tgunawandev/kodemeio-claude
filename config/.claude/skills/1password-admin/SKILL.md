@@ -55,7 +55,7 @@ kctl-1password list
 kctl-1password push --all [--dry-run] [--force]
 
 # Push specific project/environment
-kctl-1password push -p kodemeio-odoo-18 -e production
+kctl-1password push -p kodemeio-odoo -e production
 
 # Pull all from 1Password to local
 kctl-1password pull --all [--dry-run] [--force] [--no-backup]
@@ -88,7 +88,7 @@ kctl-1password vault items
 kctl-1password projects list
 
 # Show sync status for a project
-kctl-1password projects status kodemeio-odoo-18
+kctl-1password projects status kodemeio-odoo
 
 # List env files for a project
 kctl-1password projects envs kodemeio-react
@@ -100,7 +100,7 @@ kctl-1password projects envs kodemeio-react
 kctl-1password backup list [project]
 
 # Restore from backup
-kctl-1password backup restore kodemeio-odoo-18 production [timestamp]
+kctl-1password backup restore kodemeio-odoo production [timestamp]
 
 # Clean old backups (keep N most recent)
 kctl-1password backup clean --keep 5

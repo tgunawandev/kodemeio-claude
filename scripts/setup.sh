@@ -47,7 +47,7 @@ fi
 REPOS=(
     # Kodemeio
     "kodemeio-react"
-    "kodemeio-odoo-18"
+    "kodemeio-odoo"
     "kodemeio-fastapi"
     "kodemeio-next"
     "kodemeio-hono"

@@ -45,7 +45,7 @@ Build FastAPI-powered mobile app backends inside Odoo 18 addons. All 8 Kodemeio 
 ## Architecture Overview
 
 ```
-kodemeio-odoo-18/src/private/
+kodemeio-odoo/src/private/
 ├── base_management/          # Shared: JWT, errors, rate limiter
 ├── sfa_management/           # SFA app backend
 ├── lfa_management/           # LFA app backend

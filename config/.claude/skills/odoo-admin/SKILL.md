@@ -6,7 +6,7 @@ description: Odoo 18 ERP administration via kctl-odoo CLI. Covers user managemen
 
 ## Overview
 
-`kctl-odoo` is the Kodemeio CLI for managing Odoo 18 ERP instances. It uses Odoo's JSON-RPC API with API key authentication. Installed via `uv tool install ./cli` from the kodemeio-odoo-18 repo.
+`kctl-odoo` is the Kodemeio CLI for managing Odoo 18 ERP instances. It uses Odoo's JSON-RPC API with API key authentication. Installed via `uv tool install ./cli` from the kodemeio-odoo repo.
 
 ## Architecture
 

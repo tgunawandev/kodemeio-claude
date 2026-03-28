@@ -125,7 +125,7 @@ create_tmux_session "core"      "/opt/dev/kodemeio-core"
 echo ""
 
 # ─── Start SDK API server in background (if enabled) ────────────────
-if [ "${ENABLE_SDK_API:-false}" = "true" ] && [ -d /opt/sdk ]; then
+if [ "${ENABLE_SDK_API:-false}" = "true" ] && [ -f /opt/sdk/server.js ]; then
     echo "Starting SDK API server on :${SDK_PORT:-3100}..."
     cd /opt/sdk && node server.js &
 fi

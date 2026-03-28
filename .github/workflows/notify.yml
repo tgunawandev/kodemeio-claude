@@ -17,10 +17,10 @@ jobs:
           echo "subject=$SUBJECT" >> $GITHUB_OUTPUT
 
       - name: Send notification
-        uses: appleboy/telegram-action@master
+        uses: appleboy/telegram-action@v2.4.2
         with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID_ABCFOOD }}
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN_ABCFOOD }}
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           format: html
           message: |
             📝 <b>Changes Pushed</b>

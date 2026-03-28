@@ -13,6 +13,7 @@ services:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       SDK_API_KEY: ${SDK_API_KEY:-}
       SDK_PORT: ${SDK_PORT:-3100}
+      MAX_CONCURRENT: ${MAX_CONCURRENT:-3}
       TZ: Asia/Jakarta
     volumes:
       # All company repos

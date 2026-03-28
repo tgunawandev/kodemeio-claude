@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 24 skills, SDK REST API, OpenClaw MCP bridge, and ClaudeClaw plugin for automation (heartbeat, cron, Telegram, Discord).
+**Purpose:** Docker-based Claude Code remote development platform for the Kodemeio empire (4 companies, 34 repos). Deploys to Hetzner via Dokploy with full toolchain, 14 kctl-* infrastructure CLIs, 24 skills, SDK REST API, and OpenClaw MCP bridge.
 
 **Stack:** Docker, Node.js 22, Bash, TypeScript (SDK server)
 **Location:** `/home/tgunawan/project/00-new-projects/kodemeio-app/kodemeio-claude/`
@@ -52,7 +52,7 @@ kodemeio-claude/
 │   │   ├── keybindings.json    # Custom keyboard shortcuts
 │   │   ├── CLAUDE.md           # Global empire context
 │   │   ├── agents/             # 4 subagents (code-reviewer, docs, architect, test)
-│   │   ├── skills/             # 19 custom skills (kctl admin, dev frameworks)
+│   │   ├── skills/             # 29 custom skills (kctl admin, dev frameworks)
 │   │   ├── commands/           # Custom slash commands
 │   │   └── rules/              # 5 path-specific rule files
 │   ├── kodemeio/               # kctl-* credential config template
@@ -73,8 +73,7 @@ kodemeio-claude/
 │   ├── sync-secrets.sh         # Deploy credentials to Hetzner
 │   ├── backup-runtime.sh       # Backup container runtime volume
 │   ├── remote-access.sh        # SSH into container from laptop
-│   ├── verify-scores.sh        # Verify config completeness (14 checks)
-│   └── collect.sh              # Collect CLAUDE.md files (legacy)
+│   └── verify-scores.sh        # Verify config completeness (14 checks)
 ├── mcp-servers/
 │   ├── kodemeio-claude-bridge.mjs  # MCP server for OpenClaw integration
 │   └── package.json                # MCP SDK + zod dependencies

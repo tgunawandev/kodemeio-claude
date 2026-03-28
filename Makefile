@@ -2,7 +2,7 @@
        sdk-up sdk-down sdk-build dev dev-down dev-build \
        generate-env check-env deploy-env \
        sync-config sync-secrets sync-secrets-dry sync-all \
-       install-kctl check-kctl backup restore verify verify-container setup-local collect
+       install-kctl check-kctl backup restore verify verify-container setup-local
 
 # ─── Production (full dev container) ─────────────────────────────────
 
@@ -139,8 +139,3 @@ verify-container:
 
 setup-local:
 	./scripts/setup-local.sh
-
-# ─── Legacy (knowledge base collection) ──────────────────────────────
-
-collect:
-	./scripts/collect.sh

@@ -82,6 +82,8 @@ kodemeio-claude/
 │   │   └── dashboard/          # Web dashboard (SPA + API)
 │   └── config/                 # Daemon runtime config
 │       ├── daemon.yaml         # Main configuration
+│       ├── IDENTITY.md         # Persona identity
+│       ├── SOUL.md             # Persona communication style
 │       ├── heartbeat/*.md      # Per-workspace heartbeat prompts
 │       └── jobs/*.md           # Cron job definitions
 ├── scripts/
@@ -97,7 +99,6 @@ kodemeio-claude/
 │   ├── remote-access.sh        # SSH into container from laptop
 │   ├── verify-scores.sh        # Verify config completeness (14 checks)
 │   └── collect.sh              # Collect CLAUDE.md files (legacy)
-├── knowledge-base/             # Claude Code reference docs (01-20)
 ├── docker-compose.prod.yml     # Production — full dev container
 ├── docker-compose.sdk.yml      # Production — SDK API only
 ├── docker-compose.yml          # Development (local)

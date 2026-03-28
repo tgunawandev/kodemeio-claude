@@ -1,0 +1,13 @@
+# Don't send these to Docker build context
+.git
+.env
+.env.*
+!.env.example
+node_modules
+sdk/node_modules
+sdk/__tests__
+sdk/vitest.config.ts
+.ruff_cache
+.claude/agent-memory
+.claude/settings.local.json
+.claude/worktrees

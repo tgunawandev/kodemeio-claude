@@ -77,7 +77,7 @@ RUN cp -r /home/dev/.claude /opt/claude-config-baked
 
 # Copy SDK server — compile TypeScript then prune dev deps
 COPY sdk/ /opt/sdk/
-RUN cd /opt/sdk && npm install && npm run build && npm prune --omit=dev
+RUN cd /opt/sdk && pnpm install --frozen-lockfile && pnpm run build && pnpm prune --prod
 
 # Copy scripts + health check into PATH
 COPY scripts/ /opt/scripts/

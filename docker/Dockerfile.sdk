@@ -37,7 +37,7 @@ RUN mkdir -p /opt/dev /home/dev/.claude && \
 
 # Copy SDK server — compile TypeScript then prune dev deps
 COPY sdk/ /opt/sdk/
-RUN cd /opt/sdk && npm install && npm run build && npm prune --omit=dev
+RUN cd /opt/sdk && pnpm install --frozen-lockfile && pnpm run build && pnpm prune --prod
 
 # Copy config and entrypoint
 COPY config/.claude/ /home/dev/.claude/

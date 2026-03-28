@@ -107,6 +107,9 @@ export class ConfigManager extends EventEmitter {
         this.config.persona.soul_file = resolve(this.configDir, "SOUL.md");
       }
 
+      // Env var overrides for secrets (never commit user IDs to git)
+      this.applyEnvOverrides();
+
       log.info("Config loaded", { path: this.configPath });
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === "ENOENT") {
@@ -116,6 +119,8 @@ export class ConfigManager extends EventEmitter {
       } else {
         log.error("Failed to load config", { error: String(err) });
       }
+      // Still apply env overrides even when using defaults
+      this.applyEnvOverrides();
     }
   }
 
@@ -163,5 +168,16 @@ export class ConfigManager extends EventEmitter {
       }
     }
     return result;
+  }
+
+  private applyEnvOverrides(): void {
+    // TELEGRAM_ALLOWED_USERS=634688702,123456 → [634688702, 123456]
+    const allowedUsers = process.env.TELEGRAM_ALLOWED_USERS;
+    if (allowedUsers) {
+      this.config.telegram.allowed_user_ids = allowedUsers
+        .split(",")
+        .map((s) => parseInt(s.trim(), 10))
+        .filter((n) => !isNaN(n));
+    }
   }
 }

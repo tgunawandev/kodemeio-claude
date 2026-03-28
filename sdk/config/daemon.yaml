@@ -43,7 +43,7 @@ telegram:
   enabled: false
   token_env: TELEGRAM_BOT_TOKEN
   default_workspace: kodemeio
-  allowed_user_ids: []
+  allowed_user_ids: [] # Override via TELEGRAM_ALLOWED_USERS env var
   forward_heartbeat: true
   forward_cron: false
   react_on_receive: "👀"

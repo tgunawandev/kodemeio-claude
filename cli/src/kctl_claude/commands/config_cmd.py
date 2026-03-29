@@ -30,6 +30,25 @@ from kctl_claude.core.config import SERVICE_KEY, ServiceConfig
 app = typer.Typer(help="Manage CLI configuration and profiles.")
 
 ENV_PREFIX = "KCTL_CLAUDE"
+
+_SECRET_KEYS = {"token", "api_key", "password", "secret", "service_account_token", "auth_token", "api_token"}
+
+
+def _mask_value(key: str, value: object) -> str:
+    """Mask sensitive values in config output."""
+    if any(secret in key.lower() for secret in _SECRET_KEYS):
+        s = str(value)
+        if len(s) > 8:
+            return s[:4] + "****" + s[-4:]
+        return "****"
+    if isinstance(value, dict):
+        parts = [f"'{k}': {_mask_value(k, v)!r}" for k, v in value.items()]
+        return "{" + ", ".join(parts) + "}"
+    if isinstance(value, list):
+        return str(value)
+    return str(value)
+
+
 VALID_FIELDS = {"config_dir", "backup_dir"}
 
 
@@ -197,7 +216,7 @@ def show(ctx: typer.Context) -> None:
             if not isinstance(svc_data, dict):
                 continue
             indicator = "[green]●[/green]" if svc_name == SERVICE_KEY else "[dim]○[/dim]"
-            detail_parts = [f"{k}={v}" for k, v in svc_data.items() if v]
+            detail_parts = [f"{k}={_mask_value(k, v)}" for k, v in svc_data.items() if v]
             kvs.append((f"{indicator} {svc_name}", ", ".join(detail_parts) if detail_parts else "(empty)"))
 
         if not kvs:
@@ -376,7 +395,14 @@ def current(ctx: typer.Context) -> None:
     all_services = get_all_services_in_profile(active)
     other = {k: v for k, v in all_services.items() if k != SERVICE_KEY and isinstance(v, dict)}
     if other:
-        sections.append(("Other Services in Profile", [(svc_name, str(v)) for svc_name, v in other.items()]))
+        masked = []
+        for svc_name, v in other.items():
+            if isinstance(v, dict):
+                parts = ", ".join(f"{k}={_mask_value(k, val)}" for k, val in v.items() if val)
+                masked.append((svc_name, parts or "(empty)"))
+            else:
+                masked.append((svc_name, str(v)))
+        sections.append(("Other Services in Profile", masked))
 
     # Other profiles
     all_profiles = [p for p in get_profile_names() if p != active]

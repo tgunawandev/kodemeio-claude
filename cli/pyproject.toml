@@ -31,8 +31,6 @@ kctl-claude = "kctl_claude.cli:_run"
 [tool.hatch.build.targets.wheel]
 packages = ["src/kctl_claude"]
 
-[tool.uv.sources]
-kctl-common = { path = "/home/tgunawan/project/00-new-projects/kodemeio-app/kodemeio-platform/packages/kctl-common" }
 
 [tool.ruff]
 target-version = "py312"

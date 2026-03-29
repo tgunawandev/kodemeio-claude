@@ -28,9 +28,6 @@ dev = [
 [project.scripts]
 kctl-claude = "kctl_claude.cli:_run"
 
-[tool.uv.sources]
-kctl-common = { path = "../../../kodemeio-app/kodemeio-platform/packages/kctl-common" }
-
 [tool.hatch.build.targets.wheel]
 packages = ["src/kctl_claude"]
 

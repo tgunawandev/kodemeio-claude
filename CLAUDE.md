@@ -62,9 +62,10 @@ kodemeio-claude/
 │   ├── kodemeio/               # kctl-* credential config template
 │   ├── tmux.conf               # Multi-pane layout per company
 │   └── zshrc                   # Shell customization + aliases
-├── cli/                        # kctl-claude Python CLI
+├── cli/                        # kctl-claude Python CLI (117 tests)
 │   ├── pyproject.toml          # Hatchling build, uv tool install
-│   └── src/kctl_claude/        # status, sync, verify, api, env, backup
+│   ├── tests/                  # Comprehensive test suite
+│   └── src/kctl_claude/        # Commands: status, sync, verify, api, env, backup, doctor, completions, update
 ├── sdk/
 │   ├── server.ts               # REST API server (standalone)
 │   ├── package.json
@@ -204,3 +205,39 @@ kctl-claude sync pull          # Pull repo → local
 - Optional firewall (init-firewall.sh) restricts outbound to whitelisted domains
 - `bypassPermissions` mode — this container IS the isolated sandbox
 - Credentials never baked into image — injected via env vars and mounted volumes
+
+## kctl-claude CLI
+
+### Quick Commands
+```bash
+cd cli
+uv sync --all-extras
+uv run python -m pytest tests/ -v      # 117 tests
+uv run ruff check src/ tests/          # Lint
+uv run ruff format src/ tests/         # Format
+```
+
+### Command Groups
+| Command | Description |
+|---------|-------------|
+| `config` | init, add, use, show, validate, remove, set, profiles, current |
+| `status` | Dashboard, health check, update check |
+| `sync` | push, pull, diff, secrets |
+| `verify` | 14-point config verification |
+| `api` | health, task (SDK REST API) |
+| `env` | generate, check, deploy |
+| `backup` | create, restore |
+| `setup` | local, vps, docker, init, compare |
+| `doctor` | Scored diagnostics (12 checks) |
+| `completions` | Shell completion generation/install |
+| `update` | Self-update via PyPI |
+
+### Global Options
+`--json`, `--quiet/-q`, `--verbose/-v`, `--version/-V`
+
+### Architecture
+- Uses `kctl-common` shared library (output, config, doctor, completions, self-update, history, plugins)
+- Thin Output subclass in `core/output.py` with backward-compatible aliases
+- `run_script()` helper in `core/runner.py` for safe subprocess delegation
+- Plugin discovery via `kctl_claude.plugins` entry point group
+- Command history recorded to `~/.local/share/kodemeio/kctl-claude/history.db`

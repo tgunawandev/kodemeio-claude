@@ -5,8 +5,10 @@ from __future__ import annotations
 import subprocess
 
 import typer
+from kctl_common.exceptions import CommandError
 
 from kctl_claude.core.callbacks import AppContext
+from kctl_claude.core.runner import run_script
 
 app = typer.Typer(help="Setup Claude Code on local, VPS, or Docker.")
 
@@ -15,8 +17,14 @@ app = typer.Typer(help="Setup Claude Code on local, VPS, or Docker.")
 def local(ctx: typer.Context) -> None:
     """Setup local development environment (laptop)."""
     actx: AppContext = ctx.obj
+    out = actx.output
     script = _get_script(actx, "setup-local.sh")
-    subprocess.run(["bash", str(script)], check=False)
+    try:
+        run_script(script, capture=False)
+        out.success("Local setup complete")
+    except CommandError as e:
+        out.error(f"Setup failed (exit {e.returncode}): {e.stderr}")
+        raise typer.Exit(code=1) from None
 
 
 @app.command()
@@ -27,13 +35,20 @@ def vps(
 ) -> None:
     """Setup VPS/bare-metal server (requires sudo)."""
     actx: AppContext = ctx.obj
+    out = actx.output
     script = _get_script(actx, "setup-vps.sh")
-    args = ["sudo", "bash", str(script)]
+    args = []
     if check:
         args.append("--check")
     if skip_repos:
         args.append("--skip-repos")
-    subprocess.run(args, check=False)
+    # VPS setup requires sudo
+    cmd = ["sudo", "bash", str(script)] + args
+    result = subprocess.run(cmd, capture_output=False, text=True)
+    if result.returncode != 0:
+        out.error(f"VPS setup failed (exit {result.returncode})")
+        raise typer.Exit(code=1)
+    out.success("VPS setup complete")
 
 
 @app.command()
@@ -41,24 +56,35 @@ def docker(ctx: typer.Context) -> None:
     """Show Docker deployment commands."""
     actx: AppContext = ctx.obj
     out = actx.output
+
+    if actx.json_mode:
+        out.raw_json(
+            {
+                "production": "docker compose -f docker-compose.prod.yml up -d",
+                "sdk_only": "docker compose -f docker-compose.sdk.yml up -d",
+                "local": "docker compose up -d",
+            }
+        )
+        return
+
     out.header("DOCKER DEPLOYMENT")
-    out.print("")
-    out.print("  [bold]Production (full dev container):[/bold]")
-    out.print("    docker compose -f docker-compose.prod.yml build")
-    out.print("    docker compose -f docker-compose.prod.yml up -d")
-    out.print("")
-    out.print("  [bold]SDK-only (lightweight API):[/bold]")
-    out.print("    docker compose -f docker-compose.sdk.yml build")
-    out.print("    docker compose -f docker-compose.sdk.yml up -d")
-    out.print("")
-    out.print("  [bold]Local dev:[/bold]")
-    out.print("    docker compose up -d")
-    out.print("")
-    out.print("  [bold]Before deploying:[/bold]")
-    out.print("    kctl-claude env check      # Validate .env")
-    out.print("    kctl-claude sync push      # Sync config to repo")
-    out.print("    git push                   # Dokploy auto-deploys")
-    out.print("")
+    out.text("")
+    out.text("  [bold]Production (full dev container):[/bold]")
+    out.text("    docker compose -f docker-compose.prod.yml build")
+    out.text("    docker compose -f docker-compose.prod.yml up -d")
+    out.text("")
+    out.text("  [bold]SDK-only (lightweight API):[/bold]")
+    out.text("    docker compose -f docker-compose.sdk.yml build")
+    out.text("    docker compose -f docker-compose.sdk.yml up -d")
+    out.text("")
+    out.text("  [bold]Local dev:[/bold]")
+    out.text("    docker compose up -d")
+    out.text("")
+    out.text("  [bold]Before deploying:[/bold]")
+    out.text("    kctl-claude env check      # Validate .env")
+    out.text("    kctl-claude sync push      # Sync config to repo")
+    out.text("    git push                   # Dokploy auto-deploys")
+    out.text("")
 
 
 @app.command("init")
@@ -69,8 +95,14 @@ def init_session(ctx: typer.Context) -> None:
       source scripts/init-session.sh
     """
     actx: AppContext = ctx.obj
+    out = actx.output
     script = _get_script(actx, "init-session.sh")
-    subprocess.run(["bash", str(script)], check=False)
+    try:
+        run_script(script, capture=False)
+        out.success("Session initialized")
+    except CommandError as e:
+        out.error(f"Init failed (exit {e.returncode}): {e.stderr}")
+        raise typer.Exit(code=1) from None
 
 
 @app.command()
@@ -80,7 +112,7 @@ def compare(ctx: typer.Context) -> None:
     out = actx.output
 
     if actx.json_mode:
-        out.json_out(
+        out.raw_json(
             {
                 "modes": {
                     "local": {
@@ -126,13 +158,13 @@ def compare(ctx: typer.Context) -> None:
     )
 
 
-def _get_script(actx: AppContext, name: str):
+def _get_script(actx: AppContext, name: str):  # noqa: ANN202
     repo = actx.repo_dir
     if not repo:
-        actx.output.fail("Repo not found.")
+        actx.output.error("Repo not found.")
         raise typer.Exit(code=1)
     script = repo / "scripts" / name
     if not script.is_file():
-        actx.output.fail(f"Script not found: {script}")
+        actx.output.error(f"Script not found: {script}")
         raise typer.Exit(code=1)
     return script

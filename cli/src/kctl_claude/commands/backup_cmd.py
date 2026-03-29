@@ -6,8 +6,10 @@ import subprocess
 from typing import Annotated
 
 import typer
+from kctl_common.exceptions import CommandError
 
 from kctl_claude.core.callbacks import AppContext
+from kctl_claude.core.runner import run_script
 
 app = typer.Typer(help="Backup and restore Claude Code runtime.")
 
@@ -16,15 +18,18 @@ app = typer.Typer(help="Backup and restore Claude Code runtime.")
 def create_backup(ctx: typer.Context) -> None:
     """Backup container runtime volume."""
     actx: AppContext = ctx.obj
+    out = actx.output
     repo = actx.repo_dir
     if not repo:
-        actx.output.fail("Repo not found.")
+        out.error("Repo not found.")
         raise typer.Exit(code=1)
     script = repo / "scripts" / "backup-runtime.sh"
-    if not script.is_file():
-        actx.output.fail(f"Script not found: {script}")
-        raise typer.Exit(code=1)
-    subprocess.run(["bash", str(script)], check=False)
+    try:
+        run_script(script, capture=False)
+        out.success("Backup created")
+    except CommandError as e:
+        out.error(f"Backup failed (exit {e.returncode}): {e.stderr}")
+        raise typer.Exit(code=1) from None
 
 
 @app.command()
@@ -35,13 +40,14 @@ def restore(
     """Restore runtime from backup."""
     actx: AppContext = ctx.obj
     out = actx.output
-    out.print(f"Restoring from {backup_dir}...")
+    out.info(f"Restoring from {backup_dir}...")
     result = subprocess.run(
         ["docker", "cp", f"{backup_dir}/.", "kodemeio-claude:/home/dev/.claude/"],
-        check=False,
+        capture_output=True,
+        text=True,
     )
     if result.returncode == 0:
-        out.ok("Restore complete")
+        out.success("Restore complete")
     else:
-        out.fail("Restore failed")
+        out.error(f"Restore failed (exit {result.returncode}): {result.stderr.strip()}")
         raise typer.Exit(code=1)

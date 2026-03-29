@@ -2,70 +2,82 @@
 
 from __future__ import annotations
 
-import subprocess
-
 import typer
+from kctl_common.exceptions import CommandError
 
 from kctl_claude.core.callbacks import AppContext
+from kctl_claude.core.runner import run_script
 
 app = typer.Typer(help="Sync config between local ~/.claude and repo.")
 
 
 @app.command()
 def push(ctx: typer.Context) -> None:
-    """Sync local config → repo (for Docker deployment)."""
+    """Sync local config -> repo (for Docker deployment)."""
     actx: AppContext = ctx.obj
+    out = actx.output
     repo = actx.repo_dir
     if not repo:
-        actx.output.fail("Repo not found. Run from inside kodemeio-claude or set up paths.")
+        out.error("Repo not found. Run from inside kodemeio-claude or set up paths.")
         raise typer.Exit(code=1)
     script = repo / "scripts" / "sync-config.sh"
-    if not script.is_file():
-        actx.output.fail(f"Script not found: {script}")
-        raise typer.Exit(code=1)
-    subprocess.run(["bash", str(script)], check=False)
+    try:
+        run_script(script, capture=False)
+        out.success("Config pushed to repo")
+    except CommandError as e:
+        out.error(f"Command failed (exit {e.returncode}): {e.stderr}")
+        raise typer.Exit(code=1) from None
 
 
 @app.command()
 def pull(ctx: typer.Context) -> None:
-    """Sync repo config → local (update local environment)."""
+    """Sync repo config -> local (update local environment)."""
     actx: AppContext = ctx.obj
+    out = actx.output
     repo = actx.repo_dir
     if not repo:
-        actx.output.fail("Repo not found.")
+        out.error("Repo not found.")
         raise typer.Exit(code=1)
     script = repo / "scripts" / "setup-local.sh"
-    if not script.is_file():
-        actx.output.fail(f"Script not found: {script}")
-        raise typer.Exit(code=1)
-    subprocess.run(["bash", str(script), "--sync"], check=False)
+    try:
+        run_script(script, args=["--sync"], capture=False)
+        out.success("Config pulled from repo")
+    except CommandError as e:
+        out.error(f"Command failed (exit {e.returncode}): {e.stderr}")
+        raise typer.Exit(code=1) from None
 
 
 @app.command()
 def diff(ctx: typer.Context) -> None:
     """Preview what push would change (dry-run)."""
     actx: AppContext = ctx.obj
+    out = actx.output
     repo = actx.repo_dir
     if not repo:
-        actx.output.fail("Repo not found.")
+        out.error("Repo not found.")
         raise typer.Exit(code=1)
     script = repo / "scripts" / "sync-config.sh"
-    if not script.is_file():
-        actx.output.fail(f"Script not found: {script}")
-        raise typer.Exit(code=1)
-    subprocess.run(["bash", str(script), "--dry-run"], check=False)
+    try:
+        run_script(script, args=["--dry-run"], capture=False)
+        out.success("Diff complete")
+    except CommandError as e:
+        out.error(f"Command failed (exit {e.returncode}): {e.stderr}")
+        raise typer.Exit(code=1) from None
 
 
 @app.command()
 def secrets(ctx: typer.Context) -> None:
     """Deploy kctl credentials to Hetzner."""
     actx: AppContext = ctx.obj
+    out = actx.output
     repo = actx.repo_dir
     if not repo:
-        actx.output.fail("Repo not found.")
+        out.error("Repo not found.")
         raise typer.Exit(code=1)
     script = repo / "scripts" / "sync-secrets.sh"
-    if not script.is_file():
-        actx.output.fail(f"Script not found: {script}")
-        raise typer.Exit(code=1)
-    subprocess.run(["bash", str(script)], check=False)
+    try:
+        run_script(script, capture=False)
+        out.success("Secrets deployed to Hetzner")
+    except CommandError as e:
+        out.error(f"Command failed (exit {e.returncode}): {e.stderr}")
+        raise typer.Exit(code=1) from None

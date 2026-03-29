@@ -183,7 +183,10 @@ def _server_info() -> dict:
             resp = httpx.get(url, timeout=3)
             if resp.status_code == 200:
                 sdk_api_up = True
-                sdk_data = resp.json()
+                try:
+                    sdk_data = resp.json()
+                except Exception:
+                    sdk_data = {}
                 break
         except (httpx.ConnectError, httpx.TimeoutException, Exception):
             pass

@@ -20,7 +20,7 @@ def status(ctx: typer.Context) -> None:
     data = collect_status(actx.claude_dir, actx.config_dir)
 
     if actx.json_mode:
-        out.json_out(data)
+        out.raw_json(data)
         return
 
     _render_dashboard(out, data)
@@ -34,54 +34,54 @@ def health(ctx: typer.Context) -> None:
     data = collect_status(actx.claude_dir, actx.config_dir)
 
     if actx.json_mode:
-        out.json_out(data)
+        out.raw_json(data)
         return
 
     issues = 0
     c = data["claude"]
     if c["installed"]:
-        out.ok(f"Claude Code: {c['version']}")
+        out.success(f"Claude Code: {c['version']}")
     else:
-        out.fail("Claude Code: not installed")
+        out.error("Claude Code: not installed")
         issues += 1
 
     if data["auth"]["credentials"]:
-        out.ok("Auth: credentials found")
+        out.success("Auth: credentials found")
     else:
         out.warn("Auth: no credentials (run: claude login)")
         issues += 1
 
     cfg = data["config"]
     if cfg.get("sync_status") == "synced":
-        out.ok("Config: in sync")
+        out.success("Config: in sync")
     elif cfg.get("sync_status") == "out-of-sync":
         out.warn("Config: out of sync")
         issues += 1
     else:
-        out.dim("Config: no repo found")
+        out.info("Config: no repo found")
 
     s = data["settings"]
     if s["exists"] and s["hooks"]:
-        out.ok("Settings: configured")
+        out.success("Settings: configured")
     elif not s["exists"]:
-        out.fail("Settings: missing")
+        out.error("Settings: missing")
         issues += 1
     else:
         out.warn("Settings: hooks not configured")
 
     srv = data["server"]
     if srv["sdk_api_up"]:
-        out.ok(f"SDK API: up ({srv['sdk_in_flight']}/{srv['sdk_max_concurrent']} tasks)")
+        out.success(f"SDK API: up ({srv['sdk_in_flight']}/{srv['sdk_max_concurrent']} tasks)")
     else:
-        out.dim("SDK API: not running")
+        out.info("SDK API: not running")
 
     upd = data["updates"]
     if upd["up_to_date"]:
-        out.ok(f"Updates: current ({upd['latest_npm']})")
+        out.success(f"Updates: current ({upd['latest_npm']})")
     elif upd["latest_npm"]:
-        out.warn(f"Updates: {upd['current']} → {upd['latest_npm']} available")
+        out.warn(f"Updates: {upd['current']} -> {upd['latest_npm']} available")
     else:
-        out.dim("Updates: could not check")
+        out.info("Updates: could not check")
 
     if issues:
         raise typer.Exit(code=1)
@@ -96,25 +96,25 @@ def updates(ctx: typer.Context) -> None:
     upd = data["updates"]
 
     if actx.json_mode:
-        out.json_out(upd)
+        out.raw_json(upd)
         return
 
     out.header("CLAUDE CODE UPDATES")
-    out.print(f"  Installed: [bold]{upd['current'] or 'not found'}[/bold]")
-    out.print(f"  Latest:    [bold]{upd['latest_npm'] or 'unknown'}[/bold]")
+    out.text(f"  Installed: [bold]{upd['current'] or 'not found'}[/bold]")
+    out.text(f"  Latest:    [bold]{upd['latest_npm'] or 'unknown'}[/bold]")
 
     if upd["up_to_date"]:
-        out.ok("You are up to date")
+        out.success("You are up to date")
     elif upd["latest_npm"]:
         out.warn(f"Update available: {upd['latest_npm']}")
-        out.print("  Run: [bold]npm update -g @anthropic-ai/claude-code[/bold]")
+        out.text("  Run: [bold]npm update -g @anthropic-ai/claude-code[/bold]")
     else:
-        out.dim("Could not check (npm not available)")
+        out.info("Could not check (npm not available)")
 
-    out.print("")
-    out.print("  [dim]Changelog: https://github.com/anthropics/claude-code/releases[/dim]")
-    out.print("  [dim]Docs:      https://docs.anthropic.com/en/docs/claude-code[/dim]")
-    out.print("  [dim]What's new: https://claude.ai/code[/dim]")
+    out.text("")
+    out.text("  [dim]Changelog: https://github.com/anthropics/claude-code/releases[/dim]")
+    out.text("  [dim]Docs:      https://docs.anthropic.com/en/docs/claude-code[/dim]")
+    out.text("  [dim]What's new: https://claude.ai/code[/dim]")
 
 
 def _render_dashboard(out, data: dict) -> None:

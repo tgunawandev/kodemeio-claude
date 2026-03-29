@@ -18,6 +18,7 @@ class AppContext(AppContextBase):
     Extends AppContextBase with Claude-specific path resolution.
     """
 
+    verbose: bool = False
     _output: Output | None = field(default=None, repr=False)  # type: ignore[assignment]
     _paths: dict[str, Path | None] | None = field(default=None, repr=False)
 

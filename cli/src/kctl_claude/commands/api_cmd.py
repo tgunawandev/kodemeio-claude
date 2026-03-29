@@ -33,14 +33,17 @@ def health(ctx: typer.Context) -> None:
     out = actx.output
     try:
         resp = httpx.get(f"{_base_url()}/health", timeout=5)
-        data = resp.json()
+        try:
+            data = resp.json()
+        except Exception:
+            data = {}
         if actx.json_mode:
-            out.json_out(data)
+            out.raw_json(data)
         else:
-            out.ok(f"Status: {data.get('status', 'unknown')}")
-            out.ok(f"Tasks: {data.get('inFlight', 0)}/{data.get('maxConcurrent', 3)} in flight")
+            out.success(f"Status: {data.get('status', 'unknown')}")
+            out.success(f"Tasks: {data.get('inFlight', 0)}/{data.get('maxConcurrent', 3)} in flight")
     except (httpx.ConnectError, httpx.TimeoutException) as e:
-        out.fail(f"SDK API unreachable: {e}")
+        out.error(f"SDK API unreachable: {e}")
         raise typer.Exit(code=1) from None
 
 
@@ -54,6 +57,12 @@ def task(
     """Send a task to Claude Code via SDK API."""
     actx: AppContext = ctx.obj
     out = actx.output
+
+    # Validate workspace path to prevent traversal attacks
+    if workspace and (".." in workspace or workspace.startswith("/")):
+        out.error("Invalid workspace path")
+        raise typer.Exit(code=1)
+
     headers = {"Content-Type": "application/json"}
     key = _api_key()
     if key:
@@ -67,19 +76,22 @@ def task(
 
     try:
         resp = httpx.post(f"{_base_url()}/task", json=body, headers=headers, timeout=310)
-        data = resp.json()
+        try:
+            data = resp.json()
+        except Exception:
+            data = {}
         if actx.json_mode:
-            out.json_out(data)
+            out.raw_json(data)
         else:
             if resp.status_code == 200:
-                out.ok("Task completed")
-                out.print(data.get("result", str(data)))
+                out.success("Task completed")
+                out.text(data.get("result", str(data)))
             else:
-                out.fail(f"Error {resp.status_code}: {data.get('error', str(data))}")
+                out.error(f"Error {resp.status_code}: {data.get('error', str(data))}")
                 raise typer.Exit(code=1)
     except httpx.TimeoutException:
-        out.fail("Task timed out (310s)")
+        out.error("Task timed out (310s)")
         raise typer.Exit(code=1) from None
     except httpx.ConnectError as e:
-        out.fail(f"SDK API unreachable: {e}")
+        out.error(f"SDK API unreachable: {e}")
         raise typer.Exit(code=1) from None

@@ -3,20 +3,19 @@
 from __future__ import annotations
 
 import sys
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 
 from kctl_claude import __version__
-from kctl_claude.core.context import AppContext
-
+from kctl_claude.commands.api_cmd import app as api_app
+from kctl_claude.commands.backup_cmd import app as backup_app
+from kctl_claude.commands.env_cmd import app as env_app
+from kctl_claude.commands.setup_cmd import app as setup_app
 from kctl_claude.commands.status_cmd import app as status_app
 from kctl_claude.commands.sync_cmd import app as sync_app
 from kctl_claude.commands.verify_cmd import app as verify_app
-from kctl_claude.commands.api_cmd import app as api_app
-from kctl_claude.commands.env_cmd import app as env_app
-from kctl_claude.commands.backup_cmd import app as backup_app
-from kctl_claude.commands.setup_cmd import app as setup_app
+from kctl_claude.core.callbacks import AppContext
 
 app = typer.Typer(
     name="kctl-claude",

@@ -15,6 +15,14 @@ dependencies = [
     "httpx>=0.28.0",
     "rich>=13.9.0",
     "pyyaml>=6.0.2",
+    "kctl-common>=0.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13",
 ]
 
 [project.scripts]
@@ -23,6 +31,16 @@ kctl-claude = "kctl_claude.cli:_run"
 [tool.hatch.build.targets.wheel]
 packages = ["src/kctl_claude"]
 
+[tool.uv.sources]
+kctl-common = { path = "/home/tgunawan/project/00-new-projects/kodemeio-app/kodemeio-platform/packages/kctl-common" }
+
 [tool.ruff]
 target-version = "py312"
-line-length = 100
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM", "N"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"

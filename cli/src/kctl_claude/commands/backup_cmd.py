@@ -7,7 +7,7 @@ from typing import Annotated
 
 import typer
 
-from kctl_claude.core.context import AppContext
+from kctl_claude.core.callbacks import AppContext
 
 app = typer.Typer(help="Backup and restore Claude Code runtime.")
 

@@ -6,7 +6,7 @@ import subprocess
 
 import typer
 
-from kctl_claude.core.context import AppContext
+from kctl_claude.core.callbacks import AppContext
 
 app = typer.Typer(help="Verify Claude Code config completeness.")
 

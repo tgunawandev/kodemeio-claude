@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Annotated
-
 import typer
 
-from kctl_claude.core.context import AppContext
+from kctl_claude.core.callbacks import AppContext
 from kctl_claude.core.checks import collect_status
 
 app = typer.Typer(help="Status dashboard and health checks.")

@@ -1,0 +1,27 @@
+name: Validate kctl-claude
+on:
+  push:
+    branches: [main]
+    paths: ["cli/**"]
+  pull_request:
+    branches: [main]
+    paths: ["cli/**"]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - run: uv python install 3.12
+      - name: Install
+        working-directory: cli
+        run: uv sync --all-extras
+      - name: Lint
+        working-directory: cli
+        run: uv run ruff check src/ tests/
+      - name: Format
+        working-directory: cli
+        run: uv run ruff format --check src/ tests/
+      - name: Tests
+        working-directory: cli
+        run: uv run pytest tests/ -v --tb=short

@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import json
 import shutil
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
@@ -14,7 +13,7 @@ import httpx
 def collect_status(claude_dir: Path, config_dir: Path | None) -> dict:
     """Collect comprehensive status data. Returns a JSON-serializable dict."""
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "claude": _claude_info(),
         "auth": _auth_info(claude_dir),
         "config": _config_info(claude_dir, config_dir),
@@ -57,12 +56,8 @@ def _count_config(base: Path | None) -> dict:
         return {"agents": 0, "skills": 0, "commands": 0, "rules": 0}
     return {
         "agents": len(list((base / "agents").glob("*.md"))) if (base / "agents").is_dir() else 0,
-        "skills": len([d for d in (base / "skills").iterdir() if d.is_dir()])
-        if (base / "skills").is_dir()
-        else 0,
-        "commands": len(list((base / "commands").glob("*.md")))
-        if (base / "commands").is_dir()
-        else 0,
+        "skills": len([d for d in (base / "skills").iterdir() if d.is_dir()]) if (base / "skills").is_dir() else 0,
+        "commands": len(list((base / "commands").glob("*.md"))) if (base / "commands").is_dir() else 0,
         "rules": len(list((base / "rules").glob("*.md"))) if (base / "rules").is_dir() else 0,
     }
 
@@ -103,8 +98,7 @@ def _settings_info(claude_dir: Path) -> dict:
         "exists": True,
         "hooks": '"PreToolUse"' in text,
         "plugins": '"enabledPlugins"' in text,
-        "thinking": '"alwaysThinkingEnabled": true' in text
-        or '"alwaysThinkingEnabled":true' in text,
+        "thinking": '"alwaysThinkingEnabled": true' in text or '"alwaysThinkingEnabled":true' in text,
         "mcp": _count_mcp(),
     }
 

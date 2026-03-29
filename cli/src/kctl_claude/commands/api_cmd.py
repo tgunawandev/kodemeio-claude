@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import Annotated
 
-import typer
 import httpx
+import typer
 
-from kctl_claude.core.context import AppContext
+from kctl_claude.core.callbacks import AppContext
 
 app = typer.Typer(help="SDK REST API operations.")
 
@@ -41,7 +41,7 @@ def health(ctx: typer.Context) -> None:
             out.ok(f"Tasks: {data.get('inFlight', 0)}/{data.get('maxConcurrent', 3)} in flight")
     except (httpx.ConnectError, httpx.TimeoutException) as e:
         out.fail(f"SDK API unreachable: {e}")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from None
 
 
 @app.command()
@@ -79,7 +79,7 @@ def task(
                 raise typer.Exit(code=1)
     except httpx.TimeoutException:
         out.fail("Task timed out (310s)")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from None
     except httpx.ConnectError as e:
         out.fail(f"SDK API unreachable: {e}")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from None

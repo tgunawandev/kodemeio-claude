@@ -10,9 +10,6 @@ import os
 from typing import Annotated
 
 import typer
-
-from kctl_claude.core.callbacks import AppContext
-from kctl_claude.core.config import SERVICE_KEY, ServiceConfig, load_claude_config
 from kctl_common.config import (
     CONFIG_FILE,
     get_all_services_in_profile,
@@ -26,6 +23,9 @@ from kctl_common.config import (
     set_default_profile,
     set_service_config,
 )
+
+from kctl_claude.core.callbacks import AppContext
+from kctl_claude.core.config import SERVICE_KEY, ServiceConfig
 
 app = typer.Typer(help="Manage CLI configuration and profiles.")
 

@@ -140,7 +140,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.0" },
-    { name = "kctl-common", directory = "../../../kodemeio-app/kodemeio-platform/packages/kctl-common" },
+    { name = "kctl-common", specifier = ">=0.3.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.13" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
@@ -153,7 +153,7 @@ provides-extras = ["dev"]
 [[package]]
 name = "kctl-common"
 version = "0.3.0"
-source = { directory = "../../../kodemeio-app/kodemeio-platform/packages/kctl-common" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "pydantic" },
@@ -161,29 +161,9 @@ dependencies = [
     { name = "rich" },
     { name = "typer" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "httpx", specifier = ">=0.28.0" },
-    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.28.0" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.14.0" },
-    { name = "pydantic", specifier = ">=2.10.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.0" },
-    { name = "pytest", marker = "extra == 'testing'", specifier = ">=8.3.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "pytest-httpx", marker = "extra == 'dev'", specifier = ">=0.35.0" },
-    { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "rich", specifier = ">=13.9.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9.0" },
-    { name = "typer", specifier = ">=0.15.0" },
-    { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-]
-provides-extras = ["testing", "monitor", "dev"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "anyio", specifier = ">=4.13.0" },
-    { name = "pytest-anyio", specifier = ">=0.0.0" },
+sdist = { url = "https://files.pythonhosted.org/packages/52/84/dcbb8fe32dabe5dc7bbd9e82e0861b7bc4627209f67e3a0dc8b0b1f6f9d9/kctl_common-0.3.0.tar.gz", hash = "sha256:d360f7a3eb6a48785970443292a166b71be2a78e7772fe7bf869eaa34beef50b", size = 29313, upload-time = "2026-03-29T03:40:57.056Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3d/ca/e21b2813712918a52072d61b2796b7b57d2a4dea26025069b7dd4c0eea8d/kctl_common-0.3.0-py3-none-any.whl", hash = "sha256:c9123c3d951afbeb241768353629ee5601bc799cf548748e9f0b5e4e7f840aae", size = 25551, upload-time = "2026-03-29T03:40:56.238Z" },
 ]
 
 [[package]]

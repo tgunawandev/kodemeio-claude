@@ -10,6 +10,7 @@ import typer
 from kctl_claude import __version__
 from kctl_claude.commands.api_cmd import app as api_app
 from kctl_claude.commands.backup_cmd import app as backup_app
+from kctl_claude.commands.config_cmd import app as config_app
 from kctl_claude.commands.env_cmd import app as env_app
 from kctl_claude.commands.setup_cmd import app as setup_app
 from kctl_claude.commands.status_cmd import app as status_app
@@ -26,6 +27,7 @@ app = typer.Typer(
 )
 
 # Register command groups
+app.add_typer(config_app, name="config")
 app.add_typer(status_app, name="status")
 app.add_typer(sync_app, name="sync")
 app.add_typer(verify_app, name="verify")

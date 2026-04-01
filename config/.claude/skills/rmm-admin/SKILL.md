@@ -1,6 +1,6 @@
 ---
 name: rmm-admin
-description: Tactical RMM + MeshCentral administration for kodemeio infrastructure. Covers agent management, remote access (Take Control), script execution, patch management, alerts, driver deployment, and service monitoring. Use when working with kctl-rmm CLI or managing rmm.kodeme.io / api-rmm.kodeme.io / mesh.kodeme.io.
+description: Tactical RMM + MeshCentral + RustDesk administration for kodemeio infrastructure. Covers agent management, remote access (Take Control, RustDesk), script execution, patch management, alerts, driver deployment, and service monitoring. Use when working with kctl-rmm CLI or managing rmm.kodeme.io / api-rmm.kodeme.io / mesh.kodeme.io / rustdesk.kodeme.io.
 ---
 
 # RMM Admin Skill
@@ -12,6 +12,7 @@ Manage Tactical RMM + MeshCentral remote monitoring platform via `kctl-rmm` CLI.
 - **Frontend**: rmm.kodeme.io (Vue.js dashboard)
 - **API**: api-rmm.kodeme.io (Django REST API, auth via X-API-KEY header)
 - **MeshCentral**: mesh.kodeme.io (remote desktop/terminal)
+- **RustDesk**: rustdesk.kodeme.io (native remote desktop for mobile/tablet)
 - **11 Docker services**: postgres, mongodb, redis, nats, tactical-init, tactical-backend, tactical-websocket, tactical-frontend, tactical-celery, tactical-celerybeat, meshcentral
 
 ## Instances
@@ -102,6 +103,16 @@ kctl-rmm services restart <agent-id> Spooler
 kctl-rmm tasks list --agent <agent-id>
 kctl-rmm tasks run <task-id>
 
+# RustDesk Remote Access (native client -- for mobile/tablet)
+kctl-rmm rustdesk connect <hostname>     # Open RustDesk session
+kctl-rmm rustdesk transfer <hostname>    # Open file transfer
+kctl-rmm rustdesk list                   # List agents with RustDesk IDs
+kctl-rmm rustdesk list --installed       # Only agents with RustDesk
+kctl-rmm rustdesk deploy <agent-id>      # Deploy client to agent
+kctl-rmm rustdesk deploy --all           # Deploy to all online agents
+kctl-rmm rustdesk status <agent-id>      # Check RustDesk on agent
+kctl-rmm rustdesk setup                  # One-time: create fields + upload scripts
+
 # Monitoring
 kctl-rmm health --watch
 kctl-rmm dashboard
@@ -120,6 +131,8 @@ kctl-rmm maintenance logs tactical-backend
 - Script retcode 98 = timeout
 - Known scripts: ID 135 = check printer, ID 136 = install POS58 driver
 - Downloads from GitHub may hang on agents (TLS/firewall); use `certutil` on Windows
+- RustDesk custom fields: `rustdeskid` (agent ID), `rustdeskpwd` (permanent password)
+- RustDesk integration: collector scripts populate custom fields, CLI reads them for `rustdesk://` protocol links
 
 ## Troubleshooting
 

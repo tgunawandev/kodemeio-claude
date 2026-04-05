@@ -53,10 +53,17 @@ RUN curl -fsSL https://releases.hashicorp.com/terraform/1.12.1/terraform_1.12.1_
     -o /tmp/terraform.zip && unzip /tmp/terraform.zip -d /usr/local/bin/ && rm /tmp/terraform.zip
 
 # Create dev user with same UID/GID as host user (for bind mount permissions)
+# node:22 base image has node:node (1000:1000), so rename instead of creating
 ARG DEV_UID=1000
 ARG DEV_GID=1000
-RUN (groupadd -g ${DEV_GID} dev 2>/dev/null || groupmod -n dev $(getent group ${DEV_GID} | cut -d: -f1)) && \
-    useradd -m -s /bin/zsh -u ${DEV_UID} -g ${DEV_GID} -G docker dev && \
+RUN existing_user=$(getent passwd ${DEV_UID} | cut -d: -f1) && \
+    existing_group=$(getent group ${DEV_GID} | cut -d: -f1) && \
+    if [ -n "$existing_group" ] && [ "$existing_group" != "dev" ]; then groupmod -n dev "$existing_group"; fi && \
+    if [ -n "$existing_user" ] && [ "$existing_user" != "dev" ]; then \
+      usermod -l dev -d /home/dev -m -s /bin/zsh -G docker "$existing_user"; \
+    else \
+      useradd -m -s /bin/zsh -u ${DEV_UID} -g ${DEV_GID} -G docker dev; \
+    fi && \
     echo "dev ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/dev
 
 # Persistent history

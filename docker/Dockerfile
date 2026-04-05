@@ -55,7 +55,7 @@ RUN curl -fsSL https://releases.hashicorp.com/terraform/1.12.1/terraform_1.12.1_
 # Create dev user with same UID/GID as host user (for bind mount permissions)
 ARG DEV_UID=1000
 ARG DEV_GID=1000
-RUN groupadd -g ${DEV_GID} dev && \
+RUN (groupadd -g ${DEV_GID} dev 2>/dev/null || groupmod -n dev $(getent group ${DEV_GID} | cut -d: -f1)) && \
     useradd -m -s /bin/zsh -u ${DEV_UID} -g ${DEV_GID} -G docker dev && \
     echo "dev ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/dev
 

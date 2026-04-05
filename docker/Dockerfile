@@ -44,8 +44,9 @@ RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} @playwright/
 RUN pip3 install --break-system-packages ruff
 
 # Install worktrunk (Git worktree manager for parallel AI agents)
-RUN curl -fsSL https://github.com/max-sixty/worktrunk/releases/latest/download/wt-x86_64-unknown-linux-gnu.tar.xz \
-    | tar -xJ -C /usr/local/bin/ wt && chmod +x /usr/local/bin/wt
+RUN curl -fsSL https://github.com/max-sixty/worktrunk/releases/latest/download/worktrunk-x86_64-unknown-linux-musl.tar.xz \
+    | tar -xJ --strip-components=1 -C /usr/local/bin/ worktrunk-x86_64-unknown-linux-musl/wt worktrunk-x86_64-unknown-linux-musl/git-wt \
+    && chmod +x /usr/local/bin/wt /usr/local/bin/git-wt
 
 # Install Terraform (for kodemeio-infra: Hetzner, Cloudflare, Dokploy IaC)
 RUN curl -fsSL https://releases.hashicorp.com/terraform/1.12.1/terraform_1.12.1_linux_amd64.zip \

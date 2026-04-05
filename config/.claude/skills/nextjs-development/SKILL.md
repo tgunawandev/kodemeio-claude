@@ -1,6 +1,7 @@
 ---
 name: nextjs-development
-description: Comprehensive Next.js development guidance covering App Router, Pages Router, Server Components, data fetching patterns, API routes, middleware, styling, deployment strategies, and best practices for building production-ready full-stack applications with React.
+description: >
+  Comprehensive Next.js development — App Router, Server Components, data fetching, API routes, middleware, styling, deployment. MUST use for ANY Next.js development question or implementation. Triggers on: "Next.js", "App Router", "Server Component", "API route", "middleware", "next.config", "server action", or ANY Next.js development task.
 version: 1.0.0
 allowed-tools: [
   "mcp__context7__*",

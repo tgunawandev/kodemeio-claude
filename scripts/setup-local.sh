@@ -82,7 +82,7 @@ fi
 
 # 4. Sync config from repo → local (updates existing files)
 log_info "[4/5] Syncing config from repo → local..."
-mkdir -p "$CLAUDE_DIR"/{agents,skills,commands,rules}
+mkdir -p "$CLAUDE_DIR"/{agents,skills,commands,rules,plugins}
 
 # rsync: update all files, delete removed ones, keep local-only extras
 sync_dir() {
@@ -98,16 +98,25 @@ sync_dir "skills"   "$REPO_DIR/config/.claude/skills"   "$CLAUDE_DIR/skills"
 sync_dir "commands" "$REPO_DIR/config/.claude/commands" "$CLAUDE_DIR/commands"
 sync_dir "rules"    "$REPO_DIR/config/.claude/rules"    "$CLAUDE_DIR/rules"
 
-# Keybindings — always update
+# Single files — always update
 cp "$REPO_DIR/config/.claude/keybindings.json" "$CLAUDE_DIR/" 2>/dev/null && log_success "  keybindings synced" || true
+cp "$REPO_DIR/config/.claude/statusline-command.sh" "$CLAUDE_DIR/" 2>/dev/null && chmod +x "$CLAUDE_DIR/statusline-command.sh" 2>/dev/null && log_success "  statusline-command.sh synced" || true
 
-# Settings — only create if missing (local and container versions differ)
+# Settings — only create if missing (user may have local customizations)
 if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
     cp "$REPO_DIR/config/.claude/settings.json" "$CLAUDE_DIR/settings.json"
     log_success "  Created settings.json (first time)"
 else
-    log_warn "  settings.json exists — not overwriting (local/container versions differ)"
+    log_warn "  settings.json exists — not overwriting (run sync-config to push local changes)"
 fi
+
+# Plugin manifests — always update (Claude Code auto-fetches plugins from marketplaces)
+[ -f "$REPO_DIR/config/.claude/plugins/known_marketplaces.json" ] && \
+    cp "$REPO_DIR/config/.claude/plugins/known_marketplaces.json" "$CLAUDE_DIR/plugins/" && \
+    log_success "  plugin marketplaces synced" || true
+[ -f "$REPO_DIR/config/.claude/plugins/installed_plugins.json" ] && \
+    cp "$REPO_DIR/config/.claude/plugins/installed_plugins.json" "$CLAUDE_DIR/plugins/" && \
+    log_success "  plugin manifest synced" || true
 
 # MCP config — always update
 if [ -f "$REPO_DIR/.mcp.json" ]; then

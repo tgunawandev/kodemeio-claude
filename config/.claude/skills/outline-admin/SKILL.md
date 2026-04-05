@@ -1,12 +1,7 @@
 ---
 name: outline-admin
 description: >
-  Outline wiki/knowledge-base administration for kodemeio infrastructure.
-  Supports multiple Outline instances via profiles (outline.kodeme.io, etc.).
-  Covers document CRUD, collections, users, groups, shares, comments, events,
-  search, sync, stars, templates, revisions, attachments, tokens, health
-  monitoring, and dashboard. Use when working with kctl-outline CLI or
-  managing any Outline instance.
+  Outline wiki/knowledge-base administration via kctl-outline CLI. MUST use for ANY wiki, document, collection, or knowledge base operation. Triggers on: "kctl-outline", "outline", "wiki", "knowledge base", "create document", "collection", "share document", "outline search", or ANY wiki/documentation platform task.
 version: 1.0.0
 allowed-tools:
   - Bash

@@ -1,10 +1,7 @@
 ---
 name: worktrunk
 description: >
-  Git worktree management for parallel AI agent workflows. Simplifies creating,
-  switching, listing, merging, and removing worktrees. Use when working on multiple
-  features/fixes in parallel, running concurrent Claude Code agents, or managing
-  isolated workspaces for different tasks.
+  Git worktree management for parallel AI agent workflows via worktrunk commands. MUST use when creating isolated workspaces, running parallel Claude agents, managing feature branches in worktrees. Triggers on: "worktree", "parallel branch", "isolated workspace", "concurrent agent", "worktrunk", or ANY git worktree operation.
 version: 1.0.0
 allowed-tools:
   - Bash

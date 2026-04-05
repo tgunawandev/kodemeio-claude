@@ -1,6 +1,7 @@
 ---
 name: odoo-development
-description: General Odoo 18 development best practices covering ORM, models, fields, inheritance, security, views, computed fields, recordsets, and debugging. Use for core Odoo Python development patterns — NOT for FastAPI router/schema work (use odoo-fastapi-backend for that).
+description: >
+  General Odoo 18 Python development — ORM, models, fields, inheritance, security, views, computed fields, recordsets, and debugging. MUST use when writing or modifying Odoo Python code, creating models, adding fields, writing security rules, or debugging ORM issues. Triggers on: "create model", "add field", "inherit model", "record rule", "access rights", "computed field", "onchange", "Odoo Python", "_inherit", "_name", or ANY Odoo development question. NOT for FastAPI router/schema work (use odoo-fastapi-backend instead).
 version: 1.0.0
 allowed-tools: [
   "mcp__context7__*",

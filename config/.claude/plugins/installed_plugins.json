@@ -1,0 +1,230 @@
+{
+  "version": 2,
+  "plugins": {
+    "example-skills@anthropic-agent-skills": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/anthropic-agent-skills/example-skills/98669c11ca63",
+        "version": "98669c11ca63",
+        "installedAt": "2025-11-03T09:39:49.859Z",
+        "lastUpdated": "2026-03-28T04:46:45.434Z",
+        "gitCommitSha": "c74d647e56e6daa12029b6acb11a821348ad044b"
+      }
+    ],
+    "document-skills@anthropic-agent-skills": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/anthropic-agent-skills/document-skills/98669c11ca63",
+        "version": "98669c11ca63",
+        "installedAt": "2025-11-03T09:39:49.859Z",
+        "lastUpdated": "2026-03-28T04:46:45.439Z",
+        "gitCommitSha": "c74d647e56e6daa12029b6acb11a821348ad044b"
+      }
+    ],
+    "git-pr-workflows@claude-code-workflows": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-code-workflows/git-pr-workflows/1.3.0",
+        "version": "1.3.0",
+        "installedAt": "2025-11-03T10:29:41.422Z",
+        "lastUpdated": "2026-03-28T05:01:32.632Z",
+        "gitCommitSha": "51c85a89771ef6ae2d7e8996c66c953f741caff4"
+      }
+    ],
+    "python-development@claude-code-workflows": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-code-workflows/python-development/1.2.2",
+        "version": "1.2.2",
+        "installedAt": "2025-11-03T10:29:41.422Z",
+        "lastUpdated": "2026-03-28T05:01:32.641Z",
+        "gitCommitSha": "51c85a89771ef6ae2d7e8996c66c953f741caff4"
+      }
+    ],
+    "javascript-typescript@claude-code-workflows": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-code-workflows/javascript-typescript/1.2.2",
+        "version": "1.2.2",
+        "installedAt": "2025-11-03T10:29:41.422Z",
+        "lastUpdated": "2026-03-28T05:01:32.638Z",
+        "gitCommitSha": "51c85a89771ef6ae2d7e8996c66c953f741caff4"
+      }
+    ],
+    "shell-scripting@claude-code-workflows": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-code-workflows/shell-scripting/1.2.2",
+        "version": "1.2.2",
+        "installedAt": "2025-11-03T10:29:41.422Z",
+        "lastUpdated": "2026-03-28T05:01:32.636Z",
+        "gitCommitSha": "51c85a89771ef6ae2d7e8996c66c953f741caff4"
+      }
+    ],
+    "developer-essentials@claude-code-workflows": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-code-workflows/developer-essentials/1.0.2",
+        "version": "1.0.2",
+        "installedAt": "2025-11-03T10:29:41.422Z",
+        "lastUpdated": "2026-03-28T05:01:32.639Z",
+        "gitCommitSha": "51c85a89771ef6ae2d7e8996c66c953f741caff4"
+      }
+    ],
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7",
+        "version": "5.0.7",
+        "installedAt": "2026-03-28T04:45:05.891Z",
+        "lastUpdated": "2026-04-01T01:15:56.248Z",
+        "gitCommitSha": "eafe962b18f6c5dc70fb7c8cc7e83e61f4cdde06"
+      }
+    ],
+    "claude-api@anthropic-agent-skills": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/anthropic-agent-skills/claude-api/98669c11ca63",
+        "version": "98669c11ca63",
+        "installedAt": "2026-03-28T04:47:03.555Z",
+        "lastUpdated": "2026-03-28T04:47:03.555Z",
+        "gitCommitSha": "98669c11ca63e9c81c11501e1437e5c47b556621"
+      }
+    ],
+    "frontend-design@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/frontend-design/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-28T04:48:32.587Z",
+        "lastUpdated": "2026-03-29T03:21:03.891Z"
+      }
+    ],
+    "context7@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/context7/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-28T04:49:16.886Z",
+        "lastUpdated": "2026-03-29T03:21:03.896Z"
+      }
+    ],
+    "code-review@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/code-review/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-28T04:49:52.544Z",
+        "lastUpdated": "2026-03-29T03:21:03.881Z"
+      }
+    ],
+    "claude-md-management@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/claude-md-management/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-28T04:51:08.760Z",
+        "lastUpdated": "2026-03-28T04:51:08.760Z"
+      }
+    ],
+    "skill-creator@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-28T04:51:36.902Z",
+        "lastUpdated": "2026-03-29T03:21:03.894Z"
+      }
+    ],
+    "code-simplifier@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/code-simplifier/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-28T04:55:55.008Z",
+        "lastUpdated": "2026-03-28T04:55:55.008Z"
+      }
+    ],
+    "feature-dev@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/feature-dev/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-28T04:55:55.052Z",
+        "lastUpdated": "2026-03-29T03:21:03.890Z"
+      }
+    ],
+    "playwright@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/playwright/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-28T04:55:55.068Z",
+        "lastUpdated": "2026-03-29T03:21:03.889Z"
+      }
+    ],
+    "ralph-loop@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/ralph-loop/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-28T04:55:55.084Z",
+        "lastUpdated": "2026-03-29T09:16:32.087Z"
+      }
+    ],
+    "typescript-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/typescript-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-28T04:55:55.095Z",
+        "lastUpdated": "2026-03-28T04:55:55.095Z"
+      }
+    ],
+    "security-guidance@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/security-guidance/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-28T04:55:55.120Z",
+        "lastUpdated": "2026-03-29T03:21:03.892Z"
+      }
+    ],
+    "commit-commands@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/commit-commands/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-28T04:55:55.135Z",
+        "lastUpdated": "2026-03-29T03:21:03.893Z"
+      }
+    ],
+    "claude-code-setup@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/claude-code-setup/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-28T04:55:55.151Z",
+        "lastUpdated": "2026-03-28T04:55:55.151Z"
+      }
+    ],
+    "pr-review-toolkit@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/pr-review-toolkit/unknown",
+        "version": "unknown",
+        "installedAt": "2026-03-28T04:55:55.167Z",
+        "lastUpdated": "2026-03-29T03:21:03.897Z"
+      }
+    ],
+    "pyright-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/tgunawan/.claude/plugins/cache/claude-plugins-official/pyright-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-28T04:55:55.176Z",
+        "lastUpdated": "2026-03-28T04:55:55.176Z"
+      }
+    ]
+  }
+}

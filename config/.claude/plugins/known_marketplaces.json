@@ -1,0 +1,26 @@
+{
+  "claude-code-workflows": {
+    "source": {
+      "source": "github",
+      "repo": "wshobson/agents"
+    },
+    "installLocation": "/home/tgunawan/.claude/plugins/marketplaces/claude-code-workflows",
+    "lastUpdated": "2026-03-28T05:01:32.619Z"
+  },
+  "anthropic-agent-skills": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/skills"
+    },
+    "installLocation": "/home/tgunawan/.claude/plugins/marketplaces/anthropic-agent-skills",
+    "lastUpdated": "2026-03-28T05:00:09.196Z"
+  },
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "/home/tgunawan/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-04-05T22:57:32.934Z"
+  }
+}

@@ -262,8 +262,11 @@ if [ "$CHECK_ONLY" = true ]; then
     [ -d "$CLAUDE_HOME/agents" ] && echo -e "  ${GREEN}●${NC} agents" || echo -e "  ${RED}●${NC} agents"
     [ -d "$CLAUDE_HOME/skills" ] && echo -e "  ${GREEN}●${NC} skills" || echo -e "  ${RED}●${NC} skills"
     [ -f "$CLAUDE_HOME/settings.json" ] && echo -e "  ${GREEN}●${NC} settings.json" || echo -e "  ${RED}●${NC} settings.json"
+    [ -f "$CLAUDE_HOME/statusline-command.sh" ] && echo -e "  ${GREEN}●${NC} statusline-command.sh" || echo -e "  ${RED}●${NC} statusline-command.sh"
+    [ -f "$CLAUDE_HOME/plugins/known_marketplaces.json" ] && echo -e "  ${GREEN}●${NC} plugin marketplaces" || echo -e "  ${RED}●${NC} plugin marketplaces"
+    [ -f "/home/$DEV_USER/.mcp.json" ] && echo -e "  ${GREEN}●${NC} .mcp.json" || echo -e "  ${RED}●${NC} .mcp.json"
 else
-    mkdir -p "$CLAUDE_HOME"/{agents,skills,commands,rules,projects}
+    mkdir -p "$CLAUDE_HOME"/{agents,skills,commands,rules,projects,plugins}
 
     # Sync from repo
     for dir in agents skills commands rules; do
@@ -275,16 +278,37 @@ else
     [ -f "$REPO_DIR/config/.claude/CLAUDE.md" ] && \
         cp "$REPO_DIR/config/.claude/CLAUDE.md" "$CLAUDE_HOME/"
 
-    # Settings — copy and enable bypassPermissions (VPS IS the sandbox)
+    # Settings — copy as-is from repo (already matches local dev environment)
+    # Rewrite any /home/tgunawan → /home/$DEV_USER path references
     if [ -f "$REPO_DIR/config/.claude/settings.json" ]; then
-        cp "$REPO_DIR/config/.claude/settings.json" "$CLAUDE_HOME/settings.json"
-        # Enable bypass — the VPS is an isolated server, not a personal laptop
-        if command -v jq &>/dev/null; then
-            tmp=$(mktemp)
-            jq '.permissions.defaultMode = "bypassPermissions"' "$CLAUDE_HOME/settings.json" > "$tmp" && \
-                mv "$tmp" "$CLAUDE_HOME/settings.json"
-        fi
-        log_ok "settings.json configured (bypassPermissions=true)"
+        sed "s|/home/tgunawan|/home/$DEV_USER|g" \
+            "$REPO_DIR/config/.claude/settings.json" > "$CLAUDE_HOME/settings.json"
+        log_ok "settings.json installed"
+    fi
+
+    # Statusline command script
+    if [ -f "$REPO_DIR/config/.claude/statusline-command.sh" ]; then
+        cp "$REPO_DIR/config/.claude/statusline-command.sh" "$CLAUDE_HOME/statusline-command.sh"
+        chmod +x "$CLAUDE_HOME/statusline-command.sh"
+        log_ok "statusline-command.sh installed"
+    fi
+
+    # Plugin marketplaces registry (Claude Code will auto-install enabled plugins on first launch)
+    if [ -f "$REPO_DIR/config/.claude/plugins/known_marketplaces.json" ]; then
+        sed "s|/home/tgunawan|/home/$DEV_USER|g" \
+            "$REPO_DIR/config/.claude/plugins/known_marketplaces.json" > "$CLAUDE_HOME/plugins/known_marketplaces.json"
+        log_ok "plugin marketplaces registered"
+    fi
+    if [ -f "$REPO_DIR/config/.claude/plugins/installed_plugins.json" ]; then
+        sed "s|/home/tgunawan|/home/$DEV_USER|g" \
+            "$REPO_DIR/config/.claude/plugins/installed_plugins.json" > "$CLAUDE_HOME/plugins/installed_plugins.json"
+        log_ok "plugin manifest installed"
+    fi
+
+    # MCP server config (project-scoped MCP servers)
+    if [ -f "$REPO_DIR/.mcp.json" ]; then
+        cp "$REPO_DIR/.mcp.json" "/home/$DEV_USER/.mcp.json"
+        log_ok ".mcp.json installed"
     fi
 
     # Copy firewall script so ENABLE_FIREWALL=true works on VPS
@@ -297,7 +321,7 @@ else
         echo 'export HISTFILE=/commandhistory/.zsh_history' >> "/home/$DEV_USER/.zshrc"
     fi
 
-    chown -R "$DEV_USER:$DEV_USER" "$CLAUDE_HOME"
+    chown -R "$DEV_USER:$DEV_USER" "$CLAUDE_HOME" "/home/$DEV_USER/.mcp.json" 2>/dev/null || true
     log_ok "Claude config synced"
 fi
 

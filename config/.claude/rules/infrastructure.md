@@ -15,3 +15,7 @@ globs: "**/docker-compose*.yml,**/Dockerfile*,**/terraform/**,**/*.tf,**/.env*"
 - All .env files must have a corresponding .env.example (sanitized)
 - Resource limits (cpus, memory) are required in production compose files
 - Restart policy: `unless-stopped` for production services
+- Use kctl-* CLIs for service management (not raw curl/API calls)
+- All kctl-* CLIs depend on kctl-lib>=0.4.0 from PyPI
+- CLI config lives in `~/.config/kodemeio/config.yaml` (shared across all 21 kctl-* tools)
+- Each CLI's service-specific config uses SERVICE_KEY scoping (e.g., "dokploy", "grafana")

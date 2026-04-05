@@ -1,249 +1,488 @@
 ---
 name: cloudflare-admin
 description: >
-  Cloudflare infrastructure administration for kodemeio. Manages DNS zones,
-  records, tunnels, WAF rules, cache, SSL/TLS, Workers, R2 storage, email
-  routing, page rules, redirects, access policies, speed settings, analytics,
-  and Terraform IaC. Use when working with kctl-cloudflare CLI or managing
-  Cloudflare resources for kodeme.io.
-version: 2.0.0
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
+  Cloudflare DNS/CDN/WAF administration via kctl-cf CLI (39 groups, ~189 commands).
+  MUST use for ANY kctl-cf operation.
+  Triggers on: "access", "activation-check", "add-domain", "addresses", "always-https", "analytics", "apply", "apps", "argo", "backup", "bk", "brotli", "bulk-create", "cache", "catch-all", "certificates", "check", "clean-connections", "config", "connections", "cp", "create-app", "create-deployment", "create-group", "create-ip-rule", "create-item", "create-kv", "create-list", "create-monitor", "create-origin-cert", "create-policy", "create-pool", "create-project", "create-rate-limit", "create-route", "create-rule", "create-service-token", "cron-triggers", "cs", "custom-hostnames", "dashboard", "delete-app", "delete-cron-triggers", "delete-deployment", "delete-group", "delete-ip-rule", "delete-item", "delete-kv", "delete-list", "delete-monitor", "delete-object", "delete-origin-cert", "delete-policy", "delete-pool", "delete-project", "delete-rate-limit", "delete-route", "delete-rule", "delete-service-token", "deploy", "deployments", "destroy", "disable", "domains", "ea", "early-hints", "edit-setting", "email-routing", "enable", "export", "generate", "get-app", "get-config", "get-deployment", "get-project", "groups", "hc", "health", "hold", "idps".
+  Auto-generated: 2026-04-05
+  registry_hash: d4ed11ed7c4e
 ---
 
-# Cloudflare Administration for Kodemeio
+# cloudflare-admin — kctl-cf CLI Reference
 
-## System Overview
+> Auto-generated from `kctl-cf` command registry. Do not edit manually.
+> To regenerate: `kctl-cf skill generate`
+> To add custom content: edit `SKILL.extra.md` in the same directory.
 
-- **Zones**: kodeme.io + 20+ subdomains
-- **Architecture**: Cloudflare Edge → cloudflared tunnel → Traefik → Dokploy
-- **CLI**: `kctl-cloudflare` (Python, installed via `uv tool install ./cli`)
-- **IaC**: Terraform in kodemeio-infra/kodemeio-cloudflare/
-- **Config**: `~/.config/kodemeio/config.yaml` → `profiles.<profile>.cloudflare`
+## Overview
 
-## Commands
-
-### Zones
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare zones list` | All DNS zones |
-| `kctl-cloudflare zones get <zone>` | Zone details |
-
-### DNS Records
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare records list [--zone] [--type]` | DNS records |
-| `kctl-cloudflare records update <record-id> [--type] [--name] [--content] [--ttl] [--proxied/--no-proxied] [--zone]` | Update DNS record |
-| `kctl-cloudflare records bulk-create --file <json-file> [--zone]` | Bulk create records from JSON |
-| `kctl-cloudflare records import --file <bind-file> [--zone]` | Import BIND zone file |
-
-### Tunnels
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare tunnels list` | Cloudflare Tunnels |
-| `kctl-cloudflare tunnels get <name>` | Tunnel details |
-
-### WAF
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare waf list [--zone]` | WAF firewall rules |
-| `kctl-cloudflare waf ip-rules [--zone]` | IP access rules |
-| `kctl-cloudflare waf rate-limits [--zone]` | Rate limiting rules |
-
-### Cache
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare cache status [--zone]` | Cache settings |
-| `kctl-cloudflare cache purge-all [--zone] [--yes]` | Purge all cache |
-| `kctl-cloudflare cache purge <urls...> [--zone]` | Purge specific URLs |
-
-### SSL/TLS
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare ssl status [--zone]` | SSL/TLS mode |
-| `kctl-cloudflare ssl certificates [--zone]` | Certificate packs |
-| `kctl-cloudflare ssl origin-certs` | List origin certificates |
-| `kctl-cloudflare ssl create-origin-cert --hostname <h> [--hostname ...] [--validity 5475] [--type origin-rsa]` | Create origin certificate |
-| `kctl-cloudflare ssl delete-origin-cert <cert-id> [--force]` | Delete origin certificate |
-| `kctl-cloudflare ssl min-tls [--version 1.0/1.1/1.2/1.3] [--zone]` | Get/set minimum TLS version |
-| `kctl-cloudflare ssl always-https [--enable/--disable] [--zone]` | Get/set Always Use HTTPS |
-
-### Workers
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare workers list` | Worker scripts |
-| `kctl-cloudflare workers routes [--zone]` | Worker routes |
-| `kctl-cloudflare workers kv` | KV namespaces |
-| `kctl-cloudflare workers deploy <script-name> --file <path>` | Deploy worker script |
-| `kctl-cloudflare workers delete <script-name> [--force]` | Delete worker script |
-| `kctl-cloudflare workers env <script-name>` | List worker environment variables |
-| `kctl-cloudflare workers set-env <script-name> --key <k> --value <v>` | Set worker environment variable |
-| `kctl-cloudflare workers tail <script-name>` | Tail worker logs |
-| `kctl-cloudflare workers subdomain` | Get workers subdomain |
-| `kctl-cloudflare workers set-subdomain --name <subdomain>` | Set workers subdomain |
-
-### R2 Storage
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare r2 list` | R2 buckets |
-| `kctl-cloudflare r2 get <name>` | Bucket details |
-
-### Email Routing
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare email-routing status [--zone]` | Email routing status |
-| `kctl-cloudflare email-routing enable [--zone]` | Enable email routing |
-| `kctl-cloudflare email-routing disable [--zone]` | Disable email routing |
-| `kctl-cloudflare email-routing rules [--zone]` | List routing rules |
-| `kctl-cloudflare email-routing create-rule --name <n> --match <email> [--action forward] [--destination <email>] [--zone]` | Create routing rule |
-| `kctl-cloudflare email-routing delete-rule <rule-id> [--zone]` | Delete routing rule |
-| `kctl-cloudflare email-routing catch-all [--zone]` | Get catch-all rule |
-| `kctl-cloudflare email-routing set-catch-all [--action forward] [--destination <email>] [--zone]` | Set catch-all rule |
-| `kctl-cloudflare email-routing addresses` | List verified destination addresses |
-
-### Page Rules
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare page-rules list [--zone]` | List page rules |
-| `kctl-cloudflare page-rules get <rule-id> [--zone]` | Page rule details |
-| `kctl-cloudflare page-rules create --target <pattern> --action <id> [--value] [--priority] [--status] [--zone]` | Create page rule |
-| `kctl-cloudflare page-rules update <rule-id> [--target] [--action] [--value] [--zone]` | Update page rule |
-| `kctl-cloudflare page-rules delete <rule-id> [--zone]` | Delete page rule |
-
-### Redirects (Bulk Redirects)
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare redirects lists` | List redirect lists |
-| `kctl-cloudflare redirects list-items <list-id>` | List items in redirect list |
-| `kctl-cloudflare redirects create-item <list-id> --source <url> --target <url> [--status-code 301]` | Add redirect item |
-| `kctl-cloudflare redirects delete-item <list-id> <item-id>` | Delete redirect item |
-| `kctl-cloudflare redirects rulesets [--zone]` | List redirect rulesets |
-
-### Access (Zero Trust)
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare access apps` | List Access applications |
-| `kctl-cloudflare access get-app <app-id>` | Access application details |
-| `kctl-cloudflare access policies <app-id>` | List policies for application |
-| `kctl-cloudflare access groups` | List Access groups |
-| `kctl-cloudflare access create-group --name <n> --include <rules> [--require <rules>]` | Create Access group |
-| `kctl-cloudflare access idps` | List identity providers |
-| `kctl-cloudflare access service-tokens` | List service tokens |
-
-### Speed
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare speed settings [--zone]` | Speed optimization settings |
-| `kctl-cloudflare speed minify [--zone] [--html/--no-html] [--css/--no-css] [--js/--no-js]` | Get/set minification |
-| `kctl-cloudflare speed polish [--zone] [--mode off/lossless/lossy]` | Get/set image optimization |
-| `kctl-cloudflare speed mirage [--zone] [--enable/--disable]` | Get/set Mirage (image lazy-load) |
-| `kctl-cloudflare speed rocket-loader [--zone] [--enable/--disable]` | Get/set Rocket Loader |
-| `kctl-cloudflare speed early-hints [--zone] [--enable/--disable]` | Get/set Early Hints |
-| `kctl-cloudflare speed brotli [--zone] [--enable/--disable]` | Get/set Brotli compression |
-
-### Analytics
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare analytics dashboard [--zone] [--since -1440]` | Zone analytics dashboard |
-| `kctl-cloudflare analytics dns [--zone] [--since -1440]` | DNS analytics |
-
-### Export
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare export all [--zone]` | Full zone export JSON |
-
-### Terraform
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare terraform init` | Terraform init |
-| `kctl-cloudflare terraform plan` | Terraform plan |
-| `kctl-cloudflare terraform apply [--auto-approve]` | Terraform apply |
-| `kctl-cloudflare terraform destroy [--auto-approve]` | Terraform destroy |
-| `kctl-cloudflare terraform output` | Terraform output |
-| `kctl-cloudflare terraform validate` | Terraform validate |
-
-### Health & Config
-
-| Command | Description |
-|---------|-------------|
-| `kctl-cloudflare health check` | Composite API health |
-| `kctl-cloudflare config init` | First-time setup |
-| `kctl-cloudflare config show` | Show config (masked) |
-| `kctl-cloudflare config test` | Test connection |
-| `kctl-cloudflare config use <profile>` | Switch profile |
+**CLI:** `kctl-cf`
+**Command groups:** 39
+**Total commands:** ~189
+**Install:** `cd cli && uv tool install --editable .`
 
 ## Global Options
 
-`--json` `--quiet` `-q` `--profile` `-p` `--api-token` `--account-id` `--version` `-V`
+| Flag | Description |
+|------|-------------|
+| `--json` | JSON output |
+| `--quiet`, `-q` | Suppress info messages |
+| `--format`, `-f` | Output format: pretty/json/csv/yaml |
+| `--no-header` | Omit CSV header row |
+| `--profile`, `-p` | Config profile name |
+| `--version`, `-V` | Show version |
 
-## Terraform Workflow
+## Command Reference
 
+### `kctl-cf access`
+
+Manage Cloudflare Zero Trust Access.
+
+| Command | Description |
+|---------|-------------|
+| `access apps` | List Access applications. |
+| `access create-app <name> <domain> [--app_type] [--session_duration]` | Create an Access application. |
+| `access create-group <name> [--include] [--require]` | Create an Access group. |
+| `access create-policy <app_id> <name> [--decision] [--include]` | Create a policy for an Access application. |
+| `access create-service-token <name> [--duration]` | Create an Access service token. |
+| `access delete-app <app_id> [--force]` | Delete an Access application. |
+| `access delete-group <group_id> [--force]` | Delete an Access group. |
+| `access delete-policy <app_id> <policy_id> [--force]` | Delete a policy for an Access application. |
+| `access delete-service-token <token_id> [--force]` | Delete an Access service token. |
+| `access get-app <app_id>` | Get details for an Access application. |
+| `access groups` | List Access groups. |
+| `access idps` | List Access identity providers. |
+| `access policies <app_id>` | List policies for an Access application. |
+| `access rotate-service-token <token_id>` | Rotate an Access service token (generates new secret). |
+| `access service-tokens` | List Access service tokens. |
+| `access update-app <app_id> [--name] [--domain] [--session_duration]` | Update an Access application (merges with existing settings). |
+| `access update-policy <app_id> <policy_id> [--name] [--decision]` | Update a policy for an Access application (merges with existing). |
+
+### `kctl-cf analytics`
+
+Zone analytics and traffic reports.
+
+| Command | Description |
+|---------|-------------|
+| `analytics dashboard [--zone] [--since]` | Show zone analytics dashboard (requests, bandwidth, threats, etc.). |
+| `analytics dns [--zone] [--since]` | Show DNS analytics report. |
+
+### `kctl-cf argo`
+
+Manage Argo Smart Routing and Tiered Caching.
+
+| Command | Description |
+|---------|-------------|
+| `argo smart-routing [--enable] [--zone]` | Get or set Argo Smart Routing. |
+| `argo status [--zone]` | Show Argo Smart Routing and Tiered Caching status. |
+| `argo tiered-caching [--enable] [--zone]` | Get or set Argo Tiered Caching. |
+
+### `kctl-cf bk`
+
+Alias: export backup
+
+### `kctl-cf cache`
+
+Manage cache settings and purge.
+
+| Command | Description |
+|---------|-------------|
+| `cache purge <urls> [--zone]` | Purge specific URLs from the cache. |
+| `cache purge-all [--zone] [--confirm]` | Purge all cached content for a zone. |
+| `cache status [--zone]` | Show cache settings for a zone. |
+
+### `kctl-cf config`
+
+Manage CLI configuration and profiles.
+
+| Command | Description |
+|---------|-------------|
+| `config init [--api_token] [--account_id] [--name]` | Initialize CLI configuration. |
+| `config show` | Show configuration. |
+| `config test` | Test API connection. |
+| `config use <name>` | Switch default profile. |
+
+### `kctl-cf cp`
+
+Alias: cache purge-all
+
+Usage: `kctl-cf cp [--zone]`
+
+### `kctl-cf cs`
+
+Alias: cache status
+
+Usage: `kctl-cf cs [--zone]`
+
+### `kctl-cf custom-hostnames`
+
+Manage Custom Hostnames (Cloudflare for SaaS).
+
+| Command | Description |
+|---------|-------------|
+| `custom-hostnames create <hostname> [--ssl_method] [--ssl_type] [--zone]` | Create a custom hostname. |
+| `custom-hostnames delete <hostname_id> [--force] [--zone]` | Delete a custom hostname. |
+| `custom-hostnames get <hostname_id> [--zone]` | Get details for a custom hostname. |
+| `custom-hostnames list [--zone] [--hostname]` | List custom hostnames. |
+| `custom-hostnames update <hostname_id> [--ssl_method] [--zone]` | Update a custom hostname. |
+
+### `kctl-cf ea`
+
+Alias: export all
+
+Usage: `kctl-cf ea [--zone]`
+
+### `kctl-cf email-routing`
+
+Manage Cloudflare Email Routing.
+
+| Command | Description |
+|---------|-------------|
+| `email-routing addresses` | List verified destination email addresses. |
+| `email-routing catch-all [--zone]` | Show catch-all rule for email routing. |
+| `email-routing create-rule <name> <match> [--action] [--destination] [--zone]` | Create an email routing rule. |
+| `email-routing delete-rule <rule_id> [--force] [--zone]` | Delete an email routing rule. |
+| `email-routing disable [--zone]` | Disable email routing for a zone. |
+| `email-routing enable [--zone]` | Enable email routing for a zone. |
+| `email-routing rules [--zone]` | List email routing rules. |
+| `email-routing set-catch-all [--action] [--destination] [--zone]` | Set catch-all rule for email routing. |
+| `email-routing status [--zone]` | Show email routing status for a zone. |
+
+### `kctl-cf export`
+
+Export and backup Cloudflare configuration.
+
+| Command | Description |
+|---------|-------------|
+| `export all [--zone]` | Export all Cloudflare configuration as JSON. |
+| `export backup [--zone] [--output_dir] [--upload] [--s3_remote]` | Save Cloudflare export to timestamped JSON files on disk. |
+
+### `kctl-cf hc`
+
+Alias: health check
+
+### `kctl-cf health`
+
+Health checks.
+
+| Command | Description |
+|---------|-------------|
+| `health check [--watch] [--interval] [--notify]` | Run comprehensive Cloudflare health checks (6 checks, scored). |
+
+### `kctl-cf load-balancers`
+
+Manage Load Balancers, pools, and monitors.
+
+| Command | Description |
+|---------|-------------|
+| `load-balancers create <name> <default_pools> [--fallback_pool] [--proxied] [--zone]` | Create a load balancer. |
+| `load-balancers create-monitor <monitor_type> [--description] [--expected_codes]` | Create a load balancer monitor. |
+| `load-balancers create-pool <name> <origins>` | Create a load balancer pool from a JSON origins file. |
+| `load-balancers delete <lb_id> [--force] [--zone]` | Delete a load balancer. |
+| `load-balancers delete-monitor <monitor_id> [--force]` | Delete a load balancer monitor. |
+| `load-balancers delete-pool <pool_id> [--force]` | Delete a load balancer pool. |
+| `load-balancers get <lb_id> [--zone]` | Get load balancer details. |
+| `load-balancers list [--zone]` | List load balancers. |
+| `load-balancers monitors` | List load balancer monitors. |
+| `load-balancers pools` | List load balancer pools. |
+| `load-balancers update <lb_id> [--name] [--enabled] [--zone]` | Update a load balancer. |
+
+### `kctl-cf page-rules`
+
+Manage Cloudflare Page Rules.
+
+| Command | Description |
+|---------|-------------|
+| `page-rules create <target> <action> [--value] [--priority] [--status_flag] [--zone]` | Create a page rule. |
+| `page-rules delete <rule_id> [--force] [--zone]` | Delete a page rule. |
+| `page-rules get <rule_id> [--zone]` | Get details for a specific page rule. |
+| `page-rules list [--zone]` | List page rules for a zone. |
+| `page-rules update <rule_id> [--target] [--action] [--value] [--zone]` | Update a page rule. |
+
+### `kctl-cf pages`
+
+Manage Cloudflare Pages projects and deployments.
+
+| Command | Description |
+|---------|-------------|
+| `pages add-domain <project_name> <name>` | Add a custom domain to a Pages project. |
+| `pages create-deployment <project_name> [--branch]` | Create a new deployment for a Pages project. |
+| `pages create-project <name> <production_branch>` | Create a new Pages project. |
+| `pages delete-deployment <project_name> <deployment_id> [--force]` | Delete a deployment. |
+| `pages delete-project <name> [--force]` | Delete a Pages project. |
+| `pages deployments <project_name>` | List deployments for a Pages project. |
+| `pages domains <project_name>` | List custom domains for a Pages project. |
+| `pages get-deployment <project_name> <deployment_id>` | Get deployment details. |
+| `pages get-project <name>` | Get Pages project details. |
+| `pages projects` | List all Pages projects. |
+| `pages remove-domain <project_name> <domain_name> [--force]` | Remove a custom domain from a Pages project. |
+| `pages retry-deployment <project_name> <deployment_id>` | Retry a failed deployment. |
+| `pages rollback-deployment <project_name> <deployment_id>` | Rollback to a specific deployment. |
+
+### `kctl-cf r2`
+
+Manage R2 object storage buckets.
+
+| Command | Description |
+|---------|-------------|
+| `r2 create <name> [--location]` | Create an R2 bucket. |
+| `r2 delete <name> [--force]` | Delete an R2 bucket. |
+| `r2 delete-object <bucket_name> <key> [--force]` | Delete an object from an R2 bucket. |
+| `r2 get <name>` | Get R2 bucket details. |
+| `r2 list` | List all R2 buckets. |
+| `r2 list-objects <bucket_name> [--prefix] [--limit]` | List objects in an R2 bucket. |
+| `r2 usage <name>` | Show R2 bucket usage statistics. |
+
+### `kctl-cf records`
+
+Manage DNS records.
+
+| Command | Description |
+|---------|-------------|
+| `records bulk-create <file> [--zone]` | Bulk create DNS records from a JSON file. |
+| `records create <record_type> <name> <content> [--ttl] [--proxied] [--zone]` | Create a DNS record. |
+| `records delete <record_id> [--force] [--zone]` | Delete a DNS record. |
+| `records export [--zone] [--file]` | Export DNS records in BIND format. |
+| `records get <record_id> [--zone]` | Get a single DNS record by ID. |
+| `records import <file> [--zone]` | Import DNS records from a BIND zone file. |
+| `records list [--zone] [--record_type]` | List DNS records. |
+| `records scan [--zone]` | Scan for DNS records in a zone. |
+| `records update <record_id> [--record_type] [--name] [--content] [--ttl] [--proxied] [--zone]` | Update an existing DNS record. |
+
+### `kctl-cf redirects`
+
+Manage Cloudflare Redirect and Bulk Redirect rules.
+
+| Command | Description |
+|---------|-------------|
+| `redirects create-item <list_id> <source> <target> [--status_code]` | Add a redirect item to a bulk redirect list. |
+| `redirects create-list <name> [--description]` | Create a bulk redirect list. |
+| `redirects delete-item <list_id> <item_id> [--force]` | Delete a redirect item from a bulk redirect list. |
+| `redirects delete-list <list_id> [--force]` | Delete a bulk redirect list. |
+| `redirects list-items <list_id>` | List items in a bulk redirect list. |
+| `redirects lists` | List bulk redirect lists. |
+| `redirects rulesets [--zone]` | List rulesets for a zone (filtered to redirect phase). |
+
+### `kctl-cf rl`
+
+Alias: records list
+
+Usage: `kctl-cf rl [--zone] [--type]`
+
+### `kctl-cf selftest`
+
+Run built-in test suite.
+
+| Command | Description |
+|---------|-------------|
+| `selftest run [--verbose] [--smoke] [--coverage]` | Run the kctl-cf test suite. |
+
+**Examples:**
 ```bash
-kctl-cloudflare terraform plan     # Review changes
-kctl-cloudflare terraform apply    # Apply changes
-kctl-cloudflare terraform output   # Check state
+kctl-cf selftest run
+kctl-cf selftest run -v
+kctl-cf selftest run --smoke
+kctl-cf selftest run --coverage
 ```
 
-## DNS Management
+### `kctl-cf skill`
 
+Claude Code skill management.
+
+| Command | Description |
+|---------|-------------|
+| `skill generate [--output] [--install] [--check]` | Auto-generate SKILL.md from CLI command registry. |
+
+**Examples:**
 ```bash
-kctl-cloudflare records list --zone kodeme.io --type A
-kctl-cloudflare records update <id> --content 168.119.233.161 --zone kodeme.io
-kctl-cloudflare records bulk-create --file records.json --zone kodeme.io
-kctl-cloudflare records import --file zone.bind --zone kodeme.io
+kctl-cf skill generate
+kctl-cf skill generate --install
+kctl-cf skill generate --check
 ```
 
-## SSL/TLS Management
+### `kctl-cf spectrum`
+
+Manage Spectrum applications.
+
+| Command | Description |
+|---------|-------------|
+| `spectrum create <protocol> <dns_name> <origin_direct> [--dns_type] [--proxy_protocol] [--zone]` | Create a Spectrum application. |
+| `spectrum delete <app_id> [--force] [--zone]` | Delete a Spectrum application. |
+| `spectrum get <app_id> [--zone]` | Get Spectrum application details. |
+| `spectrum list [--zone]` | List Spectrum applications. |
+| `spectrum update <app_id> [--protocol] [--origin_direct] [--zone]` | Update a Spectrum application (merges with existing settings). |
+
+### `kctl-cf speed`
+
+Manage speed optimization settings (minify, polish, mirage, etc.).
+
+| Command | Description |
+|---------|-------------|
+| `speed brotli [--zone] [--enable]` | Show or toggle Brotli compression. |
+| `speed early-hints [--zone] [--enable]` | Show or toggle Early Hints (103 responses). |
+| `speed minify [--zone] [--html] [--css] [--js]` | Show or set auto-minification settings. |
+| `speed mirage [--zone] [--enable]` | Show or toggle Mirage (image lazy loading for mobile). |
+| `speed polish [--zone] [--mode]` | Show or set Polish (image optimization) mode. |
+| `speed rocket-loader [--zone] [--enable]` | Show or toggle Rocket Loader (async JS loading). |
+| `speed settings [--zone]` | Show speed-related settings for a zone. |
+
+### `kctl-cf ss`
+
+Alias: ssl status
+
+Usage: `kctl-cf ss [--zone]`
+
+### `kctl-cf ssl`
+
+Manage SSL/TLS settings and certificates.
+
+| Command | Description |
+|---------|-------------|
+| `ssl always-https [--enable] [--zone]` | Show or toggle Always Use HTTPS for a zone. |
+| `ssl certificates [--zone]` | List SSL certificate packs for a zone. |
+| `ssl create-origin-cert <hostnames> [--validity] [--request_type]` | Create an Origin CA certificate. |
+| `ssl delete-origin-cert <cert_id> [--force]` | Delete an Origin CA certificate. |
+| `ssl min-tls [--version] [--zone]` | Show or set minimum TLS version for a zone. |
+| `ssl origin-certs` | List Origin CA certificates. |
+| `ssl status [--zone]` | Show SSL/TLS mode for a zone. |
+
+### `kctl-cf st`
+
+Alias: status overview
+
+### `kctl-cf status`
+
+Account status dashboard.
+
+| Command | Description |
+|---------|-------------|
+| `status overview` | Show a comprehensive account-level dashboard. |
+
+### `kctl-cf terraform`
+
+Run Terraform commands for Cloudflare infrastructure.
+
+| Command | Description |
+|---------|-------------|
+| `terraform apply [--auto_approve] [--notify]` | Apply Terraform changes. |
+| `terraform destroy [--auto_approve] [--notify]` | Destroy Terraform-managed infrastructure. |
+| `terraform init` | Initialize Terraform working directory. |
+| `terraform output` | Show Terraform outputs. |
+| `terraform plan` | Show Terraform execution plan. |
+| `terraform validate` | Validate Terraform configuration. |
+
+### `kctl-cf tl`
+
+Alias: tunnels list
+
+### `kctl-cf tunnels`
+
+Manage Cloudflare Tunnels.
+
+| Command | Description |
+|---------|-------------|
+| `tunnels clean-connections <tunnel_id> [--force]` | Remove inactive tunnel connections. |
+| `tunnels connections <tunnel_id>` | List active tunnel connections. |
+| `tunnels create <name> [--secret]` | Create a Cloudflare Tunnel. |
+| `tunnels delete <tunnel_id> [--force]` | Delete a Cloudflare Tunnel. |
+| `tunnels get <name>` | Get tunnel details. |
+| `tunnels get-config <tunnel_id>` | Get tunnel configuration (ingress rules). |
+| `tunnels list` | List all tunnels. |
+| `tunnels update-config <tunnel_id> <file>` | Update tunnel configuration from a JSON file. |
+
+### `kctl-cf waf`
+
+Manage WAF and firewall rules.
+
+| Command | Description |
+|---------|-------------|
+| `waf create <expression> [--action] [--description] [--zone]` | Create a firewall rule. |
+| `waf create-ip-rule <mode> <value> [--target] [--notes] [--zone]` | Create an IP access rule. |
+| `waf create-rate-limit [--url] [--threshold] [--period] [--action_mode] [--timeout] [--zone]` | Create a rate limiting rule. |
+| `waf delete <rule_id> [--force] [--zone]` | Delete a firewall rule. |
+| `waf delete-ip-rule <rule_id> [--force] [--zone]` | Delete an IP access rule. |
+| `waf delete-rate-limit <rule_id> [--force] [--zone]` | Delete a rate limiting rule. |
+| `waf ip-rules [--zone]` | List IP access rules. |
+| `waf list [--zone]` | List firewall rules. |
+| `waf rate-limits [--zone]` | List rate limiting rules. |
+| `waf update <rule_id> [--expression] [--action] [--zone]` | Update a firewall rule. |
+| `waf update-ip-rule <rule_id> [--mode] [--notes] [--zone]` | Update an IP access rule. |
+| `waf update-rate-limit <rule_id> [--threshold] [--period] [--disabled] [--zone]` | Update a rate limiting rule. |
+
+### `kctl-cf waiting-rooms`
+
+Manage Waiting Rooms.
+
+| Command | Description |
+|---------|-------------|
+| `waiting-rooms create <name> <host> <total_active_users> <new_users_per_minute> [--path] [--session_duration] [--zone]` | Create a waiting room. |
+| `waiting-rooms delete <room_id> [--force] [--zone]` | Delete a waiting room. |
+| `waiting-rooms get <room_id> [--zone]` | Get waiting room details. |
+| `waiting-rooms list [--zone]` | List waiting rooms. |
+| `waiting-rooms update <room_id> [--name] [--total_active_users] [--new_users_per_minute] [--zone]` | Update a waiting room (merges with existing settings). |
+
+### `kctl-cf wl`
+
+Alias: workers list
+
+### `kctl-cf workers`
+
+Manage Cloudflare Workers, routes, and KV.
+
+| Command | Description |
+|---------|-------------|
+| `workers create-kv <title>` | Create a Workers KV namespace. |
+| `workers create-route <pattern> <script> [--zone]` | Create a Workers route for a zone. |
+| `workers cron-triggers <script_name>` | List cron triggers for a Worker script. |
+| `workers delete <script_name> [--force]` | Delete a Worker script. |
+| `workers delete-cron-triggers <script_name> [--force]` | Delete all cron triggers for a Worker script. |
+| `workers delete-kv <namespace_id> [--force]` | Delete a Workers KV namespace. |
+| `workers delete-route <route_id> [--force] [--zone]` | Delete a Workers route. |
+| `workers deploy <script_name> <file>` | Deploy a Worker script. |
+| `workers env <script_name>` | Show environment bindings for a Worker script. |
+| `workers kv` | List Workers KV namespaces. |
+| `workers list` | List all Workers scripts. |
+| `workers routes [--zone]` | List Workers routes for a zone. |
+| `workers set-cron-triggers <script_name> <crons>` | Set cron triggers for a Worker script (replaces all existing). |
+| `workers set-env <script_name> <key> <value>` | Set an environment variable (plain text binding) for a Worker. |
+| `workers set-subdomain <name>` | Set Workers subdomain for the account. |
+| `workers subdomain` | Show Workers subdomain for the account. |
+| `workers tail <script_name>` | Start a tail session for a Worker (shows recent events). |
+
+### `kctl-cf zg`
+
+Alias: zones get <zone>
+
+Usage: `kctl-cf zg <zone>`
+
+### `kctl-cf zl`
+
+Alias: zones list
+
+### `kctl-cf zones`
+
+Manage DNS zones.
+
+| Command | Description |
+|---------|-------------|
+| `zones activation-check [--zone]` | Trigger an activation check for a zone. |
+| `zones create <name> [--jump_start]` | Create a new DNS zone. |
+| `zones delete <zone> [--force]` | Delete a DNS zone. |
+| `zones edit-setting <setting> <value> [--zone]` | Edit a zone setting. |
+| `zones get <zone>` | Get zone details. |
+| `zones hold [--zone] [--include_subdomains]` | Place a hold on a zone. |
+| `zones list` | List all zones. |
+| `zones release-hold [--zone]` | Release a hold on a zone. |
+| `zones settings [--zone]` | List all zone settings. |
+
+## Configuration
+
+Shared config: `~/.config/kodemeio/config.yaml`
 
 ```bash
-kctl-cloudflare ssl status --zone kodeme.io
-kctl-cloudflare ssl min-tls --version 1.2 --zone kodeme.io
-kctl-cloudflare ssl always-https --enable --zone kodeme.io
-kctl-cloudflare ssl create-origin-cert --hostname kodeme.io --hostname "*.kodeme.io"
+kctl-cf config init       # Interactive setup
+kctl-cf config show       # Show current config
+kctl-cf config profiles   # List profiles
+kctl-cf config current    # Show active profile
+kctl-cf config validate   # Verify config
 ```
-
-## Worker Deployment
-
-```bash
-kctl-cloudflare workers deploy my-worker --file worker.js
-kctl-cloudflare workers set-env my-worker --key API_KEY --value secret123
-kctl-cloudflare workers tail my-worker
-```
-
-## Email Routing
-
-```bash
-kctl-cloudflare email-routing enable --zone kodeme.io
-kctl-cloudflare email-routing create-rule --name "Support" --match support@kodeme.io --action forward --destination admin@kodeme.io
-kctl-cloudflare email-routing set-catch-all --action forward --destination admin@kodeme.io
-```
-
-## Troubleshooting
-
-- DNS not resolving: `records list --zone` → `dig +short <domain>`
-- Tunnel down: `tunnels list` → `docker logs cloudflared`
-- SSL issues: `ssl status --zone` → should be "strict" → `ssl min-tls --version 1.2`
-- Cache stale: `cache purge-all --zone`
-- Email routing: `email-routing status` → `email-routing rules`
-- Access issues: `access apps` → `access policies <app-id>`

@@ -1,12 +1,7 @@
 ---
 name: chatwoot-admin
 description: >
-  Chatwoot customer engagement platform administration for kodemeio
-  infrastructure. Supports multiple instances via profiles. Covers
-  conversation management, contact CRUD, agent/inbox/team management,
-  label management, reporting, webhook configuration, health monitoring,
-  and dashboard overview. Use when working with kctl-chatwoot CLI or
-  managing any Chatwoot instance.
+  Chatwoot customer engagement platform administration via kctl-chatwoot CLI. MUST use for ANY Chatwoot operation — conversations, contacts, agents, inboxes, teams, labels, webhooks. Triggers on: "kctl-chatwoot", "chatwoot", "customer support", "inbox", "conversation", "agent assignment", "chat widget", "chatwoot webhook", or ANY customer engagement platform task.
 version: 1.0.0
 allowed-tools:
   - Bash

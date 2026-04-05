@@ -19,3 +19,7 @@ globs: "**/*"
 - Never stop Dokploy's own containers (dokploy, traefik)
 - Always use `docker compose -f <project>/docker-compose.yml` — never bare `docker run`
 - Before `terraform apply`, always run `terraform plan` and show the output first
+- Never run `git push --force` to 18.0 branch (Odoo production)
+- Never display plaintext secrets in `config show` output — always mask with `****`
+- Never write API keys, tokens, or passwords into CLAUDE.md, README.md, or any committed docs
+- When showing config with secrets, use masking pattern: first4****last4

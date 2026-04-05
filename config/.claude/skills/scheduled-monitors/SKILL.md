@@ -1,9 +1,7 @@
 ---
 name: scheduled-monitors
 description: >
-  Pre-built /loop recipes for recurring monitoring tasks across the Kodemeio empire.
-  Use when setting up automated health checks, PR monitoring, deployment verification,
-  or any recurring task that should run on a schedule in the container.
+  Pre-built /loop recipes for recurring monitoring tasks across Kodemeio infrastructure. MUST use when setting up automated health checks, PR monitoring, deployment verification, or recurring scheduled tasks. Triggers on: "monitor every", "check every", "recurring check", "health check loop", "deployment monitor", "schedule monitoring", or ANY recurring monitoring setup.
 version: 1.0.0
 allowed-tools:
   - Bash

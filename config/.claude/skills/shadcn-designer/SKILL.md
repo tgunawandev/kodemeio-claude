@@ -1,6 +1,7 @@
 ---
 name: shadcn-designer
-description: AI-powered designer skill for creating, customizing, and integrating shadcn UI components with modern design patterns and ultrathink principles
+description: >
+  AI-powered designer for creating, customizing, and integrating shadcn/ui components. MUST use when building UI with shadcn components, customizing themes, or designing component compositions. Triggers on: "shadcn", "ui component", "component design", "shadcn theme", "radix", or ANY shadcn/ui design task.
 version: 1.0.0
 allowed-tools: [
   "mcp__shadcn__*",

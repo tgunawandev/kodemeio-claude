@@ -1,6 +1,7 @@
 ---
 name: odoo-fastapi-backend
-description: Odoo 18 + FastAPI backend development for Kodemeio mobile apps. Covers FastAPI router patterns, Pydantic schemas, JWT auth via base_management, response envelope convention, FastAPITransactionCase testing, and OpenAPI schema generation. Not generic Odoo — specifically the FastAPI addon pattern used by all 8 apps.
+description: >
+  Odoo 18 + FastAPI backend development for Kodemeio mobile PWA apps. MUST use when working with FastAPI routers, Pydantic schemas, JWT auth, or API endpoints inside Odoo modules. Triggers on: "FastAPI router", "Pydantic schema", "API endpoint", "/api/", "BaseCRUDRouter", "FastAPITransactionCase", "OpenAPI", or any mobile app backend work (SFA, WMS, HRM, BIA, etc.).
 version: 2.0.0
 allowed-tools: [
   "mcp__context7__*",

@@ -1,294 +1,379 @@
 ---
 name: hetzner-admin
 description: >
-  Hetzner Cloud infrastructure administration for kodemeio. Full CRUD for
-  servers, volumes, firewalls, networks, SSH keys, IPs, snapshots, load
-  balancers, DNS, placement groups, S3, images, labels, and rDNS.
-  Cost reporting, server metrics, and infrastructure dashboard.
-  Use when working with kctl-hetzner CLI or managing Hetzner Cloud resources.
-version: 2.0.0
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
+  Hetzner Cloud infrastructure administration via kctl-hz CLI (33 groups, ~134 commands).
+  MUST use for ANY kctl-hz operation.
+  Triggers on: "add-route", "add-rule", "add-service", "add-subnet", "add-target", "apply", "assign", "attach", "attach-server", "backup", "buckets", "ce", "change-ip-range", "check", "config", "console", "costs", "create-floating", "create-primary", "create-record", "create-snapshot", "datacenters", "delete-floating", "delete-primary", "delete-record", "delete-snapshot", "detach", "detach-server", "disable-rescue", "dns", "dz", "enable-rescue", "estimate", "extend", "firewalls", "fl", "generate", "get-primary", "hc", "health", "images", "init", "ips", "kctl-hz", "labels", "load-balancers", "locations", "metrics", "networks", "nl", "placement-groups", "power-off", "profile", "protect", "rdns", "reboot", "rebuild", "records", "remove", "remove-from", "remove-route", "remove-rule", "remove-service", "remove-subnet", "remove-target", "reset", "reset-password", "resize", "restore", "s3", "sc", "self-test", "server-types", "servers", "sg", "shutdown", "size", "skill", "sl", "snapshots".
+  Auto-generated: 2026-04-05
+  registry_hash: 2c97993f35a7
 ---
 
-# Hetzner Cloud Administration for Kodemeio
+# hetzner-admin — kctl-hz CLI Reference
 
-## System Overview
+> Auto-generated from `kctl-hz` command registry. Do not edit manually.
+> To regenerate: `kctl-hz skill generate`
+> To add custom content: edit `SKILL.extra.md` in the same directory.
 
-- **Server**: cx42 (8 vCPU, 16 GB RAM) at fsn1
-- **IP**: 168.119.233.161 (dokploy.kodeme.io)
-- **APIs**: Cloud API v1 + DNS API v1 (separate tokens)
-- **CLI**: `kctl-hetzner` (Python, installed via `uv tool install ./cli`)
-- **Config**: `~/.config/kodemeio/config.yaml` → `profiles.<profile>.hetzner`
+## Overview
 
-## Commands
-
-### Status & Health
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner status show` | Infrastructure dashboard |
-| `kctl-hetzner health check` | Cloud + DNS API check |
-
-### Servers
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner servers list` | All servers |
-| `kctl-hetzner servers get <name>` | Server details |
-| `kctl-hetzner servers create <name> --type --image --location [--ssh-key ...]` | Create server |
-| `kctl-hetzner servers delete <name> [--force]` | Delete server |
-| `kctl-hetzner servers reboot <name>` | Reboot server |
-| `kctl-hetzner servers shutdown <name>` | Graceful shutdown |
-| `kctl-hetzner servers power-off <name>` | Force power off |
-| `kctl-hetzner servers reset <name> [--force]` | Hard reset server |
-| `kctl-hetzner servers rebuild <name> --image [--force]` | Reinstall OS |
-| `kctl-hetzner servers resize <name> --type <new-type> [--upgrade-disk] [--force]` | Resize server |
-| `kctl-hetzner servers rename <name> --name <new-name>` | Rename server |
-| `kctl-hetzner servers enable-rescue <name> [--ssh-key ...] [--force]` | Enable rescue mode |
-| `kctl-hetzner servers disable-rescue <name>` | Disable rescue mode |
-| `kctl-hetzner servers console <name>` | Get VNC console URL |
-| `kctl-hetzner servers metrics <name> [--type cpu/disk/network] [--start] [--end]` | Server metrics |
-
-### Volumes
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner volumes list` | All volumes |
-| `kctl-hetzner volumes get <id>` | Volume details |
-| `kctl-hetzner volumes create <name> [--size N] [--server] [--location]` | Create volume |
-| `kctl-hetzner volumes attach <id> --server <server-id>` | Attach to server |
-| `kctl-hetzner volumes detach <id>` | Detach from server |
-| `kctl-hetzner volumes delete <id> [--force]` | Delete volume |
-| `kctl-hetzner volumes extend <id> --size <new-size>` | Extend volume size |
-| `kctl-hetzner volumes protect <id> [--enable/--disable]` | Toggle delete protection |
-
-### Firewalls
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner firewalls list` | All firewalls |
-| `kctl-hetzner firewalls get <name>` | Firewall details + rules |
-| `kctl-hetzner firewalls create <name>` | Create firewall |
-| `kctl-hetzner firewalls delete <id> [--force]` | Delete firewall |
-| `kctl-hetzner firewalls add-rule <id> --direction <in/out> --protocol <tcp/udp/icmp> [--port] [--source-ips] [--destination-ips] [--description]` | Add firewall rule |
-| `kctl-hetzner firewalls remove-rule <id> --direction --protocol [--port]` | Remove firewall rule |
-| `kctl-hetzner firewalls apply <id> --server <server-id>` | Apply firewall to server |
-| `kctl-hetzner firewalls remove-from <id> --server <server-id>` | Remove firewall from server |
-
-### Networks
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner networks list` | All networks |
-| `kctl-hetzner networks get <id>` | Network details |
-| `kctl-hetzner networks create <name> --ip-range <cidr>` | Create network |
-| `kctl-hetzner networks delete <id> [--force]` | Delete network |
-| `kctl-hetzner networks add-subnet <id> --type <cloud/vswitch/server> --ip-range <cidr> --network-zone <zone>` | Add subnet |
-| `kctl-hetzner networks remove-subnet <id> --ip-range <cidr> [--force]` | Remove subnet |
-| `kctl-hetzner networks attach-server <id> --server <server-id> [--ip]` | Attach server to network |
-| `kctl-hetzner networks detach-server <id> --server <server-id>` | Detach server from network |
-| `kctl-hetzner networks change-ip-range <id> --ip-range <cidr>` | Change network IP range |
-| `kctl-hetzner networks add-route <id> --destination <cidr> --gateway <ip>` | Add static route |
-| `kctl-hetzner networks remove-route <id> --destination <cidr> --gateway <ip> [--force]` | Remove static route |
-
-### SSH Keys
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner ssh-keys list` | SSH keys |
-| `kctl-hetzner ssh-keys create <name> --public-key <key>` | Add key |
-| `kctl-hetzner ssh-keys delete <id> [--force]` | Remove key |
-
-### IPs (Floating & Primary)
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner ips list` | All floating + primary IPs |
-| `kctl-hetzner ips get <id>` | Floating IP details |
-| `kctl-hetzner ips create-floating --type <ipv4/ipv6> --location <loc> [--server] [--description] [--name]` | Create floating IP |
-| `kctl-hetzner ips delete-floating <id> [--force]` | Delete floating IP |
-| `kctl-hetzner ips assign <id> --server <server-id>` | Assign floating IP to server |
-| `kctl-hetzner ips unassign <id>` | Unassign floating IP |
-| `kctl-hetzner ips get-primary <id>` | Primary IP details |
-| `kctl-hetzner ips create-primary --type <ipv4/ipv6> [--assignee-type] [--assignee-id] [--datacenter] [--name] [--auto-delete/--no-auto-delete]` | Create primary IP |
-| `kctl-hetzner ips update-primary <id> [--name] [--auto-delete/--no-auto-delete]` | Update primary IP |
-| `kctl-hetzner ips delete-primary <id> [--force]` | Delete primary IP |
-
-### Snapshots
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner snapshots list` | Server snapshots |
-| `kctl-hetzner snapshots get <id>` | Snapshot details |
-| `kctl-hetzner snapshots create <server-id> [--description]` | Create snapshot |
-| `kctl-hetzner snapshots delete <id> [--force]` | Delete snapshot |
-| `kctl-hetzner snapshots restore <server-id> --image <snapshot-id> [--force]` | Restore snapshot to server |
-| `kctl-hetzner snapshots update <id> [--description]` | Update snapshot metadata |
-
-### Load Balancers
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner load-balancers list` | All load balancers |
-| `kctl-hetzner load-balancers get <name>` | Load balancer details |
-| `kctl-hetzner load-balancers create <name> [--type lb11] [--location] [--algorithm] [--network]` | Create load balancer |
-| `kctl-hetzner load-balancers delete <name> [--force]` | Delete load balancer |
-| `kctl-hetzner load-balancers update <name> --name <new-name>` | Rename load balancer |
-| `kctl-hetzner load-balancers add-target <name> --server <id> [--use-private-ip]` | Add server target |
-| `kctl-hetzner load-balancers remove-target <name> --server <id>` | Remove server target |
-| `kctl-hetzner load-balancers add-service <name> --protocol --listen-port --dest-port [--health-check-path]` | Add service/listener |
-| `kctl-hetzner load-balancers remove-service <name> --listen-port <port>` | Remove service/listener |
-
-### Placement Groups
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner placement-groups list` | All placement groups |
-| `kctl-hetzner placement-groups get <name>` | Placement group details |
-| `kctl-hetzner placement-groups create <name> [--type spread]` | Create placement group |
-| `kctl-hetzner placement-groups delete <name> [--force]` | Delete placement group |
-
-### S3 (Hetzner Object Storage)
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner s3 buckets` | List S3 buckets |
-| `kctl-hetzner s3 ls <bucket> [--prefix]` | List objects in bucket |
-| `kctl-hetzner s3 size <bucket>` | Bucket size summary |
-| `kctl-hetzner s3 cp <src> <dst> [--recursive]` | Copy files (local/S3) |
-| `kctl-hetzner s3 sync <src> <dst> [--delete]` | Sync files (local/S3) |
-| `kctl-hetzner s3 mb <name>` | Create bucket |
-| `kctl-hetzner s3 rb <name> [--force]` | Remove bucket |
-
-### Server Types
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner server-types list` | Available server types |
-| `kctl-hetzner server-types get <id>` | Server type details |
-
-### Locations
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner locations list` | Available locations |
-| `kctl-hetzner locations get <id>` | Location details |
-| `kctl-hetzner locations datacenters` | Available datacenters |
-
-### Images
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner images list [--type system/snapshot/backup/app] [--architecture x86/arm]` | List images |
-| `kctl-hetzner images get <id>` | Image details |
-| `kctl-hetzner images delete <id> [--force]` | Delete image (snapshots only) |
-| `kctl-hetzner images update <id> [--description] [--type]` | Update image metadata |
-
-### Labels
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner labels list <resource-type> <resource-id>` | List labels on resource |
-| `kctl-hetzner labels set <resource-type> <resource-id> --labels <key=val,...>` | Set labels on resource |
-| `kctl-hetzner labels remove <resource-type> <resource-id> --key <key>` | Remove label from resource |
-
-### Reverse DNS
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner rdns get <resource-type> <resource-id>` | Get rDNS entries |
-| `kctl-hetzner rdns set <resource-type> <resource-id> --ip <ip> --dns-ptr <hostname>` | Set rDNS pointer |
-| `kctl-hetzner rdns delete <resource-type> <resource-id> --ip <ip> [--force]` | Delete rDNS pointer |
-
-### DNS (separate API, separate token)
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner dns zones` | DNS zones |
-| `kctl-hetzner dns records <zone>` | DNS records |
-| `kctl-hetzner dns create-record <zone> --type --name --value [--ttl]` | Create record |
-| `kctl-hetzner dns delete-record <id> [--force]` | Delete record |
-
-### Costs
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner costs estimate` | Monthly cost breakdown |
-
-### Config
-
-| Command | Description |
-|---------|-------------|
-| `kctl-hetzner config init` | First-time setup |
-| `kctl-hetzner config show` | Show config (masked) |
-| `kctl-hetzner config test` | Test connection |
-| `kctl-hetzner config use <profile>` | Switch profile |
+**CLI:** `kctl-hz`
+**Command groups:** 33
+**Total commands:** ~134
+**Install:** `cd cli && uv tool install --editable .`
 
 ## Global Options
 
-`--json` `--quiet` `-q` `--profile` `-p` `--token` `--dns-token` `--version` `-V`
+| Flag | Description |
+|------|-------------|
+| `--json` | JSON output |
+| `--quiet`, `-q` | Suppress info messages |
+| `--format`, `-f` | Output format: pretty/json/csv/yaml |
+| `--no-header` | Omit CSV header row |
+| `--profile`, `-p` | Config profile name |
+| `--version`, `-V` | Show version |
 
-## Server Management
+## Command Reference
 
+### `kctl-hz ce`
+
+Alias: costs estimate
+
+### `kctl-hz config`
+
+Manage CLI configuration and profiles.
+
+| Command | Description |
+|---------|-------------|
+| `config init [--cloud_token] [--dns_token] [--name]` | Initialize CLI configuration. |
+| `config show` | Show configuration. |
+| `config test` | Test API connection. |
+| `config use <name>` | Switch default profile. |
+
+### `kctl-hz costs`
+
+Estimate monthly infrastructure costs.
+
+| Command | Description |
+|---------|-------------|
+| `costs estimate` | Estimate monthly costs for all Hetzner resources. |
+
+### `kctl-hz dns`
+
+Manage Hetzner DNS zones and records.
+
+| Command | Description |
+|---------|-------------|
+| `dns create-record <zone_name> <record_type> <name> <value> [--ttl]` | Create a DNS record in a zone. |
+| `dns delete-record <record_id> [--force]` | Delete a DNS record. |
+| `dns records <zone_name>` | List DNS records for a zone. |
+| `dns update-record <record_id> <zone_name> [--record_type] [--name] [--value] [--ttl]` | Update a DNS record. |
+| `dns zones` | List all DNS zones. |
+
+### `kctl-hz dz`
+
+Alias: dns zones
+
+### `kctl-hz firewalls`
+
+Manage Hetzner Cloud firewalls.
+
+| Command | Description |
+|---------|-------------|
+| `firewalls add-rule <firewall_id> <direction> <protocol> [--port] [--source_ips] [--destination_ips] [--description]` | Add a rule to a firewall (appends to existing rules). |
+| `firewalls apply <firewall_id> <server>` | Apply a firewall to a server. |
+| `firewalls create <name>` | Create a new firewall. |
+| `firewalls delete <firewall_id> [--force]` | Delete a firewall. |
+| `firewalls get <name>` | Get firewall details with rules. |
+| `firewalls list` | List all firewalls. |
+| `firewalls remove-from <firewall_id> <server>` | Remove a firewall from a server. |
+| `firewalls remove-rule <firewall_id> <direction> <protocol> [--port]` | Remove a matching rule from a firewall. |
+| `firewalls update <firewall_id> [--name] [--labels]` | Update a firewall (name, labels). |
+
+### `kctl-hz fl`
+
+Alias: firewalls list
+
+### `kctl-hz hc`
+
+Alias: health check
+
+### `kctl-hz health`
+
+Health checks.
+
+| Command | Description |
+|---------|-------------|
+| `health check` | Check Hetzner Cloud + DNS API connectivity. |
+
+### `kctl-hz images`
+
+Manage Hetzner Cloud images (OS, snapshots, backups).
+
+| Command | Description |
+|---------|-------------|
+| `images delete <image_id> [--force]` | Delete an image (only snapshots can be deleted). |
+| `images get <image_id>` | Get details of an image. |
+| `images list [--image_type] [--architecture]` | List images (optionally filtered by type). |
+| `images update <image_id> [--description] [--image_type] [--labels]` | Update an image (description, type, labels). |
+
+### `kctl-hz ips`
+
+Manage Hetzner Cloud IP addresses.
+
+| Command | Description |
+|---------|-------------|
+| `ips assign <ip_id> <server>` | Assign a floating IP to a server. |
+| `ips create-floating <ip_type> <location> [--server] [--description] [--name]` | Create a new floating IP. |
+| `ips create-primary <ip_type> [--assignee_type] [--assignee_id] [--datacenter] [--name] [--auto_delete]` | Create a new primary IP. |
+| `ips delete-floating <ip_id> [--force]` | Delete a floating IP. |
+| `ips delete-primary <ip_id> [--force]` | Delete a primary IP. |
+| `ips get <ip_id>` | Get details of a floating IP. |
+| `ips get-primary <ip_id>` | Get details of a primary IP. |
+| `ips list` | List all floating and primary IPs. |
+| `ips unassign <ip_id>` | Unassign a floating IP from its server. |
+| `ips update-floating <ip_id> [--name] [--description] [--labels]` | Update a floating IP (name, description, labels). |
+| `ips update-primary <ip_id> [--name] [--auto_delete] [--labels]` | Update a primary IP (name, auto-delete, labels). |
+
+### `kctl-hz labels`
+
+Manage labels on Hetzner Cloud resources.
+
+| Command | Description |
+|---------|-------------|
+| `labels list <resource_type> <resource_id>` | Show labels on a resource. |
+| `labels remove <resource_type> <resource_id> <key>` | Remove a label from a resource. |
+| `labels set <resource_type> <resource_id> <labels>` | Set labels on a resource (merges with existing labels). |
+
+### `kctl-hz load-balancers`
+
+Manage Hetzner Cloud load balancers.
+
+| Command | Description |
+|---------|-------------|
+| `load-balancers add-service <name> <protocol> <listen_port> <dest_port> [--health_check_path]` | Add a service (listener) to a load balancer. |
+| `load-balancers add-target <name> <server> [--use_private_ip]` | Add a server target to a load balancer. |
+| `load-balancers create <name> [--lb_type] [--location] [--algorithm] [--network]` | Create a new load balancer. |
+| `load-balancers delete <name> [--force]` | Delete a load balancer. |
+| `load-balancers get <name>` | Get load balancer details. |
+| `load-balancers list` | List all load balancers. |
+| `load-balancers remove-service <name> <listen_port>` | Remove a service (listener) from a load balancer. |
+| `load-balancers remove-target <name> <server>` | Remove a server target from a load balancer. |
+| `load-balancers update <name> [--new_name] [--labels]` | Update a load balancer (name, labels). |
+
+### `kctl-hz locations`
+
+Browse Hetzner Cloud locations and datacenters.
+
+| Command | Description |
+|---------|-------------|
+| `locations datacenters` | List all available datacenters. |
+| `locations get <location_id>` | Get details of a location. |
+| `locations list` | List all available locations. |
+
+### `kctl-hz networks`
+
+Manage Hetzner Cloud networks.
+
+| Command | Description |
+|---------|-------------|
+| `networks add-route <network_id> <destination> <gateway>` | Add a static route to a network. |
+| `networks add-subnet <network_id> <subnet_type> <ip_range> <network_zone>` | Add a subnet to a network. |
+| `networks attach-server <network_id> <server> [--ip]` | Attach a server to a network. |
+| `networks change-ip-range <network_id> <ip_range>` | Change the IP range of a network. |
+| `networks create <name> <ip_range>` | Create a new network. |
+| `networks delete <network_id> [--force]` | Delete a network. |
+| `networks detach-server <network_id> <server>` | Detach a server from a network. |
+| `networks get <network_id>` | Get network details. |
+| `networks list` | List all networks. |
+| `networks remove-route <network_id> <destination> <gateway> [--force]` | Remove a static route from a network. |
+| `networks remove-subnet <network_id> <ip_range> [--force]` | Remove a subnet from a network. |
+| `networks update <network_id> [--name] [--labels]` | Update a network (name, labels). |
+
+### `kctl-hz nl`
+
+Alias: networks list
+
+### `kctl-hz placement-groups`
+
+Manage Hetzner Cloud placement groups.
+
+| Command | Description |
+|---------|-------------|
+| `placement-groups create <name> [--pg_type]` | Create a new placement group. |
+| `placement-groups delete <name> [--force]` | Delete a placement group. |
+| `placement-groups get <name>` | Get placement group details. |
+| `placement-groups list` | List all placement groups. |
+| `placement-groups update <name> [--new_name] [--labels]` | Update a placement group (name, labels). |
+
+### `kctl-hz rdns`
+
+Manage reverse DNS entries on Hetzner Cloud resources.
+
+| Command | Description |
+|---------|-------------|
+| `rdns delete <resource_type> <resource_id> <ip> [--force]` | Delete a reverse DNS entry (set to null). |
+| `rdns get <resource_type> <resource_id>` | Show reverse DNS entries for a resource. |
+| `rdns set <resource_type> <resource_id> <ip> <dns_ptr>` | Set a reverse DNS entry for a resource. |
+
+### `kctl-hz s3`
+
+Manage Hetzner S3-compatible object storage.
+
+| Command | Description |
+|---------|-------------|
+| `s3 buckets` | List all S3 buckets. |
+| `s3 cp <src> <dst> [--recursive]` | Copy files to/from S3. |
+| `s3 ls <bucket> [--prefix]` | List objects in an S3 bucket. |
+| `s3 mb <name>` | Create a new S3 bucket. |
+| `s3 rb <name> [--force]` | Remove an S3 bucket. |
+| `s3 size <bucket>` | Calculate total size of an S3 bucket. |
+| `s3 sync <src> <dst> [--delete]` | Sync directories to/from S3 (incremental). |
+
+### `kctl-hz sc`
+
+Alias: servers create <name>
+
+Usage: `kctl-hz sc <name> [--server_type] [--image]`
+
+### `kctl-hz self-test`
+
+CLI self-test and smoke test.
+
+### `kctl-hz server-types`
+
+Browse Hetzner Cloud server types.
+
+| Command | Description |
+|---------|-------------|
+| `server-types get <type_id>` | Get details of a server type. |
+| `server-types list` | List all available server types. |
+
+### `kctl-hz servers`
+
+Manage Hetzner Cloud servers.
+
+| Command | Description |
+|---------|-------------|
+| `servers console <name>` | Request a VNC console URL for a server. |
+| `servers create <name> [--server_type] [--image] [--location] [--ssh_keys]` | Create a new server. |
+| `servers delete <name> [--force]` | Delete a server. |
+| `servers disable-rescue <name>` | Disable rescue mode on a server. |
+| `servers enable-rescue <name> [--ssh_key] [--force]` | Enable rescue mode on a server. |
+| `servers get <name>` | Get server details. |
+| `servers list` | List all servers. |
+| `servers metrics <name> [--metric_type] [--start] [--end]` | Fetch server metrics (cpu, disk, network). |
+| `servers power-off <name>` | Force power off a server. |
+| `servers reboot <name>` | Reboot a server (soft reboot). |
+| `servers rebuild <name> <image> [--force]` | Rebuild a server with a new image (destroys all data). |
+| `servers reset <name> [--force]` | Hard reset a server (like pulling power). |
+| `servers resize <name> <server_type> [--upgrade_disk] [--force]` | Resize a server to a different type. |
+| `servers shutdown <name>` | Gracefully shut down a server. |
+| `servers update <name> [--new_name] [--labels]` | Update a server (name, labels). |
+
+### `kctl-hz sg`
+
+Alias: servers get <name>
+
+Usage: `kctl-hz sg <name>`
+
+### `kctl-hz skill`
+
+Claude Code skill management.
+
+| Command | Description |
+|---------|-------------|
+| `skill generate [--output] [--install] [--check]` | Auto-generate SKILL.md from CLI command registry. |
+
+**Examples:**
 ```bash
-kctl-hetzner servers create my-server --type cx22 --image ubuntu-24.04 --location fsn1
-kctl-hetzner servers reboot my-server
-kctl-hetzner servers rebuild my-server --image ubuntu-24.04
-kctl-hetzner servers resize my-server --type cx32
-kctl-hetzner servers metrics my-server --type cpu
+kctl-hz skill generate
+kctl-hz skill generate --install
+kctl-hz skill generate --check
 ```
 
-## Firewall Management
+### `kctl-hz sl`
+
+Alias: servers list
+
+### `kctl-hz snapshots`
+
+Manage Hetzner Cloud snapshots.
+
+| Command | Description |
+|---------|-------------|
+| `snapshots create <server_id> [--description]` | Create a snapshot from a server. |
+| `snapshots delete <snapshot_id> [--force]` | Delete a snapshot. |
+| `snapshots get <snapshot_id>` | Get snapshot details. |
+| `snapshots list` | List all snapshots. |
+| `snapshots restore <server_id> <image> [--force]` | Restore a server from a snapshot (rebuilds the server). |
+| `snapshots update <snapshot_id> [--description] [--labels]` | Update a snapshot (description, labels). |
+
+### `kctl-hz ss`
+
+Alias: status show
+
+### `kctl-hz ssh-keys`
+
+Manage Hetzner Cloud SSH keys.
+
+| Command | Description |
+|---------|-------------|
+| `ssh-keys create <name> <public_key>` | Create (register) a new SSH key. |
+| `ssh-keys delete <key_id> [--force]` | Delete an SSH key. |
+| `ssh-keys list` | List all SSH keys. |
+| `ssh-keys update <key_id> [--name] [--labels]` | Update an SSH key (name, labels). |
+
+### `kctl-hz status`
+
+Infrastructure dashboard.
+
+| Command | Description |
+|---------|-------------|
+| `status show` | Show infrastructure dashboard. |
+
+### `kctl-hz storage-boxes`
+
+Manage Hetzner Storage Boxes (Robot API).
+
+| Command | Description |
+|---------|-------------|
+| `storage-boxes create-snapshot <storagebox_id>` | Create a snapshot of a Storage Box. |
+| `storage-boxes delete-snapshot <storagebox_id> <snapshot_name> [--force]` | Delete a Storage Box snapshot. |
+| `storage-boxes get <storagebox_id>` | Get Storage Box details. |
+| `storage-boxes list` | List all Storage Boxes. |
+| `storage-boxes reset-password <storagebox_id> [--force]` | Reset the password of a Storage Box. |
+| `storage-boxes snapshots <storagebox_id>` | List snapshots of a Storage Box. |
+| `storage-boxes subaccounts <storagebox_id>` | List sub-accounts of a Storage Box. |
+| `storage-boxes update <storagebox_id> [--name] [--webdav] [--samba] [--ssh] [--external_reachability] [--zfs]` | Update Storage Box settings. |
+
+### `kctl-hz vl`
+
+Alias: volumes list
+
+### `kctl-hz volumes`
+
+Manage Hetzner Cloud volumes.
+
+| Command | Description |
+|---------|-------------|
+| `volumes attach <volume_id> <server_id>` | Attach a volume to a server. |
+| `volumes create <name> [--size] [--server] [--location]` | Create a new volume. |
+| `volumes delete <volume_id> [--force]` | Delete a volume. |
+| `volumes detach <volume_id>` | Detach a volume from its server. |
+| `volumes extend <volume_id> <size>` | Extend (resize) a volume to a larger size. |
+| `volumes get <volume_id>` | Get volume details. |
+| `volumes list` | List all volumes. |
+| `volumes protect <volume_id> [--enable]` | Enable or disable delete protection on a volume. |
+| `volumes update <volume_id> [--name] [--labels]` | Update a volume (name, labels). |
+
+## Configuration
+
+Shared config: `~/.config/kodemeio/config.yaml`
 
 ```bash
-kctl-hetzner firewalls create my-fw
-kctl-hetzner firewalls add-rule 12345 --direction in --protocol tcp --port 443 --source-ips 0.0.0.0/0
-kctl-hetzner firewalls apply 12345 --server 67890
+kctl-hz config init       # Interactive setup
+kctl-hz config show       # Show current config
+kctl-hz config profiles   # List profiles
+kctl-hz config current    # Show active profile
+kctl-hz config validate   # Verify config
 ```
-
-## Network Management
-
-```bash
-kctl-hetzner networks create my-net --ip-range 10.0.0.0/16
-kctl-hetzner networks add-subnet 123 --type cloud --ip-range 10.0.1.0/24 --network-zone eu-central
-kctl-hetzner networks attach-server 123 --server 456
-```
-
-## Load Balancer Setup
-
-```bash
-kctl-hetzner load-balancers create my-lb --type lb11 --location fsn1
-kctl-hetzner load-balancers add-target my-lb --server 12345
-kctl-hetzner load-balancers add-service my-lb --protocol http --listen-port 80 --dest-port 8080
-```
-
-## S3 Object Storage
-
-```bash
-kctl-hetzner s3 buckets
-kctl-hetzner s3 ls my-bucket --prefix backups/
-kctl-hetzner s3 cp ./local-file s3://my-bucket/remote-file
-kctl-hetzner s3 sync ./local-dir s3://my-bucket/prefix/ --delete
-```
-
-## DNS (separate API, separate token)
-
-```bash
-kctl-hetzner dns zones
-kctl-hetzner dns records kodeme.io
-kctl-hetzner dns create-record kodeme.io --type A --name www --value 168.119.233.161
-```
-
-## Troubleshooting
-
-- Server unreachable: `servers get <name>` → `firewalls list` → `ips list`
-- Costs: `costs estimate` → monthly breakdown by resource type
-- DNS: uses separate DNS API — if using Cloudflare DNS, use kctl-cloudflare instead
-- Snapshots: `snapshots list` → `snapshots restore <server-id> --image <snapshot-id>`
-- Labels: `labels list server <id>` → `labels set server <id> --labels env=prod`

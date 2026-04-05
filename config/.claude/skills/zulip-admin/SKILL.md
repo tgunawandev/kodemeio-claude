@@ -1,12 +1,7 @@
 ---
 name: zulip-admin
 description: >
-  Zulip team chat administration for kodemeio infrastructure.
-  Supports multiple Zulip instances via profiles (zulip.kodeme.io).
-  Covers user management, stream management, messaging, topics,
-  user groups, invitations, custom emoji, realm settings,
-  health checks, and announcements. Use when working with
-  kctl-zulip CLI or managing any Zulip instance.
+  Zulip team chat administration via kctl-zulip CLI (zulip.kodeme.io). MUST use for ANY Zulip stream, messaging, user management, or team chat operation. Triggers on: "kctl-zulip", "zulip", "create stream", "send message zulip", "zulip user", "team chat", or ANY Zulip platform task.
 version: 1.0.0
 allowed-tools:
   - Bash

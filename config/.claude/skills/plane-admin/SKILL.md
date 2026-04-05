@@ -1,12 +1,7 @@
 ---
 name: plane-admin
 description: >
-  Plane project management administration for kodemeio infrastructure.
-  Supports multiple Plane instances via profiles (plane.kodeme.io,
-  plane.abcfood.app, etc.). Covers workspace management, project CRUD,
-  issue tracking, cycles, modules, members, labels, states, export,
-  and health monitoring. Use when working with kctl-plane CLI or
-  managing any Plane instance.
+  Plane project management administration via kctl-plane CLI. MUST use for ANY project, issue, cycle, or sprint management task. Triggers on: "kctl-plane", "plane", "create issue", "project board", "cycle", "sprint", "issue tracking", "plane.kodeme.io", or ANY project management platform task.
 version: 1.0.0
 allowed-tools:
   - Bash

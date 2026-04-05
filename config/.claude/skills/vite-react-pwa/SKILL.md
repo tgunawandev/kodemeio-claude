@@ -1,6 +1,7 @@
 ---
 name: vite-react-pwa
-description: Comprehensive Vite + React 19 + PWA development skill for building offline-capable single-page applications with TanStack Query, Tailwind v4, OpenAPI codegen, and service worker patterns. Covers Vite plugin configuration, React 19 patterns, PWA update flows, offline-first architecture, and modern SPA best practices.
+description: >
+  Vite + React 19 + PWA development for offline-capable SPAs with TanStack Query, Tailwind v4, OpenAPI codegen. MUST use for ANY React PWA, Vite config, service worker, or offline-first development. Triggers on: "vite", "React PWA", "service worker", "offline", "TanStack Query", "OpenAPI codegen", "kodemeio-react", "PWA update", or ANY Vite/React/PWA development task.
 version: 1.0.0
 allowed-tools: [
   "mcp__context7__*",

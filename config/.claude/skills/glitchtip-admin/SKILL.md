@@ -1,269 +1,181 @@
 ---
 name: glitchtip-admin
-description: GlitchTip error tracking administration for kodemeio infrastructure. Supports multiple GlitchTip instances via profiles (glitchtip.kodeme.io). Covers project management, DSN keys, issue tracking, team management, organization management, event management, uptime monitors, alerts, health monitoring, and user management. Use when working with kctl-glitchtip CLI or managing any GlitchTip instance.
+description: >
+  GlitchTip error tracking administration via kctl-glitchtip CLI (11 groups, ~50 commands).
+  MUST use for ANY kctl-glitchtip operation.
+  Triggers on: "add-member", "alerts", "bulk-resolve", "celery-status", "check", "checks", "cleanup", "config", "current", "dashboard", "dsn-create", "events", "generate", "health", "ignore", "init", "issues", "kctl-glitchtip", "migrate", "monitor", "orgs", "profile", "profiles", "projects", "redis-info", "remove", "remove-member", "resolve", "skill", "stats", "teams", "test", "test-alert", "test-email", "test-webhook", "uptime", "users", "validate".
+  Auto-generated: 2026-04-05
+  registry_hash: 33eb22a7212e
 ---
 
-# GlitchTip Admin Skill
+# glitchtip-admin — kctl-glitchtip CLI Reference
 
-You are an expert at managing GlitchTip error tracking instances via the `kctl-glitchtip` CLI.
+> Auto-generated from `kctl-glitchtip` command registry. Do not edit manually.
+> To regenerate: `kctl-glitchtip skill generate`
+> To add custom content: edit `SKILL.extra.md` in the same directory.
 
-## CLI Overview
+## Overview
 
-`kctl-glitchtip` is a Typer-based Python CLI that talks to GlitchTip's Sentry-compatible REST API (`/api/0/`).
-It uses shared multi-service profiles at `~/.config/kodemeio/config.yaml` under the `glitchtip` service key.
+**CLI:** `kctl-glitchtip`
+**Command groups:** 11
+**Total commands:** ~50
+**Install:** `cd cli && uv tool install --editable .`
 
-### Installation
+## Global Options
 
-```bash
-cd cli && uv tool install .
-```
-
-### Configuration
-
-```bash
-# Interactive setup
-kctl-glitchtip config init
-
-# Non-interactive
-kctl-glitchtip config add kodemeio \
-  --url https://glitchtip.kodeme.io \
-  --token <api-token-from-glitchtip-ui>
-
-# Switch profiles
-kctl-glitchtip config use kodemeio
-
-# Test connection
-kctl-glitchtip config test
-```
-
-Config lives in `~/.config/kodemeio/config.yaml`:
-```yaml
-profiles:
-  kodemeio:
-    glitchtip:
-      url: https://glitchtip.kodeme.io
-      token: <token>
-```
-
-### Global Flags
-
-All commands support:
-- `--json` — JSON output (data to stdout, status to stderr)
-- `--quiet` / `-q` — Suppress info messages
-- `--profile` / `-p` — Override active profile
-- `--url` — Override API URL
-- `--token` — Override API token
+| Flag | Description |
+|------|-------------|
+| `--json` | JSON output |
+| `--quiet`, `-q` | Suppress info messages |
+| `--format`, `-f` | Output format: pretty/json/csv/yaml |
+| `--no-header` | Omit CSV header row |
+| `--profile`, `-p` | Config profile name |
+| `--version`, `-V` | Show version |
 
 ## Command Reference
 
-### Projects
+### `kctl-glitchtip alerts`
 
+Manage alerts and notifications.
+
+| Command | Description |
+|---------|-------------|
+| `alerts list <org_slug> <project_slug>` | List project alerts. |
+| `alerts test-alert <org_slug> <project_slug> <alert_id>` | Test a project alert. |
+| `alerts test-email [--to]` | Send test email via Django (requires Docker access). |
+| `alerts test-webhook <url>` | Send test alert to a webhook URL. |
+
+### `kctl-glitchtip config`
+
+Manage CLI configuration and profiles.
+
+| Command | Description |
+|---------|-------------|
+| `config add <name> [--url] [--token] [--set_default]` | Add or update a profile's GlitchTip connection. |
+| `config current` | Show the active profile and connection status. |
+| `config init [--url] [--token] [--name]` | Initialize CLI configuration (interactive if no flags given). |
+| `config migrate` | Migrate config from flat format to service-scoped format. |
+| `config profiles` | List all profiles with GlitchTip connection status. |
+| `config remove <name> [--force] [--service_only]` | Remove a profile or just its GlitchTip config. |
+| `config set <key> <value> [--profile_arg]` | Set a configuration value for the current service. |
+| `config show` | Show full configuration (tokens masked). |
+| `config test` | Test API connection with current configuration. |
+| `config use <name>` | Switch the default profile. |
+| `config validate` | Validate configuration file syntax and required fields. |
+
+### `kctl-glitchtip events`
+
+Manage GlitchTip events.
+
+| Command | Description |
+|---------|-------------|
+| `events cleanup [--days]` | Clean old events via Django management command (requires Docker access). |
+| `events list <org_slug> <project_slug> [--limit]` | List recent events for a project. |
+
+### `kctl-glitchtip health`
+
+Health checks and monitoring.
+
+| Command | Description |
+|---------|-------------|
+| `health celery-status` | Celery worker status. |
+| `health check` | API health + container status. |
+| `health dashboard` | Overview: projects, issues, events, teams. |
+| `health redis-info` | Redis stats. |
+
+### `kctl-glitchtip issues`
+
+Manage GlitchTip issues and errors.
+
+| Command | Description |
+|---------|-------------|
+| `issues bulk-resolve <org_slug> <project> [--force]` | Resolve all issues in a project. |
+| `issues delete <issue_id> [--force]` | Delete an issue. |
+| `issues get <issue_id>` | Get issue details with events. |
+| `issues ignore <issue_id>` | Mark an issue as ignored. |
+| `issues list <org_slug> [--project] [--status] [--sort] [--limit]` | List issues. |
+| `issues resolve <issue_id>` | Mark an issue as resolved. |
+
+### `kctl-glitchtip orgs`
+
+Manage GlitchTip organizations.
+
+| Command | Description |
+|---------|-------------|
+| `orgs get <org_slug>` | Get organization details. |
+| `orgs list` | List organizations. |
+
+### `kctl-glitchtip projects`
+
+Manage GlitchTip projects.
+
+| Command | Description |
+|---------|-------------|
+| `projects create <name> <org_slug> <team_slug> [--platform]` | Create a new project (returns DSN). |
+| `projects delete <org_slug> <project_slug> [--force]` | Delete a project. |
+| `projects dsn <org_slug> <project_slug>` | Show DSN keys for a project. |
+| `projects dsn-create <org_slug> <project_slug> [--label]` | Create a new DSN key for a project. |
+| `projects get <org_slug> <project_slug>` | Get project details. |
+| `projects list` | List all projects with DSNs. |
+| `projects stats <org_slug> <project_slug>` | Show event statistics for a project. |
+| `projects update <org_slug> <project_slug> [--name] [--platform]` | Update project name or platform. |
+
+### `kctl-glitchtip skill`
+
+Claude Code skill management.
+
+| Command | Description |
+|---------|-------------|
+| `skill generate [--output] [--install] [--check]` | Auto-generate SKILL.md from CLI command registry. |
+
+**Examples:**
 ```bash
-# List all projects
-kctl-glitchtip projects list
-
-# Get project details
-kctl-glitchtip projects get <org-slug> <project-slug>
-
-# Create project (returns DSN)
-kctl-glitchtip projects create <name> --org <org-slug> --team <team-slug> [--platform python]
-
-# Update project name or platform
-kctl-glitchtip projects update <org-slug> <project-slug> [--name "New Name"] [--platform javascript]
-
-# Delete project
-kctl-glitchtip projects delete <org-slug> <project-slug> [--force]
-
-# Show DSN keys
-kctl-glitchtip projects dsn <org-slug> <project-slug>
-
-# Create new DSN key
-kctl-glitchtip projects dsn-create <org-slug> <project-slug> [--label "my-key"]
-
-# Project statistics
-kctl-glitchtip projects stats <org-slug> <project-slug>
+kctl-glitchtip skill generate
+kctl-glitchtip skill generate --install
+kctl-glitchtip skill generate --check
 ```
 
-### Issues
+### `kctl-glitchtip teams`
+
+Manage GlitchTip teams.
+
+| Command | Description |
+|---------|-------------|
+| `teams add-member <org_slug> <team_slug> <email>` | Add a member to a team. |
+| `teams create <name> <org_slug>` | Create a new team. |
+| `teams delete <org_slug> <team_slug> [--force]` | Delete a team. |
+| `teams get <org_slug> <team_slug>` | Get team details with members. |
+| `teams list <org_slug>` | List teams. |
+| `teams remove-member <org_slug> <team_slug> <email>` | Remove a member from a team. |
+
+### `kctl-glitchtip uptime`
+
+Manage uptime monitors.
+
+| Command | Description |
+|---------|-------------|
+| `uptime checks <monitor_id> [--org]` | Show recent checks for an uptime monitor. |
+| `uptime create <name> <url> [--org] [--interval] [--monitor_type] [--expected_status]` | Create an uptime monitor. |
+| `uptime delete <monitor_id> [--org] [--force]` | Delete an uptime monitor. |
+| `uptime list [--org]` | List uptime monitors. |
+
+### `kctl-glitchtip users`
+
+Manage GlitchTip users.
+
+| Command | Description |
+|---------|-------------|
+| `users create <email> [--superuser]` | Create a user. |
+| `users list` | List users. |
+
+## Configuration
+
+Shared config: `~/.config/kodemeio/config.yaml`
 
 ```bash
-# List issues
-kctl-glitchtip issues list --org <org-slug> [--project <slug>] [--status unresolved]
-
-# Get issue details
-kctl-glitchtip issues get <issue-id>
-
-# Resolve issue
-kctl-glitchtip issues resolve <issue-id>
-
-# Ignore issue
-kctl-glitchtip issues ignore <issue-id>
-
-# Delete issue
-kctl-glitchtip issues delete <issue-id> [--force]
-
-# Bulk resolve all issues in a project
-kctl-glitchtip issues bulk-resolve --org <org-slug> --project <project-slug>
-```
-
-### Teams
-
-```bash
-# List teams
-kctl-glitchtip teams list --org <org-slug>
-
-# Get team details with members
-kctl-glitchtip teams get --org <org-slug> <team-slug>
-
-# Create team
-kctl-glitchtip teams create <name> --org <org-slug>
-
-# Delete team
-kctl-glitchtip teams delete --org <org-slug> <team-slug> [--force]
-
-# Add/remove members
-kctl-glitchtip teams add-member --org <org-slug> <team-slug> <email>
-kctl-glitchtip teams remove-member --org <org-slug> <team-slug> <email>
-```
-
-### Organizations
-
-```bash
-# List organizations
-kctl-glitchtip orgs list
-
-# Get organization details (includes members)
-kctl-glitchtip orgs get <org-slug>
-```
-
-### Events
-
-```bash
-# List recent events
-kctl-glitchtip events list <org-slug> <project-slug> [--limit 50]
-
-# Clean old events (requires Docker)
-kctl-glitchtip events cleanup [--days 90]
-```
-
-### Uptime Monitors
-
-```bash
-# List uptime monitors
-kctl-glitchtip uptime list [--org <org-slug>]
-
-# Create an uptime monitor
-kctl-glitchtip uptime create --name "My Service" --url https://example.com [--org <org-slug>] [--interval 60] [--type Ping] [--expected-status 200]
-
-# Delete an uptime monitor
-kctl-glitchtip uptime delete <monitor-id> [--org <org-slug>] [--force]
-
-# Show recent checks for a monitor
-kctl-glitchtip uptime checks <monitor-id> [--org <org-slug>]
-```
-
-### Users
-
-```bash
-# List users
-kctl-glitchtip users list
-
-# Create/invite user
-kctl-glitchtip users create <email>
-
-# Create superuser (requires Docker)
-kctl-glitchtip users create <email> --superuser
-```
-
-### Health & Monitoring
-
-```bash
-# Full health check (API + containers)
-kctl-glitchtip health check
-
-# Dashboard overview
-kctl-glitchtip health dashboard
-
-# Celery worker status (requires Docker)
-kctl-glitchtip health celery-status
-
-# Redis info (requires Docker)
-kctl-glitchtip health redis-info
-```
-
-### Alerts & Notifications
-
-```bash
-# List project alerts
-kctl-glitchtip alerts list --org <org-slug> --project <project-slug>
-
-# Test a specific alert
-kctl-glitchtip alerts test-alert --org <org-slug> --project <project-slug> <alert-id>
-
-# Test webhook URL
-kctl-glitchtip alerts test-webhook <url>
-
-# Test email (requires Docker)
-kctl-glitchtip alerts test-email [--to admin@kodeme.io]
-```
-
-### Config Management
-
-```bash
-kctl-glitchtip config init          # Interactive setup
-kctl-glitchtip config add <name>    # Add profile
-kctl-glitchtip config use <name>    # Switch profile
-kctl-glitchtip config remove <name> # Remove profile
-kctl-glitchtip config show          # Show all config
-kctl-glitchtip config set <key> <val> # Set config value
-kctl-glitchtip config profiles      # List profiles with status
-kctl-glitchtip config current       # Show active profile
-kctl-glitchtip config test          # Test connection
-kctl-glitchtip config migrate       # Migrate flat -> scoped format
-```
-
-## Environment Variables
-
-Priority (highest to lowest):
-1. CLI flags (`--url`, `--token`)
-2. `KCTL_GLITCHTIP_URL` / `KCTL_GLITCHTIP_TOKEN`
-3. `GLITCHTIP_API_URL` / `GLITCHTIP_API_TOKEN`
-4. Config profile
-
-Profile selection: `--profile` flag > `KCTL_GLITCHTIP_PROFILE` env > config default.
-
-## API Notes
-
-- GlitchTip uses Sentry-compatible API at `/api/0/`
-- Auth: `Authorization: Bearer <token>` (API token from GlitchTip UI Settings > API Tokens)
-- Most list endpoints return JSON arrays directly (not paginated objects)
-- DSN format: `https://<public_key>@glitchtip.kodeme.io/<project_id>`
-- Uptime monitors: `GET/POST /api/0/organizations/{org}/monitors/`, checks at `.../monitors/{id}/checks/`
-
-## Common Workflows
-
-### Set up error tracking for a new app
-```bash
-kctl-glitchtip projects create my-app --org kodemeio --team backend --platform python
-# Copy the DSN from output into your app's Sentry SDK config
-```
-
-### Triage errors
-```bash
-kctl-glitchtip issues list --org kodemeio --status unresolved --sort -count
-kctl-glitchtip issues get <id>
-kctl-glitchtip issues resolve <id>
-```
-
-### Bulk cleanup
-```bash
-kctl-glitchtip issues bulk-resolve --org kodemeio --project old-app --force
-kctl-glitchtip events cleanup --days 30
-```
-
-### Monitor service uptime
-```bash
-kctl-glitchtip uptime create --name "API" --url https://api.kodeme.io/health --type GET --interval 60
-kctl-glitchtip uptime list
-kctl-glitchtip uptime checks <monitor-id>
+kctl-glitchtip config init       # Interactive setup
+kctl-glitchtip config show       # Show current config
+kctl-glitchtip config profiles   # List profiles
+kctl-glitchtip config current    # Show active profile
+kctl-glitchtip config validate   # Verify config
 ```

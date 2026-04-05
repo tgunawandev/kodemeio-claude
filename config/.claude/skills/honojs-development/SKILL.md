@@ -1,6 +1,7 @@
 ---
 name: honojs-development
-description: Comprehensive Hono.js backend service and API development skill covering best practices from development to production deployment in Docker or serverless environments. Master ultra-fast web framework with TypeScript, middleware, authentication, database integration, and deployment strategies for building scalable backend services.
+description: >
+  Hono.js backend service development — TypeScript, middleware, auth, database integration, Docker deployment. MUST use for ANY Hono.js development. Triggers on: "hono", "Hono.js", "hono middleware", "hono route", "kodemeio-hono", or ANY Hono.js backend task.
 version: 1.0.0
 allowed-tools: [
   "mcp__context7__*",

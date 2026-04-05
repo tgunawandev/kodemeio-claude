@@ -1,405 +1,357 @@
 ---
 name: postgres-admin
 description: >
-  PostgreSQL server administration for kodemeio infrastructure via SSH tunnel.
-  Covers database management, role/user management, health monitoring,
-  backup/restore, extension management, and connection activity monitoring.
-  Use when working with kctl-pg CLI or managing db.kodeme.io.
-version: 1.0.0
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
+  PostgreSQL server administration via kctl-pg CLI (24 groups, ~130 commands).
+  MUST use for ANY kctl-pg operation.
+  Triggers on: "activity", "alerts", "alter", "analyze", "audit", "automation", "autovacuum", "backup", "baseline", "bgwriter", "bloat", "cache", "capacity-forecast", "check", "checkpoint", "clients", "cluster", "config", "constraints", "copy", "create-concurrently", "create-slot", "current", "dashboard", "database", "databases", "db", "default-privileges", "dependencies", "describe", "diff", "dr", "drop", "drop-slot", "dump", "duplicate", "explain", "extensions", "freeze", "frozen-xid", "gate", "generate", "grant", "grant-db", "grant-schema", "grant-table", "hba-rules", "health", "indexes", "info", "init", "install", "invalid", "kctl-pg", "kill", "lint", "locks", "maintenance", "missing", "monitor", "overview", "owner", "partitions", "password", "password-check", "pause", "performance", "permissions", "pg-config", "pgbouncer", "pipeline", "plan", "pools", "privileges", "profile", "profiles", "progress", "promote", "publications", "quality".
+  Auto-generated: 2026-04-05
+  registry_hash: b88a2bcda8a6
 ---
 
-# PostgreSQL Administration for Kodemeio
+# postgres-admin — kctl-pg CLI Reference
 
-## System Overview
+> Auto-generated from `kctl-pg` command registry. Do not edit manually.
+> To regenerate: `kctl-pg skill generate`
+> To add custom content: edit `SKILL.extra.md` in the same directory.
 
-- **PostgreSQL 16.12** at `db.kodeme.io` (Hetzner private network `10.0.0.3`)
-- **PostGIS 3.5** (Alpine-based custom Docker image)
-- **PgBouncer** for transaction-level connection pooling (port 6432)
-- **postgres-exporter** for Prometheus metrics (port 9187)
-- **Deployed**: Dokploy on `dokploy.kodeme.io` with `dokploy-network`
-- **SSH access**: `root@db.kodeme.io` (public IP: 49.13.14.79)
-- **Connection**: SSH tunnel -> Docker port mapping -> PostgreSQL container
+## Overview
 
-## Production Databases
+**CLI:** `kctl-pg`
+**Command groups:** 24
+**Total commands:** ~130
+**Install:** `cd cli && uv tool install --editable .`
 
-| Database | Owner | Size | Purpose |
-|---|---|---|---|
-| authentik | authentik | 87 MB | Identity provider (auth.kodeme.io) |
-| zulip | zulip | 58 MB | Team chat (zulip.kodeme.io) |
-| glitchtip | glitchtip | 53 MB | Error tracking (glitchtip.kodeme.io) |
-| hmdm | hmdm | 50 MB | Mobile device management |
-| outline | outline | 49 MB | Wiki/docs (outline.kodeme.io) |
-| gatus | gatus | 48 MB | Uptime monitoring (gatus.kodeme.io) |
-| plane | plane | 23 MB | Project management (plane.kodeme.io) |
-| postgres | postgres | 16 MB | Default/admin database |
+## Global Options
 
-## Production Roles
+| Flag | Description |
+|------|-------------|
+| `--json` | JSON output |
+| `--quiet`, `-q` | Suppress info messages |
+| `--format`, `-f` | Output format: pretty/json/csv/yaml |
+| `--no-header` | Omit CSV header row |
+| `--profile`, `-p` | Config profile name |
+| `--version`, `-V` | Show version |
 
-| Role | Flags | Purpose |
-|---|---|---|
-| postgres | SLCRP | Superuser (admin) |
-| app | L | Generic application user |
-| authentik | L | Authentik service (conn limit: 50) |
-| zulip | L | Zulip service |
-| outline | L | Outline service |
-| gatus | L | Gatus service |
-| glitchtip | L | GlitchTip service |
-| hmdm | L | Headwind MDM service |
-| plane | L | Plane service |
-| pgbouncer | L | PgBouncer auth user |
-| replicator | LP | Streaming replication |
+## Command Reference
 
-Flags: S=superuser, L=login, C=createdb, R=createrole, P=replication
+### `kctl-pg activity`
 
-## CLI Tool: kctl-pg
+Monitor connections and activity.
 
-The CLI is installed in the project at `cli/` and available via the venv:
+| Command | Description |
+|---------|-------------|
+| `activity kill <pid> [--force]` | Cancel or terminate a backend process. |
+| `activity list [--database] [--state]` | List active connections. |
+| `activity locks [--database]` | Show lock contention (blocked queries waiting for locks). |
+
+### `kctl-pg automation`
+
+Automation: maintenance plans, alerts, reports, baselines.
+
+| Command | Description |
+|---------|-------------|
+| `automation alerts` | Show current metric values against recommended alert thresholds. |
+| `automation baseline [--database]` | Capture current performance baseline for future comparison. |
+| `automation plan [--database]` | Generate recommended vacuum/analyze/reindex schedule based on table stats. |
+| `automation report [--database] [--period]` | Generate a health report: sizes, slow queries, connections, maintenance. |
+
+### `kctl-pg backup`
+
+Backup and restore databases via SSH.
+
+| Command | Description |
+|---------|-------------|
+| `backup dump <database> [--output] [--format_]` | Dump a database via SSH + pg_dump. |
+| `backup list` | List recent backups on the remote server. |
+| `backup restore <database> <input_file> [--create] [--clean]` | Restore a database from a dump file via SSH. |
+
+**Examples:**
+```bash
+kctl-pg backup dump odoo
+kctl-pg backup dump odoo -o /tmp/odoo.dump
+kctl-pg backup dump odoo --format p -o /tmp/odoo.sql
+kctl-pg backup restore odoo_new -i odoo.dump --create
+kctl-pg backup restore odoo -i odoo.dump --clean
+```
+
+### `kctl-pg config`
+
+Manage CLI configuration and profiles.
+
+| Command | Description |
+|---------|-------------|
+| `config add <name> [--host] [--port] [--user] [--password] [--ssh_host] [--ssh_port] [--ssh_user] [--ssh_key] [--databases] [--set_default]` | Add or update a profile's PostgreSQL connection. |
+| `config current` | Show the active profile and connection status. |
+| `config init [--host] [--port] [--user] [--password] [--ssh_host] [--ssh_port] [--ssh_user] [--ssh_key] [--name]` | Initialize CLI configuration (interactive if no flags given). |
+| `config profiles` | List all profiles with PostgreSQL connection status. |
+| `config remove <name> [--force] [--service_only]` | Remove a profile or just its PostgreSQL config. |
+| `config set <key> <value> [--profile_arg]` | Set a configuration value for the current service. |
+| `config show` | Show full configuration (passwords masked). |
+| `config test` | Test PostgreSQL connection with current configuration. |
+| `config use <name>` | Switch the default profile. |
+
+**Examples:**
+```bash
+kctl-pg config set host 10.0.0.3
+kctl-pg config set password new-password
+kctl-pg config set ssh_host 49.13.14.79
+kctl-pg config set default_profile abcfood
+```
+
+### `kctl-pg dashboard`
+
+System overview dashboard.
+
+### `kctl-pg db`
+
+Manage databases.
+
+| Command | Description |
+|---------|-------------|
+| `db copy <source> <target> [--owner]` | Copy a database using CREATE DATABASE .. |
+| `db create <name> [--owner] [--encoding]` | Create a new database. |
+| `db drop <name> [--force]` | Drop a database. |
+| `db info <name>` | Show detailed info about a database. |
+| `db list` | List all databases with size and owner. |
+| `db owner <database> <new_owner>` | Change the owner of a database. |
+| `db rename <old_name> <new_name> [--force]` | Rename a database (terminates active connections first). |
+| `db size` | Show database sizes sorted by size. |
+
+### `kctl-pg dr`
+
+Disaster recovery: backup verification, failover testing, capacity forecasting.
+
+| Command | Description |
+|---------|-------------|
+| `dr capacity-forecast [--database] [--months] [--disk_gb]` | Project storage growth based on table sizes and transaction rates. |
+| `dr rpo-rto` | Calculate actual RPO/RTO from backup status and replication state. |
+| `dr test-failover [--dry_run]` | Check replica promotion readiness and replication slot health. |
+| `dr verify-backup <backup_file> [--database]` | Restore backup to a temp database, run integrity checks, then drop it. |
+
+### `kctl-pg extensions`
+
+Manage PostgreSQL extensions.
+
+| Command | Description |
+|---------|-------------|
+| `extensions install <name> [--database] [--schema]` | Install an extension. |
+| `extensions list [--database] [--available]` | List installed or available extensions. |
+| `extensions uninstall <name> [--database] [--cascade] [--force]` | Uninstall an extension. |
+
+### `kctl-pg health`
+
+Check PostgreSQL server health.
+
+### `kctl-pg indexes`
+
+Index inspection and management.
+
+| Command | Description |
+|---------|-------------|
+| `indexes bloat [--database] [--top]` | Estimate index bloat using actual vs expected size ratios. |
+| `indexes create-concurrently <table> <columns> [--database] [--name] [--unique] [--schema]` | Create an index concurrently (non-blocking). |
+| `indexes duplicate [--database]` | Find duplicate or overlapping indexes (same table, same leading columns). |
+| `indexes invalid [--database]` | Find invalid indexes (e.g., from failed REINDEX CONCURRENTLY). |
+| `indexes list [--database] [--table]` | List indexes with size, type, uniqueness, and partial predicate. |
+| `indexes missing [--database] [--min_size]` | Find tables with high sequential scan counts suggesting missing indexes. |
+| `indexes reindex-concurrently <target> [--database] [--is_table]` | Reindex an index or table concurrently (non-blocking). |
+
+### `kctl-pg lint`
+
+Schema and configuration quality checks.
+
+| Command | Description |
+|---------|-------------|
+| `lint all [--database] [--strict] [--min_scans]` | Run all lint checks. |
+| `lint indexes [--database] [--min_scans]` | Detect unused, duplicate, bloated, and missing FK indexes. |
+| `lint permissions [--database]` | Find excessive privileges, public schema grants, superuser misuse, missing RLS. |
+| `lint schema [--database]` | Check naming conventions, missing PKs, column types, and NOT NULL gaps. |
+
+### `kctl-pg maintenance`
+
+Database maintenance operations.
+
+| Command | Description |
+|---------|-------------|
+| `maintenance analyze <database> [--table] [--verbose]` | Update planner statistics (ANALYZE) on a database or table. |
+| `maintenance autovacuum [--database]` | Show autovacuum settings and last vacuum/analyze times per table. |
+| `maintenance checkpoint [--force]` | Force a WAL checkpoint. |
+| `maintenance cluster <database> <table> <index> [--force]` | Physically reorder a table by an index (requires exclusive lock). |
+| `maintenance freeze <database> [--table]` | Run VACUUM FREEZE to aggressively freeze old row versions. |
+| `maintenance frozen-xid [--database] [--top]` | Show transaction ID freeze status (XID age) per database and per table. |
+| `maintenance reindex <database> [--table] [--index] [--system]` | Rebuild indexes on a database, table, or specific index. |
+| `maintenance vacuum <database> [--table] [--full] [--analyze] [--verbose]` | Run VACUUM on a database or table. |
+
+### `kctl-pg performance`
+
+Performance monitoring and diagnostics.
+
+| Command | Description |
+|---------|-------------|
+| `performance cache [--database]` | Show buffer cache hit ratio per database. |
+| `performance explain <sql> [--database] [--analyze_opt] [--buffers]` | Show query execution plan (EXPLAIN). |
+| `performance overview [--database]` | Show performance overview: cache hits, transactions, connections, DB sizes. |
+| `performance progress` | Show progress of running maintenance operations (vacuum, analyze, create index, etc.). |
+| `performance settings [--filter]` | Show PostgreSQL configuration parameters. |
+| `performance slow-queries [--database] [--min_duration] [--limit]` | Show slowest queries from pg_stat_statements. |
+| `performance temp-files [--database]` | Show temporary file usage per database. |
+
+### `kctl-pg pg-config`
+
+Manage PostgreSQL configuration (pg_settings).
+
+| Command | Description |
+|---------|-------------|
+| `pg-config diff` | Show settings that differ from their default (boot) values. |
+| `pg-config get <name>` | Get details of a specific PostgreSQL setting. |
+| `pg-config reload` | Reload PostgreSQL configuration (pg_reload_conf). |
+| `pg-config reset <name>` | Reset a PostgreSQL configuration parameter to default (ALTER SYSTEM RESET + reload). |
+| `pg-config set <name> <value>` | Set a PostgreSQL configuration parameter (ALTER SYSTEM + reload). |
+| `pg-config show [--filter]` | Show PostgreSQL settings (optionally filtered by name pattern). |
+
+### `kctl-pg pgbouncer`
+
+PgBouncer management (admin console).
+
+| Command | Description |
+|---------|-------------|
+| `pgbouncer clients` | Show PgBouncer client connections. |
+| `pgbouncer databases` | Show PgBouncer database configurations. |
+| `pgbouncer pause [--database] [--force]` | Pause PgBouncer database (or all databases). |
+| `pgbouncer pools` | Show PgBouncer connection pools. |
+| `pgbouncer reload [--force]` | Reload PgBouncer configuration. |
+| `pgbouncer resume [--database]` | Resume PgBouncer database (or all databases). |
+| `pgbouncer servers` | Show PgBouncer server (backend) connections. |
+| `pgbouncer stats` | Show PgBouncer statistics. |
+| `pgbouncer status` | Show PgBouncer version and pool summary. |
+
+### `kctl-pg pipeline`
+
+Pipeline orchestration: quality gates, combined health reports.
+
+| Command | Description |
+|---------|-------------|
+| `pipeline gate [--database] [--strict] [--min_scans]` | Run quality gate: lint + alerts + DR checks. |
+| `pipeline report [--database] [--fmt]` | Comprehensive health report combining all checks. |
+
+### `kctl-pg query`
+
+Execute SQL queries.
+
+### `kctl-pg replication`
+
+Replication management (status, lag, slots, publications, subscriptions).
+
+| Command | Description |
+|---------|-------------|
+| `replication create-slot <name> [--logical] [--plugin] [--physical]` | Create a replication slot (physical or logical). |
+| `replication drop-slot <name> [--force]` | Drop a replication slot. |
+| `replication lag` | Show replication lag for connected replicas (bytes and estimated seconds). |
+| `replication promote [--force]` | Promote standby to primary (pg_promote). |
+| `replication publications [--database]` | Show publications and their tables. |
+| `replication receiver` | Show WAL receiver status (only on standby servers). |
+| `replication senders` | Show detailed WAL sender information for all connected replicas. |
+| `replication slots` | Show replication slots: name, type, active status, retained WAL. |
+| `replication status` | Show replication status: primary/standby role and connected replicas. |
+| `replication subscriptions [--database]` | Show subscriptions and their status. |
+
+### `kctl-pg schemas`
+
+Manage schemas.
+
+| Command | Description |
+|---------|-------------|
+| `schemas create <name> [--database] [--owner]` | Create a new schema. |
+| `schemas drop <name> [--database] [--cascade] [--force]` | Drop a schema. |
+| `schemas list [--database]` | List all schemas with sizes. |
+| `schemas size [--database]` | Show per-schema size breakdown. |
+
+### `kctl-pg security`
+
+Security management (SSL, HBA, privileges, RLS, auditing).
+
+| Command | Description |
+|---------|-------------|
+| `security hba-rules` | Show pg_hba.conf rules (PostgreSQL 15+). |
+| `security password-check` | Check for password security issues: missing passwords, weak hashing, unnecessary passwords. |
+| `security privileges <role> [--database]` | Show privileges for a specific role (tables, routines, database-level). |
+| `security rls [--database]` | Show tables with Row-Level Security (RLS) enabled. |
+| `security rls-policies [--database] [--table]` | Show RLS policies (name, table, command, roles, expressions). |
+| `security ssl` | Show SSL connection status for all active connections. |
+| `security superuser-audit` | Audit superuser roles and their recent activity. |
+
+### `kctl-pg skill`
+
+Claude Code skill management.
+
+| Command | Description |
+|---------|-------------|
+| `skill generate [--output] [--install] [--check]` | Auto-generate SKILL.md from CLI command registry. |
+
+**Examples:**
+```bash
+kctl-pg skill generate
+kctl-pg skill generate --install
+kctl-pg skill generate --check
+```
+
+### `kctl-pg stats`
+
+PostgreSQL statistics views (tables, indexes, WAL, I/O).
+
+| Command | Description |
+|---------|-------------|
+| `stats bgwriter` | Show background writer statistics. |
+| `stats database [--name]` | Show database-level statistics from pg_stat_database. |
+| `stats indexes [--database]` | Show index statistics from pg_stat_user_indexes. |
+| `stats io` | Show I/O statistics (PostgreSQL 16+). |
+| `stats replication` | Show replication status from pg_stat_replication. |
+| `stats tables [--database]` | Show table statistics from pg_stat_user_tables. |
+| `stats wal` | Show WAL statistics (PostgreSQL 14+). |
+
+### `kctl-pg tables`
+
+Table inspection and management.
+
+| Command | Description |
+|---------|-------------|
+| `tables constraints <table> [--database] [--schema]` | Show all constraints on a table (PK, FK, UNIQUE, CHECK). |
+| `tables dependencies <table> [--database] [--schema]` | Show foreign key references to and from a table. |
+| `tables describe <table> [--database] [--schema]` | Show table structure: columns, types, constraints, defaults. |
+| `tables list [--database] [--schema]` | List tables with sizes in a database. |
+| `tables partitions <table> [--database] [--schema]` | Show partition children and their bounds. |
+| `tables sequences [--database] [--near_max]` | Show sequences with current value and percentage used. |
+| `tables size [--database] [--top]` | Show table sizes with breakdown (table, toast, indexes). |
+| `tables toast <table> [--database] [--schema]` | Show TOAST table statistics for a table. |
+| `tables triggers <table> [--database] [--schema]` | Show triggers on a table with event, function, and enabled status. |
+
+### `kctl-pg users`
+
+Manage PostgreSQL roles and users.
+
+| Command | Description |
+|---------|-------------|
+| `users alter <name> <set_param> <value>` | Set a configuration parameter for a role. |
+| `users create <name> [--password] [--login] [--createdb] [--superuser]` | Create a new role/user. |
+| `users default-privileges <role> <grant_to> [--privileges] [--database] [--schema]` | Set default privileges for tables created by a role. |
+| `users drop <name> [--force]` | Drop a role/user. |
+| `users get <name>` | Show detailed role info. |
+| `users grant <role> <to>` | Grant a role to another role. |
+| `users grant-db <role> <database> [--privileges]` | Grant privileges on a database to a role. |
+| `users grant-schema <role> <schema> [--database] [--privileges]` | Grant privileges on a schema to a role. |
+| `users grant-table <role> <table> [--database] [--privileges]` | Grant privileges on a table to a role. |
+| `users list` | List all roles/users. |
+| `users password <name> [--new_password]` | Set or reset a role's password. |
+| `users revoke <role> <from_>` | Revoke a role from another role. |
+
+## Configuration
+
+Shared config: `~/.config/kodemeio/config.yaml`
 
 ```bash
-# Run from the kodemeio-postgres-16 project root:
-cd cli && uv run kctl-pg <command>
-
-# Or if installed globally:
-kctl-pg <command>
+kctl-pg config init       # Interactive setup
+kctl-pg config show       # Show current config
+kctl-pg config profiles   # List profiles
+kctl-pg config current    # Show active profile
+kctl-pg config validate   # Verify config
 ```
-
-Configuration is stored at `~/.config/kodemeio/config.yaml` under `profiles.<name>.postgres`.
-
-### Global Options
-
-```bash
-kctl-pg [--json] [--quiet] [--profile NAME] [--host HOST] [--port PORT] [--user USER] [--password PASS] <command>
-```
-
-### Database Management
-
-```bash
-kctl-pg db list                                         # List all databases with size/owner/connections
-kctl-pg db create <name> [--owner USER] [--encoding]    # Create database
-kctl-pg db drop <name> [--force]                        # Drop database (terminates connections first)
-kctl-pg db size                                         # Show all database sizes with total
-kctl-pg db info <name>                                  # Detailed info (encoding, collation, tables, connections)
-```
-
-### User/Role Management
-
-```bash
-kctl-pg users list                                      # List all roles with flags
-kctl-pg users get <name>                                # Detailed role info (memberships, owned DBs)
-kctl-pg users create <name> [--password PASS] [--login/--no-login] [--createdb] [--superuser]
-kctl-pg users drop <name> [--force]                     # Drop role
-kctl-pg users password <name> [--password PASS]         # Set/reset password (auto-generates if omitted)
-kctl-pg users grant <role> --to <target>                # Grant role membership
-kctl-pg users revoke <role> --from <target>             # Revoke role membership
-kctl-pg users alter <name> --set <param> <value>        # Set session defaults per role
-kctl-pg users grant-db <role> <database> --privileges connect,create,temp
-kctl-pg users grant-schema <role> <schema> --privileges usage,create [--db DATABASE]
-kctl-pg users grant-table <role> <table> --privileges select,insert,update,delete [--db DATABASE]
-kctl-pg users default-privileges <role> [--db DATABASE] [--schema SCHEMA] --grant-to <target> --privileges select
-```
-
-### Health & Monitoring
-
-```bash
-kctl-pg health                                          # Server status, version, uptime, connections, replication
-kctl-pg dashboard                                       # Overview: databases, sizes, connections, long-running queries
-```
-
-### Connection Activity
-
-```bash
-kctl-pg activity list [--db NAME] [--state STATE]       # List active connections
-kctl-pg activity kill <pid> [--force]                   # Cancel or terminate backend (--force = pg_terminate)
-kctl-pg activity locks [--db NAME]                      # Show lock contention (blocked queries)
-```
-
-### Ad-hoc SQL Queries
-
-```bash
-kctl-pg query "SELECT version()"                        # Execute SQL on default database
-kctl-pg query --db odoo "SELECT * FROM res_users"       # Query specific database
-kctl-pg query "SELECT datname, pg_size_pretty(pg_database_size(datname)) FROM pg_database"
-```
-
-### Backup & Restore (via SSH)
-
-```bash
-kctl-pg backup dump <database> [-o output.dump] [-F c|p|d]  # pg_dump via SSH into Docker container
-kctl-pg backup restore <database> -i file.dump [--create] [--clean]  # pg_restore via SSH
-kctl-pg backup list                                     # List pgBackRest backups (if configured)
-```
-
-### Extension Management
-
-```bash
-kctl-pg extensions list [--db NAME]                     # List installed extensions
-kctl-pg extensions list --db NAME --available           # List all available extensions
-kctl-pg extensions install <name> [--db NAME] [--schema SCHEMA]
-kctl-pg extensions uninstall <name> [--db NAME] [--cascade] [--force]
-```
-
-### Configuration Management
-
-```bash
-kctl-pg config init                                     # Interactive first-time setup
-kctl-pg config add <profile> --host H --ssh-host SSH [--databases db1,db2]
-kctl-pg config use <profile>                            # Switch default profile
-kctl-pg config remove <profile> [--force] [--service-only]
-kctl-pg config show                                     # Show all profiles (passwords masked)
-kctl-pg config set <key> <value>                        # Set individual config value
-kctl-pg config profiles                                 # List profiles with connection status
-kctl-pg config current                                  # Show active profile details
-kctl-pg config test                                     # Test SSH tunnel + PostgreSQL connection
-```
-
-## Connection Architecture
-
-```
-kctl-pg (local machine)
-  └─ SSH tunnel (sshtunnel + paramiko)
-       └─ db.kodeme.io:22 (SSH)
-            └─ 127.0.0.1:5432 (Docker port mapping)
-                 └─ PostgreSQL container (kodemeio-postgres-16)
-```
-
-- SQL commands (db, users, health, query, activity, extensions) use psycopg3 through the SSH tunnel
-- Backup/restore commands use `subprocess` SSH + `docker exec` to run pg_dump/pg_restore inside the container
-
-## Config File Format
-
-```yaml
-# ~/.config/kodemeio/config.yaml
-default_profile: production
-profiles:
-  production:
-    postgres:                          # SERVICE_KEY = "postgres"
-      host: 127.0.0.1
-      port: 5432
-      user: postgres
-      password: ${PG_PASSWORD}         # Supports env var expansion
-      ssh_host: db.kodeme.io
-      ssh_port: 22
-      ssh_user: root
-      ssh_key: ~/.ssh/id_ed25519
-      databases:
-        - authentik
-        - zulip
-        - outline
-        - gatus
-        - glitchtip
-        - hmdm
-    authentik:                         # Other kctl-* tools coexist
-      url: https://auth.kodeme.io
-      token: ${AUTHENTIK_TOKEN}
-```
-
-### Config Resolution Priority
-
-1. CLI flags (`--host`, `--user`, `--password`)
-2. `KCTL_PG_*` env vars (`KCTL_PG_HOST`, `KCTL_PG_USER`, etc.)
-3. Standard `PG*` env vars (`PGHOST`, `PGUSER`, `PGPASSWORD`)
-4. Config file profile
-
-## Service Database Provisioning
-
-New service databases are auto-provisioned by the init container using `SERVICE_DATABASES` env var:
-
-```bash
-# Format: db1:user1:pass1,db2:user2:pass2
-SERVICE_DATABASES=authentik:authentik:4bdab...,zulip:zulip:YVbm...
-```
-
-To manually add a new service database:
-```bash
-kctl-pg users create <service_name> --password "$PASS"
-kctl-pg db create <service_name> --owner <service_name>
-```
-
-## Container Scripts (via SSH)
-
-The Docker container embeds 24 management scripts at `/scripts/`. These can be run via SSH:
-
-```bash
-ssh root@db.kodeme.io "docker exec kodemeio-postgres-16 /scripts/health.sh"
-ssh root@db.kodeme.io "docker exec kodemeio-postgres-16 /scripts/db.sh list"
-ssh root@db.kodeme.io "docker exec kodemeio-postgres-16 /scripts/dashboard.sh"
-```
-
-kctl-pg replaces the need for most of these by providing a local CLI experience.
-
-## Security Notes
-
-- SCRAM-SHA-256 authentication (not md5)
-- SSL/TLS with auto-generated RSA-4096 self-signed certs
-- pgAudit extension for DDL + role change audit logging
-- `audit.logged_actions` table for row-level change tracking
-- Replication restricted to RFC1918 private networks
-- App users have LOGIN only (no CREATEDB by default)
-- PgBouncer uses `auth_query` for credential lookup
-
-## Database Maintenance
-
-```bash
-kctl-pg maintenance vacuum <database> [--table TABLE] [--full] [--analyze] [--verbose]
-kctl-pg maintenance analyze <database> [--table TABLE] [--verbose]
-kctl-pg maintenance reindex <database> [--table TABLE] [--index INDEX] [--system]
-kctl-pg maintenance bloat [--db DATABASE] [--top 20]
-kctl-pg maintenance autovacuum-status [--db DATABASE]
-kctl-pg maintenance vacuum-freeze <database> [--table TABLE]
-kctl-pg maintenance cluster <database> <table> <index> [--force]
-kctl-pg maintenance reindex-concurrently <database> [--table TABLE] [--index INDEX]
-kctl-pg maintenance checkpoint [--force]
-kctl-pg maintenance frozen-xid [--db DATABASE] [--top 20]
-```
-
-## Performance Monitoring
-
-```bash
-kctl-pg perf overview [--db DATABASE]
-kctl-pg perf slow-queries [--db DATABASE] [--min-duration MS] [--limit 20]
-kctl-pg perf table-stats [--db DATABASE] [--top 20]
-kctl-pg perf index-usage [--db DATABASE] [--min-size BYTES]
-kctl-pg perf cache [--db DATABASE]
-kctl-pg perf locks [--db DATABASE]
-kctl-pg perf connections [--db DATABASE]
-kctl-pg perf settings [--filter PATTERN]
-kctl-pg perf wal-status
-kctl-pg perf explain <sql> [--db DATABASE] [--analyze] [--buffers]
-kctl-pg perf xid-wraparound                             # XID age per database
-kctl-pg perf temp-files [--db DATABASE]                  # Temp file usage
-kctl-pg perf progress                                    # All pg_stat_progress_* views
-```
-
-## PostgreSQL Configuration
-
-```bash
-kctl-pg pg-config show [--filter PATTERN]
-kctl-pg pg-config get <name>
-kctl-pg pg-config set <name> <value>
-kctl-pg pg-config reset <name>
-kctl-pg pg-config reload
-kctl-pg pg-config diff
-```
-
-## Statistics Views
-
-```bash
-kctl-pg stats tables [--db DATABASE]
-kctl-pg stats indexes [--db DATABASE]
-kctl-pg stats bgwriter
-kctl-pg stats replication
-kctl-pg stats wal
-kctl-pg stats io
-kctl-pg stats database [--name DB]
-```
-
-## Table Management
-
-```bash
-kctl-pg tables list [--db DATABASE] [--schema SCHEMA]
-kctl-pg tables describe <table> [--db DATABASE]
-kctl-pg tables size [--db DATABASE] [--top 20]
-kctl-pg tables partitions <table> [--db DATABASE]
-kctl-pg tables constraints <table> [--db DATABASE]
-kctl-pg tables triggers <table> [--db DATABASE]
-kctl-pg tables dependencies <table> [--db DATABASE]
-kctl-pg tables toast <table> [--db DATABASE]
-kctl-pg tables sequences [--db DATABASE] [--near-max]
-```
-
-## Index Management
-
-```bash
-kctl-pg indexes list [--db DATABASE] [--table TABLE]
-kctl-pg indexes bloat [--db DATABASE] [--top 20]
-kctl-pg indexes duplicate [--db DATABASE]
-kctl-pg indexes invalid [--db DATABASE]
-kctl-pg indexes missing [--db DATABASE] [--min-size "10 MB"]
-kctl-pg indexes create-concurrently <table> <columns> [--db DATABASE] [--name NAME] [--unique]
-kctl-pg indexes reindex-concurrently <target> [--db DATABASE] [--table]
-```
-
-## Replication Management
-
-```bash
-kctl-pg replication status
-kctl-pg replication lag
-kctl-pg replication slots
-kctl-pg replication slot-create <name> [--logical --plugin pgoutput] [--physical]
-kctl-pg replication slot-drop <name> [--force]
-kctl-pg replication publications [--db DATABASE]
-kctl-pg replication subscriptions [--db DATABASE]
-kctl-pg replication promote [--force]
-kctl-pg replication wal-senders
-kctl-pg replication wal-receiver
-```
-
-## Security Management
-
-```bash
-kctl-pg security ssl-status
-kctl-pg security hba-rules
-kctl-pg security privileges <role> [--db DATABASE]
-kctl-pg security rls-status [--db DATABASE]
-kctl-pg security rls-policies [--db DATABASE] [--table TABLE]
-kctl-pg security superuser-audit
-kctl-pg security password-check
-```
-
-## Schema Management
-
-```bash
-kctl-pg schemas list [--db DATABASE]
-kctl-pg schemas create <name> [--db DATABASE] [--owner ROLE]
-kctl-pg schemas drop <name> [--db DATABASE] [--cascade] [--force]
-kctl-pg schemas size [--db DATABASE]
-```
-
-## PgBouncer Management
-
-```bash
-kctl-pg pgbouncer status
-kctl-pg pgbouncer pools
-kctl-pg pgbouncer clients
-kctl-pg pgbouncer servers
-kctl-pg pgbouncer databases
-kctl-pg pgbouncer stats
-kctl-pg pgbouncer reload [--force]
-kctl-pg pgbouncer pause [--db DATABASE] [--force]
-kctl-pg pgbouncer resume [--db DATABASE]
-```
-
-## Troubleshooting
-
-### Cannot connect via kctl-pg
-1. Check SSH key: `ssh -i ~/.ssh/id_ed25519 root@db.kodeme.io "echo ok"`
-2. Check config: `kctl-pg config current`
-3. Test connection: `kctl-pg config test`
-
-### Database connection refused
-1. Check Docker container is running: `ssh root@db.kodeme.io "docker ps | grep postgres"`
-2. Check port mapping: PostgreSQL must map 5432 to host
-3. Try `kctl-pg health` to see if server responds
-
-### High connection count
-1. `kctl-pg activity list` -- see who is connected
-2. `kctl-pg activity list --state idle` -- find idle connections
-3. `kctl-pg activity kill <pid>` -- cancel runaway queries
-4. Check PgBouncer pool settings if connections exceed `max_connections`
-
-### Lock contention / slow queries
-1. `kctl-pg activity locks` -- show blocked queries
-2. `kctl-pg dashboard` -- shows long-running queries (>5s)
-3. `kctl-pg activity kill <blocking_pid> --force` -- terminate blocking backend
-
-### Backup failures
-1. Ensure Docker container name is discoverable: `ssh root@db.kodeme.io "docker ps --format '{{.Names}}' | grep postgres"`
-2. Check disk space on remote server
-3. For large databases, increase timeout in backup command

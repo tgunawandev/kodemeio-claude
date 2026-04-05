@@ -1,6 +1,7 @@
 ---
 name: mdm-admin
-description: Headwind MDM device management administration for kodemeio infrastructure. Covers device management, application deployment, configuration profiles, group management, admin users, audit logs, messaging, and device actions (lock/unlock/reboot/wipe/locate). Use when working with kctl-mdm CLI or managing mdm.kodeme.io.
+description: >
+  Headwind MDM device management administration via kctl-mdm CLI (mdm.kodeme.io). MUST use for ANY mobile device management, app deployment, or device control task. Triggers on: "kctl-mdm", "headwind", "MDM", "deploy app", "device group", "lock device", "wipe device", "device configuration", or ANY mobile device management task.
 user_invocable: false
 ---
 

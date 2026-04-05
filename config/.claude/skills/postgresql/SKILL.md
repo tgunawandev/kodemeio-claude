@@ -1,8 +1,8 @@
 ---
 name: postgresql
+description: >
+  PostgreSQL development, optimization, and integration — SQL/PL/pgSQL, JSON/JSONB, high availability, query optimization. MUST use for ANY PostgreSQL development or query optimization question. Triggers on: "SQL query", "PL/pgSQL", "JSONB", "index optimization", "explain analyze", "PostgreSQL function", "database design", or ANY PostgreSQL development task. NOT for server admin (use postgres-admin for kctl-pg operations).
 title: PostgreSQL Enterprise Mastery
-description: Comprehensive PostgreSQL development, optimization, and integration patterns for enterprise applications with expertise in SQL/PL/pgSQL, JSON/JSONB, high availability, and modern database architecture.
-
 keywords: [postgresql, database, sql, plpgsql, nosql, json, performance, replication, sharding, typescript, python, kctl-pg, ssh-tunnel, psycopg3]
 
 # Dependencies and related skills

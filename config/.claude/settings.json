@@ -1,36 +1,21 @@
 {
-  "permissions": {
-    "defaultMode": "bypassPermissions",
-    "deny": [
-      "Bash(rm -rf /)",
-      "Bash(rm -rf ~)",
-      "Bash(mkfs *)",
-      "Bash(dd if=*)",
-      "Bash(git push --force *main*)"
-    ]
-  },
-  "enableAllProjectMcpServers": true,
-  "agentTeams": true,
-  "enabledPlugins": {
-    "example-skills@anthropic-agent-skills": true,
-    "document-skills@anthropic-agent-skills": true,
-    "git-pr-workflows@claude-code-workflows": true,
-    "python-development@claude-code-workflows": true,
-    "javascript-typescript@claude-code-workflows": true,
-    "shell-scripting@claude-code-workflows": true,
-    "developer-essentials@claude-code-workflows": false,
-    "safety-hooks@cctools-plugins": false,
-    "langroid@cctools-plugins": false,
-    "n8n-mcp-skills@n8n-mcp-skills": false
-  },
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit",
+        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(cat - | jq -r '.tool_input.file_path // empty'); case \"$FILE\" in *.env|*.env.*|*.credentials*|*id_rsa*|*id_ed25519*|*.pem|*.key|*.p12) echo '{\"decision\": \"block\", \"reason\": \"Cannot edit secrets/keys in container\"}' ;; esac; exit 0"
+            "command": "FILE=$(cat - | jq -r '.tool_input.file_path // empty'); case \"$FILE\" in *.env|*.env.*|*.credentials*|*id_rsa*|*id_ed25519*|*secrets*) echo '{\"decision\": \"ask\", \"reason\": \"Editing sensitive file — confirm?\"}' ;; */node_modules/*|*/uv.lock|*/pnpm-lock.yaml|*/package-lock.json) echo '{\"decision\": \"block\", \"reason\": \"Do not edit lock files or node_modules directly.\"}' ;; esac; exit 0"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CMD=$(cat - | jq -r '.tool_input.command // empty'); case \"$CMD\" in *docker\\ system\\ prune*|*docker\\ rm\\ -f*) echo '{\"decision\": \"ask\", \"reason\": \"Destructive Docker operation — confirm?\"}' ;; *terraform\\ apply*) echo '{\"decision\": \"ask\", \"reason\": \"Terraform apply — did you review the plan?\"}' ;; esac; exit 0"
           }
         ]
       }
@@ -41,23 +26,54 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(cat - | jq -r '.tool_input.file_path // empty'); case \"$FILE\" in *.py) ruff format \"$FILE\" 2>/dev/null || true ;; *.ts|*.tsx|*.js|*.jsx) npx prettier --write \"$FILE\" 2>/dev/null || true ;; esac; exit 0"
+            "command": "FILE=$(cat - | jq -r '.tool_input.file_path // empty'); case \"$FILE\" in *.py) ruff format \"$FILE\" 2>/dev/null || true ;; *.ts|*.tsx|*.js|*.jsx) npx prettier --write \"$FILE\" 2>/dev/null || true ;; *.yml|*.yaml) python3 -c \"import yaml,sys; yaml.safe_load(open(sys.argv[1]))\" \"$FILE\" 2>/dev/null || echo '{\"warning\": \"Invalid YAML syntax\"}' ;; esac; exit 0"
           }
         ]
       }
     ],
-    "Stop": [
+    "Notification": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"[$(date '+%Y-%m-%d %H:%M:%S')] Task completed in $(pwd)\" >> /tmp/claude-activity.log"
+            "command": "/usr/bin/paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null || /usr/bin/aplay /usr/share/sounds/sound-icons/trumpet-12.wav 2>/dev/null || true"
           }
         ]
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "/home/tgunawan/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "example-skills@anthropic-agent-skills": true,
+    "document-skills@anthropic-agent-skills": true,
+    "git-pr-workflows@claude-code-workflows": true,
+    "python-development@claude-code-workflows": true,
+    "javascript-typescript@claude-code-workflows": true,
+    "shell-scripting@claude-code-workflows": true,
+    "developer-essentials@claude-code-workflows": false,
+    "superpowers@claude-plugins-official": true,
+    "claude-api@anthropic-agent-skills": true,
+    "frontend-design@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true
+  },
   "alwaysThinkingEnabled": true,
   "autoUpdatesChannel": "latest",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "agentTeams": true
 }

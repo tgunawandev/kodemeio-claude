@@ -1,12 +1,7 @@
 ---
 name: kodemeio-platform
 description: >
-  Cross-project architecture knowledge for the Kodemeio platform.
-  Documents how the 5 main repos connect: kodemeio-react (11 PWA apps),
-  kodemeio-odoo (ERP backend), kodemeio-next (websites),
-  kodemeio-hono (Node.js services), kodemeio-fastapi (Python services).
-  Use when working across repos, adding end-to-end features, debugging
-  cross-service issues, or deciding which project to work in.
+  Cross-project architecture knowledge for the Kodemeio platform — how the 5 main repos connect: kodemeio-react (11 PWA apps), kodemeio-odoo (ERP backend), kodemeio-next (websites), kodemeio-hono (Node.js services), kodemeio-fastapi (Python services). MUST use when working across repos, deciding which project to work in, adding end-to-end features, or debugging cross-service issues. Triggers on: "which repo", "cross-project", "how does X connect to Y", "end-to-end", "architecture overview", or ANY question about how Kodemeio services relate.
 version: 1.0.0
 allowed-tools:
   - Bash
@@ -273,6 +268,55 @@ Hono and FastAPI use:
 // Error
 { "error": "message" }
 ```
+
+## CLI Ecosystem (kctl-common v0.3.1)
+
+21 kctl-* CLIs share core infrastructure via `kctl-common` (PyPI). All use APIClient base class for HTTP APIs.
+
+### kodemeio-app (5 CLIs)
+| CLI | Repo | Service Key | Groups |
+|---|---|---|---|
+| kctl-next | kodemeio-next | `next` | 35 |
+| kctl-odoo | kodemeio-odoo | `odoo` | 70+ |
+| kctl-react | kodemeio-react | `react` | 31 |
+| kctl-api | kodemeio-fastapi | `api` | 46 |
+| kctl-claw | kodemeio-openclaw | `claw` | 29 |
+
+### kodemeio-core (9 CLIs)
+| CLI | Repo | Service Key | Groups |
+|---|---|---|---|
+| kctl-dokploy | kodemeio-dokploy | `dokploy` | 37 |
+| kctl-hetzner | kodemeio-hetzner | `hetzner` | 24 |
+| kctl-pg | kodemeio-postgres | `postgres` | 24 |
+| kctl-cloudflare | kodemeio-cloudflare | `cloudflare` | 27 |
+| kctl-ak | kodemeio-authentik | `authentik` | 24 |
+| kctl-gatus | kodemeio-gatus | `gatus` | 8 |
+| kctl-mdm | kodemeio-headwind | `mdm` | 12 |
+| kctl-waha | kodemeio-waha | `waha` | 8 |
+| kctl-grafana | kodemeio-grafana | `grafana` | 11 |
+
+### kodemeio-saas (7 CLIs)
+| CLI | Repo | Service Key | Groups |
+|---|---|---|---|
+| kctl-telegram | kodemeio-telegram | `telegram` | 7 |
+| kctl-1password | kodemeio-1password | `1password` | 9 |
+| kctl-claude | kodemeio-claude | `claude` | 11 |
+| kctl-github | kodemeio-github | `github` | 10 |
+| kctl-linear | kodemeio-linear | `linear` | 9 |
+| kctl-notion | kodemeio-notion | `notion` | 7 |
+| kctl-sentry | kodemeio-sentry | `sentry` | 10 |
+
+**Shared config:** `~/.config/kodemeio/config.yaml` (service-scoped profiles, all 21 CLIs share the file)
+
+**Shared infrastructure repo:** `kodemeio-platform` (GitHub: tgunawandev/kodemeio-platform)
+- `packages/kctl-common/` — Shared library (APIClient, AsyncAPIClient, exceptions, output, config, callbacks, runner, plugins, history, testing, doctor, monitor, completions, self_update)
+- `templates/kctl-cli/` — Copier template for scaffolding new CLIs (kctl-common>=0.3.1)
+
+**Standard global options:** `--json`, `--quiet/-q`, `--format/-f` (pretty/json/csv/yaml), `--no-header`, `--profile/-p`, `--version/-V`
+
+**Standard config subcommands:** init, add, use, show, validate, remove, set, profiles, current
+
+**Install any CLI:** `cd <repo>/cli && uv tool install --editable .`
 
 ## Key Conventions Across All Projects
 

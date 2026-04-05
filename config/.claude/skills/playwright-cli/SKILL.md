@@ -1,6 +1,7 @@
 ---
 name: playwright-cli
-description: Automates browser interactions for web testing, form filling, screenshots, and data extraction. Use when the user needs to navigate websites, interact with web pages, fill forms, take screenshots, test web applications, or extract information from web pages.
+description: >
+  Browser automation for web testing, form filling, screenshots, and data extraction via Playwright MCP. MUST use when navigating websites, interacting with web pages, filling forms, taking screenshots, testing web apps, or extracting web page data. Triggers on: "open browser", "take screenshot", "fill form", "click button", "navigate to", "web test", "browser", or ANY browser interaction task.
 allowed-tools: Bash(playwright-cli:*)
 ---
 

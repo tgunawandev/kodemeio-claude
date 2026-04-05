@@ -90,8 +90,6 @@ PACKAGES=(
     tmux zsh fzf less nano vim
     # Build tools
     build-essential python3 python3-pip python3-venv
-    # Docker CLI
-    docker.io docker-compose
     # Network
     openssh-client iptables ipset iproute2 dnsutils
     # Utilities
@@ -103,6 +101,12 @@ PACKAGES=(
     # Documents
     pandoc
 )
+
+# Docker CLI — only add docker.io if Docker CE is not already installed
+# (docker.io conflicts with containerd.io from Docker CE repos)
+if ! command -v docker &>/dev/null; then
+    PACKAGES+=(docker.io docker-compose)
+fi
 
 if [ "$CHECK_ONLY" = true ]; then
     for pkg in "${PACKAGES[@]}"; do

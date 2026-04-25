@@ -76,6 +76,27 @@ if [ "$SYNC_ONLY" = false ]; then
         fi
     fi
     log_success "Dev tools OK"
+
+    # 3b. Zsh plugins (Zap, Powerlevel10k, autosuggestions, syntax-highlighting)
+    log_info "[3b/5] Checking zsh plugins..."
+    if [ ! -d "${XDG_DATA_HOME:-$HOME/.local/share}/zap" ]; then
+        log_info "  Installing Zap plugin manager..."
+        zsh -c 'source <(curl -sS https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1 --keep' 2>/dev/null || \
+            log_warn "  Zap install failed — install manually: https://github.com/zap-zsh/zap"
+    fi
+    if [ ! -d "$HOME/powerlevel10k" ]; then
+        log_info "  Installing Powerlevel10k..."
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k 2>/dev/null || \
+            log_warn "  p10k install failed"
+    fi
+    ZAP_PLUGINS="${XDG_DATA_HOME:-$HOME/.local/share}/zap/plugins"
+    mkdir -p "$ZAP_PLUGINS"
+    for plugin in zsh-autosuggestions zsh-syntax-highlighting; do
+        if [ ! -d "$ZAP_PLUGINS/$plugin" ]; then
+            git clone --depth=1 "https://github.com/zsh-users/$plugin.git" "$ZAP_PLUGINS/$plugin" 2>/dev/null || true
+        fi
+    done
+    log_success "Zsh plugins OK"
 else
     log_info "Skipping tool install (--sync mode)"
 fi

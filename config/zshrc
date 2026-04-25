@@ -1,6 +1,20 @@
 # =============================================================================
-# .zshrc — kodemeio-claude development container
+# .zshrc — kodemeio-claude development environment
 # =============================================================================
+
+# Welcome message (must be before p10k instant prompt to avoid console output warning)
+if [ -z "$TMUX" ]; then
+    echo "================================================================"
+    echo "  kodemeio-claude — Remote Development Container"
+    echo "  Companies: kodemeio | kontenos | journaltx | kidneuro"
+    echo "  Use: tmux attach -t <company> or aliases (kd, kt, jt, kn)"
+    echo "================================================================"
+fi
+
+# Powerlevel10k instant prompt (must be after any console output)
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 # History
 HISTFILE=/commandhistory/.zsh_history
@@ -13,13 +27,24 @@ setopt APPEND_HISTORY
 
 # Key bindings
 bindkey -e
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+bindkey "^[[1;5A" beginning-of-line
+bindkey "^[[1;5B" end-of-line
 
-# Prompt — show company/workspace context
-autoload -Uz vcs_info
-precmd() { vcs_info }
-zstyle ':vcs_info:git:*' formats '%F{cyan}(%b)%f '
-setopt PROMPT_SUBST
-PROMPT='%F{blue}%~%f ${vcs_info_msg_0_}%F{yellow}>%f '
+# Zap plugin manager + plugins
+[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh" ] && source "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh"
+plug "zsh-users/zsh-autosuggestions"
+plug "zsh-users/zsh-syntax-highlighting"
+
+# Completions
+autoload -Uz compinit
+compinit
+zstyle ':completion:*' menu select
+
+# Powerlevel10k theme
+[ -d ~/powerlevel10k ] && source ~/powerlevel10k/powerlevel10k.zsh-theme
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Aliases — company shortcuts
 alias kd='cd /opt/dev/kodemeio-app'
@@ -49,17 +74,8 @@ alias ccr='claude --remote'
 alias versions='echo "Node: $(node -v) | pnpm: $(pnpm -v) | Python: $(python3 --version) | uv: $(uv --version) | Claude: $(claude --version 2>/dev/null || echo N/A)"'
 
 # Path
-export PATH="/home/dev/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # FZF integration
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
-
-# Welcome message
-if [ -z "$TMUX" ]; then
-    echo "================================================================"
-    echo "  kodemeio-claude — Remote Development Container"
-    echo "  Companies: kodemeio | kontenos | journaltx | kidneuro"
-    echo "  Use: tmux attach -t <company> or aliases (kd, kt, jt, kn)"
-    echo "================================================================"
-fi

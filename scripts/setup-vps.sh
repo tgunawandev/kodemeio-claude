@@ -176,6 +176,11 @@ if [ "$CHECK_ONLY" = true ]; then
     log_check terraform
 else
     npm install -g @anthropic-ai/claude-code@latest @playwright/cli prettier 2>/dev/null || true
+    # Allow dev user to auto-update npm globals without sudo
+    chown -R "$DEV_USER:$DEV_USER" /usr/lib/node_modules 2>/dev/null || true
+    for bin in claude prettier pnpm; do
+        [ -L "/usr/bin/$bin" ] && chown -h "$DEV_USER:$DEV_USER" "/usr/bin/$bin" 2>/dev/null || true
+    done
     log_ok "Claude Code + Playwright + prettier installed"
 
     # Prefer uv (already installed in Phase 3) over pip for ruff
@@ -226,6 +231,56 @@ else
     mkdir -p "/home/$DEV_USER/.local/bin"
     [ -f /root/.local/bin/uv ] && cp /root/.local/bin/uv "/home/$DEV_USER/.local/bin/"
     chown -R "$DEV_USER:$DEV_USER" "/home/$DEV_USER"
+fi
+
+# ═════════════════════════════════════════════════════════════════════
+# Phase 5b: Zsh plugins (Zap, Powerlevel10k, autosuggestions, syntax-highlighting)
+# ═════════════════════════════════════════════════════════════════════
+log_info "Phase 5b: Zsh plugins"
+
+if [ "$CHECK_ONLY" = true ]; then
+    [ -d "/home/$DEV_USER/.local/share/zap" ] && echo -e "  ${GREEN}●${NC} zap" || echo -e "  ${RED}●${NC} zap"
+    [ -d "/home/$DEV_USER/powerlevel10k" ] && echo -e "  ${GREEN}●${NC} powerlevel10k" || echo -e "  ${RED}●${NC} powerlevel10k"
+    [ -d "/home/$DEV_USER/.local/share/zap/plugins/zsh-autosuggestions" ] && echo -e "  ${GREEN}●${NC} zsh-autosuggestions" || echo -e "  ${RED}●${NC} zsh-autosuggestions"
+    [ -d "/home/$DEV_USER/.local/share/zap/plugins/zsh-syntax-highlighting" ] && echo -e "  ${GREEN}●${NC} zsh-syntax-highlighting" || echo -e "  ${RED}●${NC} zsh-syntax-highlighting"
+else
+    # Zap plugin manager
+    if [ ! -d "/home/$DEV_USER/.local/share/zap" ]; then
+        su - "$DEV_USER" -s /bin/bash -c \
+            'zsh -c "source <(curl -sS https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1 --keep"' 2>/dev/null || true
+        log_ok "Zap plugin manager installed"
+    else
+        log_ok "Zap already installed"
+    fi
+
+    # Powerlevel10k
+    if [ ! -d "/home/$DEV_USER/powerlevel10k" ]; then
+        su - "$DEV_USER" -s /bin/bash -c \
+            'git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k' 2>/dev/null || true
+        log_ok "Powerlevel10k installed"
+    else
+        log_ok "Powerlevel10k already installed"
+    fi
+
+    # Pre-download plugins so first shell start is instant
+    ZAP_PLUGINS="/home/$DEV_USER/.local/share/zap/plugins"
+    mkdir -p "$ZAP_PLUGINS"
+    for plugin in zsh-autosuggestions zsh-syntax-highlighting; do
+        if [ ! -d "$ZAP_PLUGINS/$plugin" ]; then
+            git clone --depth=1 "https://github.com/zsh-users/$plugin.git" "$ZAP_PLUGINS/$plugin" 2>/dev/null || true
+            log_ok "$plugin installed"
+        else
+            log_ok "$plugin already installed"
+        fi
+    done
+    chown -R "$DEV_USER:$DEV_USER" "/home/$DEV_USER/.local/share/zap" "/home/$DEV_USER/powerlevel10k"
+
+    # Copy p10k config from repo if available
+    if [ -f "$REPO_DIR/config/p10k.zsh" ]; then
+        cp "$REPO_DIR/config/p10k.zsh" "/home/$DEV_USER/.p10k.zsh"
+        chown "$DEV_USER:$DEV_USER" "/home/$DEV_USER/.p10k.zsh"
+        log_ok "p10k config installed"
+    fi
 fi
 
 # ═════════════════════════════════════════════════════════════════════
@@ -319,11 +374,6 @@ else
     [ -f "$REPO_DIR/docker/init-firewall.sh" ] && \
         cp "$REPO_DIR/docker/init-firewall.sh" /usr/local/bin/ && \
         chmod +x /usr/local/bin/init-firewall.sh
-
-    # Ensure HISTFILE is set for persistent history
-    if ! grep -q 'HISTFILE' "/home/$DEV_USER/.zshrc" 2>/dev/null; then
-        echo 'export HISTFILE=/commandhistory/.zsh_history' >> "/home/$DEV_USER/.zshrc"
-    fi
 
     chown -R "$DEV_USER:$DEV_USER" "$CLAUDE_HOME" "/home/$DEV_USER/.mcp.json" 2>/dev/null || true
     log_ok "Claude config synced"

@@ -22,7 +22,7 @@ allowed-tools:
 - **Database**: SQLite (db_v2.sqlite3 inside hbbs container)
 - **CLI**: `kctl-rustdesk` (Python, installed via `uv pip install -e packages/kctl-rustdesk`)
 - **Config**: `~/.config/kodemeio/config.yaml` → `profiles.<profile>.rustdesk`
-- **Repo**: kodemeio-platform/packages/kctl-rustdesk
+- **Repo**: kodemeio-cli/packages/kctl-rustdesk
 
 ## Architecture
 

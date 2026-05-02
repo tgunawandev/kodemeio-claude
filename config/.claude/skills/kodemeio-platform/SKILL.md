@@ -308,7 +308,7 @@ Hono and FastAPI use:
 
 **Shared config:** `~/.config/kodemeio/config.yaml` (service-scoped profiles, all 21 CLIs share the file)
 
-**Shared infrastructure repo:** `kodemeio-platform` (GitHub: tgunawandev/kodemeio-platform)
+**Shared infrastructure repo:** `kodemeio-platform` (GitHub: tgunawandev/kodemeio-platform) — CLI tools moved to `kodemeio-cli`
 - `packages/kctl-common/` — Shared library (APIClient, AsyncAPIClient, exceptions, output, config, callbacks, runner, plugins, history, testing, doctor, monitor, completions, self_update)
 - `templates/kctl-cli/` — Copier template for scaffolding new CLIs (kctl-common>=0.3.1)
 

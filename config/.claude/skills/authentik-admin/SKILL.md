@@ -24,7 +24,7 @@ allowed-tools:
 
 ## CLI Tool: kctl-ak
 
-Installed via uv workspace at `packages/kctl-ak/` in the kodemeio-platform repo.
+Installed via uv workspace at `packages/kctl-ak/` in the kodemeio-cli repo.
 
 ```bash
 kctl-ak <command>

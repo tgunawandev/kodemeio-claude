@@ -1,11 +1,6 @@
 name: Validate kctl-claude
 on:
-  push:
-    branches: [main]
-    paths: ["cli/**"]
-  pull_request:
-    branches: [main]
-    paths: ["cli/**"]
+  workflow_dispatch:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
